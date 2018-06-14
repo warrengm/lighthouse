@@ -36,7 +36,7 @@ class PageDependencyGraph {
       for (let stack = record.initiator.stack; stack; stack = stack.parent) {
         const callFrames = stack.callFrames || [];
         for (const frame of callFrames) {
-          if (frame.url) scriptURLs.add(frame.url)
+          if (frame.url) scriptURLs.add(frame.url);
         }
       }
 
