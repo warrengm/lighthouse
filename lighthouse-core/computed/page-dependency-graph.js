@@ -30,9 +30,17 @@ class PageDependencyGraph {
   static getNetworkInitiators(record) {
     if (!record.initiator) return [];
     if (record.initiator.url) return [record.initiator.url];
-    if (record.initiator.type === 'script' && record.initiator.stack) {
-      const frames = record.initiator.stack.callFrames;
-      return Array.from(new Set(frames.map(frame => frame.url))).filter(Boolean);
+    if (record.initiator.type === 'script') {
+      /** @type {Set<string>} */
+      const scriptURLs = new Set();
+      for (let stack = record.initiator.stack; stack; stack = stack.parent) {
+        const callFrames = stack.callFrames || [];
+        for (const frame of callFrames) {
+          if (frame.url) scriptURLs.add(frame.url)
+        }
+      }
+
+      return Array.from(scriptURLs);
     }
 
     return [];
