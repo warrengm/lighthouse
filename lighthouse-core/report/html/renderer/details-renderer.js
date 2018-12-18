@@ -126,14 +126,11 @@ class DetailsRenderer {
       displayedPath = parsed.file === '/' ? parsed.origin : parsed.file;
       displayedHost = parsed.file === '/' ? '' : `(${parsed.hostname})`;
       title = url;
-    } catch (/** @type {!Error} */ e) {
-      if (!e.name.startsWith('TypeError')) {
-        throw e;
-      }
+    } catch (e) {
       displayedPath = url;
     }
 
-    const element = /** @type {HTMLElement} */ (this._dom.createElement('div', 'lh-text__url'));
+    const element = this._dom.createElement('div', 'lh-text__url');
     element.appendChild(this._renderText({
       value: displayedPath,
     }));
@@ -164,7 +161,7 @@ class DetailsRenderer {
       });
     }
 
-    const a = /** @type {HTMLAnchorElement} */ (this._dom.createElement('a'));
+    const a = this._dom.createElement('a');
     a.rel = 'noopener';
     a.target = '_blank';
     a.textContent = details.text;
@@ -200,7 +197,7 @@ class DetailsRenderer {
    * @return {Element}
    */
   _renderThumbnail(details) {
-    const element = /** @type {HTMLImageElement}*/ (this._dom.createElement('img', 'lh-thumbnail'));
+    const element = this._dom.createElement('img', 'lh-thumbnail');
     const strValue = details.value;
     element.src = strValue;
     element.title = strValue;
@@ -349,7 +346,7 @@ class DetailsRenderer {
    * @protected
    */
   renderNode(item) {
-    const element = /** @type {HTMLSpanElement} */ (this._dom.createElement('span', 'lh-node'));
+    const element = this._dom.createElement('span', 'lh-node');
     if (item.snippet) {
       element.textContent = item.snippet;
     }

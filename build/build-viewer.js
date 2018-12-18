@@ -13,7 +13,7 @@ const writeFileAsync = promisify(fs.writeFile);
 
 const browserify = require('browserify');
 const cpy = require('cpy');
-const ghPages = promisify(require('gh-pages').publish);
+const ghPages = require('gh-pages');
 const glob = promisify(require('glob'));
 const lighthousePackage = require('../package.json');
 const makeDir = require('make-dir');
@@ -113,8 +113,15 @@ async function compileJs() {
   const generatorFilename = `${sourceDir}/../lighthouse-core/report/report-generator.js`;
   const generatorBrowserify = browserify(generatorFilename, {standalone: 'ReportGenerator'})
     .transform('brfs');
-  const generatorBundle = promisify(generatorBrowserify.bundle.bind(generatorBrowserify));
-  const generatorJs = (await generatorBundle()).toString();
+
+  /** @type {Promise<string>} */
+  const generatorJsPromise = new Promise((resolve, reject) => {
+    generatorBrowserify.bundle((err, src) => {
+      if (err) return reject(err);
+      resolve(src.toString());
+    });
+  });
+  const generatorJs = await generatorJsPromise;
 
   // Report renderer scripts.
   const rendererJs = htmlReportAssets.REPORT_JAVASCRIPT;
@@ -148,6 +155,23 @@ async function compileJs() {
 }
 
 /**
+ * Publish viewer to gh-pages branch.
+ * @return {Promise<void>}
+ */
+async function deploy() {
+  return new Promise((resolve, reject) => {
+    ghPages.publish(distDir, {
+      add: true, // keep existing files
+      dest: 'viewer',
+      message: `Update viewer to lighthouse@${lighthousePackage.version}`,
+    }, err => {
+      if (err) return reject(err);
+      resolve();
+    });
+  });
+}
+
+/**
  * Build viewer, optionally deploying to gh-pages if `--deploy` flag was set.
  */
 async function run() {
@@ -162,10 +186,7 @@ async function run() {
 
   const argv = process.argv.slice(2);
   if (argv.includes('--deploy')) {
-    await ghPages(`${distDir}/**/*`, {
-      add: true, // keep existing files
-      dest: 'viewer',
-    }, () => {});
+    await deploy();
   }
 }
 

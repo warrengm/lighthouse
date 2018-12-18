@@ -68,18 +68,12 @@ class GatherRunner {
    * never fired on it.
    * @param {Driver} driver
    * @param {string=} url
-   * @param {number=} duration
    * @return {Promise<void>}
    */
-  static async loadBlank(
-      driver,
-      url = constants.defaultPassConfig.blankPage,
-      duration = constants.defaultPassConfig.blankDuration
-  ) {
+  static async loadBlank(driver, url = constants.defaultPassConfig.blankPage) {
     const status = {msg: 'Resetting state with about:blank', id: 'lh:gather:loadBlank'};
     log.time(status);
-    await driver.gotoURL(url);
-    await new Promise(resolve => setTimeout(resolve, duration));
+    await driver.gotoURL(url, {waitForNavigated: true});
     log.timeEnd(status);
   }
 
@@ -152,19 +146,29 @@ class GatherRunner {
       return URL.equalWithExcludedFragments(record.url, url);
     });
 
-    let errorDef;
     if (!mainRecord) {
-      errorDef = LHError.errors.NO_DOCUMENT_REQUEST;
+      return new LHError(LHError.errors.NO_DOCUMENT_REQUEST);
     } else if (mainRecord.failed) {
-      errorDef = {...LHError.errors.FAILED_DOCUMENT_REQUEST};
-      errorDef.message += ` ${mainRecord.localizedFailDescription}.`;
+      const netErr = mainRecord.localizedFailDescription;
+      // Match all resolution and DNS failures
+      // https://cs.chromium.org/chromium/src/net/base/net_error_list.h?rcl=cd62979b
+      if (
+        netErr === 'net::ERR_NAME_NOT_RESOLVED' ||
+        netErr === 'net::ERR_NAME_RESOLUTION_FAILED' ||
+        netErr.startsWith('net::ERR_DNS_')
+      ) {
+        return new LHError(LHError.errors.DNS_FAILURE);
+      } else {
+        return new LHError(
+          LHError.errors.FAILED_DOCUMENT_REQUEST,
+          {errorDetails: netErr}
+        );
+      }
     } else if (mainRecord.hasErrorStatusCode()) {
-      errorDef = {...LHError.errors.ERRORED_DOCUMENT_REQUEST};
-      errorDef.message += ` Status code: ${mainRecord.statusCode}.`;
-    }
-
-    if (errorDef) {
-      return new LHError(errorDef);
+      return new LHError(
+        LHError.errors.ERRORED_DOCUMENT_REQUEST,
+        {statusCode: `${mainRecord.statusCode}`}
+      );
     }
   }
 
@@ -175,12 +179,13 @@ class GatherRunner {
    */
   static assertNoSecurityIssues({securityState, explanations}) {
     if (securityState === 'insecure') {
-      const errorDef = {...LHError.errors.INSECURE_DOCUMENT_REQUEST};
       const insecureDescriptions = explanations
         .filter(exp => exp.securityState === 'insecure')
         .map(exp => exp.description);
-      errorDef.message += ` ${insecureDescriptions.join(' ')}`;
-      throw new LHError(errorDef);
+      throw new LHError(
+        LHError.errors.INSECURE_DOCUMENT_REQUEST,
+        {securityMessages: insecureDescriptions.join(' ')}
+      );
     }
   }
 
@@ -306,6 +311,8 @@ class GatherRunner {
     const networkRecords = NetworkRecorder.recordsFromLogs(devtoolsLog);
     log.timeEnd(status);
 
+    this.assertNoSecurityIssues(driver.getSecurityState());
+
     let pageLoadError = GatherRunner.getPageLoadError(passContext.url, networkRecords);
     // If the driver was offline, a page load error is expected, so do not save it.
     if (!driver.online) pageLoadError = undefined;
@@ -314,8 +321,6 @@ class GatherRunner {
       log.error('GatherRunner', pageLoadError.message, passContext.url);
       passContext.LighthouseRunWarnings.push(pageLoadError.friendlyMessage);
     }
-
-    this.assertNoSecurityIssues(driver.getSecurityState());
 
     // Expose devtoolsLog, networkRecords, and trace (if present) to gatherers
     /** @type {LH.Gatherer.LoadData} */
@@ -458,7 +463,7 @@ class GatherRunner {
         await driver.setThrottling(options.settings, passConfig);
         if (!isFirstPass) {
           // Already on blank page if driver was just set up.
-          await GatherRunner.loadBlank(driver, passConfig.blankPage, passConfig.blankDuration);
+          await GatherRunner.loadBlank(driver, passConfig.blankPage);
         }
         await GatherRunner.beforePass(passContext, gathererResults);
         await GatherRunner.pass(passContext, gathererResults);

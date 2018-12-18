@@ -5,7 +5,7 @@
     "hostUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3358.0 Safari/537.36",
     "benchmarkIndex": 1000
   },
-  "lighthouseVersion": "3.2.0",
+  "lighthouseVersion": "4.0.0-beta",
   "fetchTime": "2018-03-13T00:55:45.840Z",
   "requestedUrl": "http://localhost:10200/dobetterweb/dbw_tester.html",
   "finalUrl": "http://localhost:10200/dobetterweb/dbw_tester.html",
@@ -49,7 +49,7 @@
     },
     "service-worker": {
       "id": "service-worker",
-      "title": "Does not register a service worker",
+      "title": "Does not register a service worker that controls page and start_url",
       "description": "The service worker is the technology that enables your app to use many Progressive Web App features, such as offline, add to homescreen, and push notifications. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/registered-service-worker).",
       "score": 0,
       "scoreDisplayMode": "binary",
@@ -57,7 +57,7 @@
     },
     "works-offline": {
       "id": "works-offline",
-      "title": "Does not respond with a 200 when offline",
+      "title": "Current page does not respond with a 200 when offline",
       "description": "If you're building a Progressive Web App, consider using a service worker so that your app can work offline. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/http-200-when-offline).",
       "score": 0,
       "scoreDisplayMode": "binary",
@@ -460,20 +460,19 @@
         "overallSavingsMs": 0
       }
     },
-    "webapp-install-banner": {
-      "id": "webapp-install-banner",
-      "title": "User will not be prompted to Install the Web App",
+    "installable-manifest": {
+      "id": "installable-manifest",
+      "title": "Web app manifest does not meet the installability requirements",
       "description": "Browsers can proactively prompt users to add your app to their homescreen, which can lead to higher engagement. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/install-prompt).",
       "score": 0,
       "scoreDisplayMode": "binary",
       "rawValue": false,
-      "explanation": "Failures: No manifest was fetched,\nSite does not register a service worker.",
+      "explanation": "Failures: No manifest was fetched.",
       "details": {
         "items": [
           {
             "failures": [
-              "No manifest was fetched",
-              "Site does not register a service worker"
+              "No manifest was fetched"
             ],
             "isParseFailure": true,
             "parseFailureReason": "No manifest was fetched"
@@ -503,7 +502,7 @@
     },
     "themed-omnibox": {
       "id": "themed-omnibox",
-      "title": "Address bar does not match brand colors",
+      "title": "Does not set an address-bar theme color",
       "description": "The browser address bar can be themed to match your site. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/address-bar).",
       "score": 0,
       "scoreDisplayMode": "binary",
@@ -767,6 +766,7 @@
       "scoreDisplayMode": "numeric",
       "rawValue": 0,
       "displayValue": "",
+      "warnings": [],
       "details": {
         "type": "opportunity",
         "headings": [],
@@ -2952,39 +2952,39 @@
           "group": "pwa-installable"
         },
         {
-          "id": "webapp-install-banner",
+          "id": "installable-manifest",
           "weight": 2,
           "group": "pwa-installable"
         },
         {
           "id": "redirects-http",
           "weight": 2,
-          "group": "pwa-engaging"
+          "group": "pwa-optimized"
         },
         {
           "id": "splash-screen",
           "weight": 1,
-          "group": "pwa-engaging"
+          "group": "pwa-optimized"
         },
         {
           "id": "themed-omnibox",
           "weight": 1,
-          "group": "pwa-engaging"
+          "group": "pwa-optimized"
         },
         {
           "id": "content-width",
           "weight": 1,
-          "group": "pwa-engaging"
+          "group": "pwa-optimized"
         },
         {
           "id": "viewport",
           "weight": 2,
-          "group": "pwa-engaging"
+          "group": "pwa-optimized"
         },
         {
           "id": "without-javascript",
           "weight": 1,
-          "group": "pwa-engaging"
+          "group": "pwa-optimized"
         },
         {
           "id": "pwa-cross-browser",
@@ -3388,8 +3388,8 @@
     "pwa-installable": {
       "title": "Installable"
     },
-    "pwa-engaging": {
-      "title": "Engaging"
+    "pwa-optimized": {
+      "title": "PWA Optimized"
     },
     "a11y-color-contrast": {
       "title": "Color Contrast Is Satisfactory",
@@ -3476,6 +3476,12 @@
       },
       {
         "startTime": 0,
+        "name": "lh:computed:NetworkRecords",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
         "name": "lh:audit:redirects-http",
         "duration": 100,
         "entryType": "measure"
@@ -3512,7 +3518,25 @@
       },
       {
         "startTime": 0,
+        "name": "lh:computed:FirstContentfulPaint",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:computed:TraceOfTab",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
         "name": "lh:audit:first-meaningful-paint",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:computed:FirstMeaningfulPaint",
         "duration": 100,
         "entryType": "measure"
       },
@@ -3524,7 +3548,25 @@
       },
       {
         "startTime": 0,
+        "name": "lh:computed:Interactive",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
         "name": "lh:audit:speed-index",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:computed:SpeedIndex",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:computed:Speedline",
         "duration": 100,
         "entryType": "measure"
       },
@@ -3542,7 +3584,19 @@
       },
       {
         "startTime": 0,
+        "name": "lh:computed:Screenshots",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
         "name": "lh:audit:estimated-input-latency",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:computed:EstimatedInputLatency",
         "duration": 100,
         "entryType": "measure"
       },
@@ -3560,7 +3614,19 @@
       },
       {
         "startTime": 0,
+        "name": "lh:computed:MainResource",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
         "name": "lh:audit:first-cpu-idle",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:computed:FirstCPUIdle",
         "duration": 100,
         "entryType": "measure"
       },
@@ -3584,13 +3650,61 @@
       },
       {
         "startTime": 0,
+        "name": "lh:computed:CriticalRequestChains",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
         "name": "lh:audit:redirects",
         "duration": 100,
         "entryType": "measure"
       },
       {
         "startTime": 0,
-        "name": "lh:audit:webapp-install-banner",
+        "name": "lh:computed:LanternInteractive",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:computed:LanternFirstMeaningfulPaint",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:computed:LanternFirstContentfulPaint",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:computed:PageDependencyGraph",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:computed:LoadSimulator",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:computed:NetworkAnalysis",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:audit:installable-manifest",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:computed:ManifestValues",
         "duration": 100,
         "entryType": "measure"
       },
@@ -3632,6 +3746,12 @@
       },
       {
         "startTime": 0,
+        "name": "lh:computed:MainThreadTasks",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
         "name": "lh:audit:bootup-time",
         "duration": 100,
         "entryType": "measure"
@@ -3639,6 +3759,12 @@
       {
         "startTime": 0,
         "name": "lh:audit:uses-rel-preload",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:computed:LoadSimulator",
         "duration": 100,
         "entryType": "measure"
       },
@@ -3987,6 +4113,18 @@
       {
         "startTime": 0,
         "name": "lh:audit:render-blocking-resources",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:computed:FirstContentfulPaint",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:computed:LanternFirstContentfulPaint",
         "duration": 100,
         "entryType": "measure"
       },
@@ -4387,6 +4525,223 @@
       "lighthouse-core/audits/font-display.js | description": [
         "audits[font-display].description"
       ],
+      "lighthouse-core/audits/accessibility/accesskeys.js | title": [
+        "audits.accesskeys.title"
+      ],
+      "lighthouse-core/audits/accessibility/accesskeys.js | description": [
+        "audits.accesskeys.description"
+      ],
+      "lighthouse-core/audits/accessibility/aria-allowed-attr.js | title": [
+        "audits[aria-allowed-attr].title"
+      ],
+      "lighthouse-core/audits/accessibility/aria-allowed-attr.js | description": [
+        "audits[aria-allowed-attr].description"
+      ],
+      "lighthouse-core/audits/accessibility/aria-required-attr.js | title": [
+        "audits[aria-required-attr].title"
+      ],
+      "lighthouse-core/audits/accessibility/aria-required-attr.js | description": [
+        "audits[aria-required-attr].description"
+      ],
+      "lighthouse-core/audits/accessibility/aria-required-children.js | title": [
+        "audits[aria-required-children].title"
+      ],
+      "lighthouse-core/audits/accessibility/aria-required-children.js | description": [
+        "audits[aria-required-children].description"
+      ],
+      "lighthouse-core/audits/accessibility/aria-required-parent.js | title": [
+        "audits[aria-required-parent].title"
+      ],
+      "lighthouse-core/audits/accessibility/aria-required-parent.js | description": [
+        "audits[aria-required-parent].description"
+      ],
+      "lighthouse-core/audits/accessibility/aria-roles.js | title": [
+        "audits[aria-roles].title"
+      ],
+      "lighthouse-core/audits/accessibility/aria-roles.js | description": [
+        "audits[aria-roles].description"
+      ],
+      "lighthouse-core/audits/accessibility/aria-valid-attr-value.js | title": [
+        "audits[aria-valid-attr-value].title"
+      ],
+      "lighthouse-core/audits/accessibility/aria-valid-attr-value.js | description": [
+        "audits[aria-valid-attr-value].description"
+      ],
+      "lighthouse-core/audits/accessibility/aria-valid-attr.js | title": [
+        "audits[aria-valid-attr].title"
+      ],
+      "lighthouse-core/audits/accessibility/aria-valid-attr.js | description": [
+        "audits[aria-valid-attr].description"
+      ],
+      "lighthouse-core/audits/accessibility/audio-caption.js | title": [
+        "audits[audio-caption].title"
+      ],
+      "lighthouse-core/audits/accessibility/audio-caption.js | description": [
+        "audits[audio-caption].description"
+      ],
+      "lighthouse-core/audits/accessibility/button-name.js | title": [
+        "audits[button-name].title"
+      ],
+      "lighthouse-core/audits/accessibility/button-name.js | description": [
+        "audits[button-name].description"
+      ],
+      "lighthouse-core/audits/accessibility/bypass.js | title": [
+        "audits.bypass.title"
+      ],
+      "lighthouse-core/audits/accessibility/bypass.js | description": [
+        "audits.bypass.description"
+      ],
+      "lighthouse-core/audits/accessibility/color-contrast.js | failureTitle": [
+        "audits[color-contrast].title"
+      ],
+      "lighthouse-core/audits/accessibility/color-contrast.js | description": [
+        "audits[color-contrast].description"
+      ],
+      "lighthouse-core/audits/accessibility/axe-audit.js | failingElementsHeader": [
+        "audits[color-contrast].details.headings[0].text",
+        "audits[html-has-lang].details.headings[0].text",
+        "audits[image-alt].details.headings[0].text",
+        "audits.label.details.headings[0].text",
+        "audits[link-name].details.headings[0].text"
+      ],
+      "lighthouse-core/audits/accessibility/definition-list.js | title": [
+        "audits[definition-list].title"
+      ],
+      "lighthouse-core/audits/accessibility/definition-list.js | description": [
+        "audits[definition-list].description"
+      ],
+      "lighthouse-core/audits/accessibility/dlitem.js | title": [
+        "audits.dlitem.title"
+      ],
+      "lighthouse-core/audits/accessibility/dlitem.js | description": [
+        "audits.dlitem.description"
+      ],
+      "lighthouse-core/audits/accessibility/document-title.js | title": [
+        "audits[document-title].title"
+      ],
+      "lighthouse-core/audits/accessibility/document-title.js | description": [
+        "audits[document-title].description"
+      ],
+      "lighthouse-core/audits/accessibility/duplicate-id.js | title": [
+        "audits[duplicate-id].title"
+      ],
+      "lighthouse-core/audits/accessibility/duplicate-id.js | description": [
+        "audits[duplicate-id].description"
+      ],
+      "lighthouse-core/audits/accessibility/frame-title.js | title": [
+        "audits[frame-title].title"
+      ],
+      "lighthouse-core/audits/accessibility/frame-title.js | description": [
+        "audits[frame-title].description"
+      ],
+      "lighthouse-core/audits/accessibility/html-has-lang.js | failureTitle": [
+        "audits[html-has-lang].title"
+      ],
+      "lighthouse-core/audits/accessibility/html-has-lang.js | description": [
+        "audits[html-has-lang].description"
+      ],
+      "lighthouse-core/audits/accessibility/html-lang-valid.js | title": [
+        "audits[html-lang-valid].title"
+      ],
+      "lighthouse-core/audits/accessibility/html-lang-valid.js | description": [
+        "audits[html-lang-valid].description"
+      ],
+      "lighthouse-core/audits/accessibility/image-alt.js | failureTitle": [
+        "audits[image-alt].title"
+      ],
+      "lighthouse-core/audits/accessibility/image-alt.js | description": [
+        "audits[image-alt].description"
+      ],
+      "lighthouse-core/audits/accessibility/input-image-alt.js | title": [
+        "audits[input-image-alt].title"
+      ],
+      "lighthouse-core/audits/accessibility/input-image-alt.js | description": [
+        "audits[input-image-alt].description"
+      ],
+      "lighthouse-core/audits/accessibility/label.js | failureTitle": [
+        "audits.label.title"
+      ],
+      "lighthouse-core/audits/accessibility/label.js | description": [
+        "audits.label.description"
+      ],
+      "lighthouse-core/audits/accessibility/layout-table.js | title": [
+        "audits[layout-table].title"
+      ],
+      "lighthouse-core/audits/accessibility/layout-table.js | description": [
+        "audits[layout-table].description"
+      ],
+      "lighthouse-core/audits/accessibility/link-name.js | failureTitle": [
+        "audits[link-name].title"
+      ],
+      "lighthouse-core/audits/accessibility/link-name.js | description": [
+        "audits[link-name].description"
+      ],
+      "lighthouse-core/audits/accessibility/list.js | title": [
+        "audits.list.title"
+      ],
+      "lighthouse-core/audits/accessibility/list.js | description": [
+        "audits.list.description"
+      ],
+      "lighthouse-core/audits/accessibility/listitem.js | title": [
+        "audits.listitem.title"
+      ],
+      "lighthouse-core/audits/accessibility/listitem.js | description": [
+        "audits.listitem.description"
+      ],
+      "lighthouse-core/audits/accessibility/meta-refresh.js | title": [
+        "audits[meta-refresh].title"
+      ],
+      "lighthouse-core/audits/accessibility/meta-refresh.js | description": [
+        "audits[meta-refresh].description"
+      ],
+      "lighthouse-core/audits/accessibility/meta-viewport.js | title": [
+        "audits[meta-viewport].title"
+      ],
+      "lighthouse-core/audits/accessibility/meta-viewport.js | description": [
+        "audits[meta-viewport].description"
+      ],
+      "lighthouse-core/audits/accessibility/object-alt.js | title": [
+        "audits[object-alt].title"
+      ],
+      "lighthouse-core/audits/accessibility/object-alt.js | description": [
+        "audits[object-alt].description"
+      ],
+      "lighthouse-core/audits/accessibility/tabindex.js | title": [
+        "audits.tabindex.title"
+      ],
+      "lighthouse-core/audits/accessibility/tabindex.js | description": [
+        "audits.tabindex.description"
+      ],
+      "lighthouse-core/audits/accessibility/td-headers-attr.js | title": [
+        "audits[td-headers-attr].title"
+      ],
+      "lighthouse-core/audits/accessibility/td-headers-attr.js | description": [
+        "audits[td-headers-attr].description"
+      ],
+      "lighthouse-core/audits/accessibility/th-has-data-cells.js | title": [
+        "audits[th-has-data-cells].title"
+      ],
+      "lighthouse-core/audits/accessibility/th-has-data-cells.js | description": [
+        "audits[th-has-data-cells].description"
+      ],
+      "lighthouse-core/audits/accessibility/valid-lang.js | title": [
+        "audits[valid-lang].title"
+      ],
+      "lighthouse-core/audits/accessibility/valid-lang.js | description": [
+        "audits[valid-lang].description"
+      ],
+      "lighthouse-core/audits/accessibility/video-caption.js | title": [
+        "audits[video-caption].title"
+      ],
+      "lighthouse-core/audits/accessibility/video-caption.js | description": [
+        "audits[video-caption].description"
+      ],
+      "lighthouse-core/audits/accessibility/video-description.js | title": [
+        "audits[video-description].title"
+      ],
+      "lighthouse-core/audits/accessibility/video-description.js | description": [
+        "audits[video-description].description"
+      ],
       "lighthouse-core/audits/byte-efficiency/uses-long-cache-ttl.js | failureTitle": [
         "audits[uses-long-cache-ttl].title"
       ],
@@ -4578,8 +4933,56 @@
       "lighthouse-core/config/default-config.js | pwaInstallableGroupTitle": [
         "categoryGroups[pwa-installable].title"
       ],
-      "lighthouse-core/config/default-config.js | pwaEngagingGroupTitle": [
-        "categoryGroups[pwa-engaging].title"
+      "lighthouse-core/config/default-config.js | pwaOptimizedGroupTitle": [
+        "categoryGroups[pwa-optimized].title"
+      ],
+      "lighthouse-core/config/default-config.js | a11yColorContrastGroupTitle": [
+        "categoryGroups[a11y-color-contrast].title"
+      ],
+      "lighthouse-core/config/default-config.js | a11yColorContrastGroupDescription": [
+        "categoryGroups[a11y-color-contrast].description"
+      ],
+      "lighthouse-core/config/default-config.js | a11yDescribeContentsGroupTitle": [
+        "categoryGroups[a11y-describe-contents].title"
+      ],
+      "lighthouse-core/config/default-config.js | a11yDescribeContentsGroupDescription": [
+        "categoryGroups[a11y-describe-contents].description"
+      ],
+      "lighthouse-core/config/default-config.js | a11yWellStructuredGroupTitle": [
+        "categoryGroups[a11y-well-structured].title"
+      ],
+      "lighthouse-core/config/default-config.js | a11yWellStructuredGroupDescription": [
+        "categoryGroups[a11y-well-structured].description"
+      ],
+      "lighthouse-core/config/default-config.js | a11yAriaGroupTitle": [
+        "categoryGroups[a11y-aria].title"
+      ],
+      "lighthouse-core/config/default-config.js | a11yAriaGroupDescription": [
+        "categoryGroups[a11y-aria].description"
+      ],
+      "lighthouse-core/config/default-config.js | a11yCorrectAttributesGroupTitle": [
+        "categoryGroups[a11y-correct-attributes].title"
+      ],
+      "lighthouse-core/config/default-config.js | a11yCorrectAttributesGroupDescription": [
+        "categoryGroups[a11y-correct-attributes].description"
+      ],
+      "lighthouse-core/config/default-config.js | a11yElementNamesGroupTitle": [
+        "categoryGroups[a11y-element-names].title"
+      ],
+      "lighthouse-core/config/default-config.js | a11yElementNamesGroupDescription": [
+        "categoryGroups[a11y-element-names].description"
+      ],
+      "lighthouse-core/config/default-config.js | a11yLanguageGroupTitle": [
+        "categoryGroups[a11y-language].title"
+      ],
+      "lighthouse-core/config/default-config.js | a11yLanguageGroupDescription": [
+        "categoryGroups[a11y-language].description"
+      ],
+      "lighthouse-core/config/default-config.js | a11yMetaGroupTitle": [
+        "categoryGroups[a11y-meta].title"
+      ],
+      "lighthouse-core/config/default-config.js | a11yMetaGroupDescription": [
+        "categoryGroups[a11y-meta].description"
       ]
     }
   }

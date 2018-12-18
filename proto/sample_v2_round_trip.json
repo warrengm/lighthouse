@@ -933,6 +933,25 @@
             "scoreDisplayMode": "not_applicable", 
             "title": "`<input type=\"image\">` elements have `[alt]` text"
         }, 
+        "installable-manifest": {
+            "description": "Browsers can proactively prompt users to add your app to their homescreen, which can lead to higher engagement. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/install-prompt).", 
+            "details": {
+                "items": [
+                    {
+                        "failures": [
+                            "No manifest was fetched"
+                        ], 
+                        "isParseFailure": true, 
+                        "parseFailureReason": "No manifest was fetched"
+                    }
+                ]
+            }, 
+            "explanation": "Failures: No manifest was fetched.", 
+            "id": "installable-manifest", 
+            "score": 0.0, 
+            "scoreDisplayMode": "binary", 
+            "title": "Web app manifest does not meet the installability requirements"
+        }, 
         "interactive": {
             "description": "Interactive marks the time at which the page is fully interactive. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/consistently-interactive).", 
             "displayValue": "4.9\u00a0s", 
@@ -1876,7 +1895,7 @@
             "id": "service-worker", 
             "score": 0.0, 
             "scoreDisplayMode": "binary", 
-            "title": "Does not register a service worker"
+            "title": "Does not register a service worker that controls page and start_url"
         }, 
         "speed-index": {
             "description": "Speed Index shows how quickly the contents of a page are visibly populated. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/speed-index).", 
@@ -1952,7 +1971,7 @@
             "id": "themed-omnibox", 
             "score": 0.0, 
             "scoreDisplayMode": "binary", 
-            "title": "Address bar does not match brand colors"
+            "title": "Does not set an address-bar theme color"
         }, 
         "time-to-first-byte": {
             "description": "Time To First Byte identifies the time at which your server sends a response. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/ttfb).", 
@@ -2390,7 +2409,8 @@
             "id": "uses-rel-preconnect", 
             "score": 1.0, 
             "scoreDisplayMode": "numeric", 
-            "title": "Preconnect to required origins"
+            "title": "Preconnect to required origins", 
+            "warnings": []
         }, 
         "uses-rel-preload": {
             "description": "Consider using <link rel=preload> to prioritize fetching resources that are currently requested later in page load. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/preload).", 
@@ -2542,26 +2562,6 @@
             "scoreDisplayMode": "manual", 
             "title": "Visual order on the page follows DOM order"
         }, 
-        "webapp-install-banner": {
-            "description": "Browsers can proactively prompt users to add your app to their homescreen, which can lead to higher engagement. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/install-prompt).", 
-            "details": {
-                "items": [
-                    {
-                        "failures": [
-                            "No manifest was fetched", 
-                            "Site does not register a service worker"
-                        ], 
-                        "isParseFailure": true, 
-                        "parseFailureReason": "No manifest was fetched"
-                    }
-                ]
-            }, 
-            "explanation": "Failures: No manifest was fetched,\nSite does not register a service worker.", 
-            "id": "webapp-install-banner", 
-            "score": 0.0, 
-            "scoreDisplayMode": "binary", 
-            "title": "User will not be prompted to Install the Web App"
-        }, 
         "without-javascript": {
             "description": "Your app should display some content when JavaScript is disabled, even if it's just a warning to the user that JavaScript is required to use the app. [Learn more](https://developers.google.com/web/tools/lighthouse/audits/no-js).", 
             "id": "without-javascript", 
@@ -2574,7 +2574,7 @@
             "id": "works-offline", 
             "score": 0.0, 
             "scoreDisplayMode": "binary", 
-            "title": "Does not respond with a 200 when offline", 
+            "title": "Current page does not respond with a 200 when offline", 
             "warnings": []
         }
     }, 
@@ -3066,36 +3066,36 @@
                 }, 
                 {
                     "group": "pwa-installable", 
-                    "id": "webapp-install-banner", 
+                    "id": "installable-manifest", 
                     "weight": 2.0
                 }, 
                 {
-                    "group": "pwa-engaging", 
+                    "group": "pwa-optimized", 
                     "id": "redirects-http", 
                     "weight": 2.0
                 }, 
                 {
-                    "group": "pwa-engaging", 
+                    "group": "pwa-optimized", 
                     "id": "splash-screen", 
                     "weight": 1.0
                 }, 
                 {
-                    "group": "pwa-engaging", 
+                    "group": "pwa-optimized", 
                     "id": "themed-omnibox", 
                     "weight": 1.0
                 }, 
                 {
-                    "group": "pwa-engaging", 
+                    "group": "pwa-optimized", 
                     "id": "content-width", 
                     "weight": 1.0
                 }, 
                 {
-                    "group": "pwa-engaging", 
+                    "group": "pwa-optimized", 
                     "id": "viewport", 
                     "weight": 2.0
                 }, 
                 {
-                    "group": "pwa-engaging", 
+                    "group": "pwa-optimized", 
                     "id": "without-javascript", 
                     "weight": 1.0
                 }, 
@@ -3235,14 +3235,14 @@
         "metrics": {
             "title": "Metrics"
         }, 
-        "pwa-engaging": {
-            "title": "Engaging"
-        }, 
         "pwa-fast-reliable": {
             "title": "Fast and reliable"
         }, 
         "pwa-installable": {
             "title": "Installable"
+        }, 
+        "pwa-optimized": {
+            "title": "PWA Optimized"
         }, 
         "seo-content": {
             "description": "Format your HTML in a way that enables crawlers to better understand your app\u2019s content.", 
@@ -3289,7 +3289,7 @@
             "warningHeader": "Warnings: "
         }
     }, 
-    "lighthouseVersion": "3.2.0", 
+    "lighthouseVersion": "4.0.0-beta", 
     "requestedUrl": "http://localhost:10200/dobetterweb/dbw_tester.html", 
     "runWarnings": [], 
     "timing": {
@@ -3333,6 +3333,12 @@
             {
                 "duration": 100.0, 
                 "entryType": "measure", 
+                "name": "lh:computed:NetworkRecords", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
                 "name": "lh:audit:redirects-http", 
                 "startTime": 0.0
             }, 
@@ -3369,7 +3375,25 @@
             {
                 "duration": 100.0, 
                 "entryType": "measure", 
+                "name": "lh:computed:FirstContentfulPaint", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
+                "name": "lh:computed:TraceOfTab", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
                 "name": "lh:audit:first-meaningful-paint", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
+                "name": "lh:computed:FirstMeaningfulPaint", 
                 "startTime": 0.0
             }, 
             {
@@ -3381,7 +3405,25 @@
             {
                 "duration": 100.0, 
                 "entryType": "measure", 
+                "name": "lh:computed:Interactive", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
                 "name": "lh:audit:speed-index", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
+                "name": "lh:computed:SpeedIndex", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
+                "name": "lh:computed:Speedline", 
                 "startTime": 0.0
             }, 
             {
@@ -3399,7 +3441,19 @@
             {
                 "duration": 100.0, 
                 "entryType": "measure", 
+                "name": "lh:computed:Screenshots", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
                 "name": "lh:audit:estimated-input-latency", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
+                "name": "lh:computed:EstimatedInputLatency", 
                 "startTime": 0.0
             }, 
             {
@@ -3417,7 +3471,19 @@
             {
                 "duration": 100.0, 
                 "entryType": "measure", 
+                "name": "lh:computed:MainResource", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
                 "name": "lh:audit:first-cpu-idle", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
+                "name": "lh:computed:FirstCPUIdle", 
                 "startTime": 0.0
             }, 
             {
@@ -3441,13 +3507,61 @@
             {
                 "duration": 100.0, 
                 "entryType": "measure", 
+                "name": "lh:computed:CriticalRequestChains", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
                 "name": "lh:audit:redirects", 
                 "startTime": 0.0
             }, 
             {
                 "duration": 100.0, 
                 "entryType": "measure", 
-                "name": "lh:audit:webapp-install-banner", 
+                "name": "lh:computed:LanternInteractive", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
+                "name": "lh:computed:LanternFirstMeaningfulPaint", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
+                "name": "lh:computed:LanternFirstContentfulPaint", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
+                "name": "lh:computed:PageDependencyGraph", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
+                "name": "lh:computed:LoadSimulator", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
+                "name": "lh:computed:NetworkAnalysis", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
+                "name": "lh:audit:installable-manifest", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
+                "name": "lh:computed:ManifestValues", 
                 "startTime": 0.0
             }, 
             {
@@ -3489,6 +3603,12 @@
             {
                 "duration": 100.0, 
                 "entryType": "measure", 
+                "name": "lh:computed:MainThreadTasks", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
                 "name": "lh:audit:bootup-time", 
                 "startTime": 0.0
             }, 
@@ -3496,6 +3616,12 @@
                 "duration": 100.0, 
                 "entryType": "measure", 
                 "name": "lh:audit:uses-rel-preload", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
+                "name": "lh:computed:LoadSimulator", 
                 "startTime": 0.0
             }, 
             {
@@ -3844,6 +3970,18 @@
                 "duration": 100.0, 
                 "entryType": "measure", 
                 "name": "lh:audit:render-blocking-resources", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
+                "name": "lh:computed:FirstContentfulPaint", 
+                "startTime": 0.0
+            }, 
+            {
+                "duration": 100.0, 
+                "entryType": "measure", 
+                "name": "lh:computed:LanternFirstContentfulPaint", 
                 "startTime": 0.0
             }, 
             {

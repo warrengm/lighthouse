@@ -166,6 +166,8 @@ describe('Browser Driver', () => {
       assert.ok(false, 'long-running getRequestContent supposed to reject');
     }, e => {
       assert.equal(e.code, 'PROTOCOL_TIMEOUT');
+      expect(e.friendlyMessage).toBeDisplayString(
+        /^Waiting for DevTools.*Method: Network.getResponseBody/);
     });
   });
 
@@ -238,6 +240,32 @@ describe('Browser Driver', () => {
     return driver.gotoURL(startUrl, loadOptions).then(loadedUrl => {
       assert.equal(loadedUrl, finalUrl);
     });
+  });
+
+  it('.sendCommand timesout when commands take too long', async () => {
+    class SlowConnection extends EventEmitter {
+      connect() {
+        return Promise.resolve();
+      }
+      disconnect() {
+        return Promise.resolve();
+      }
+      sendCommand() {
+        return new Promise(resolve => setTimeout(resolve, 15));
+      }
+    }
+    const slowConnection = new SlowConnection();
+    const driver = new Driver(slowConnection);
+    driver.setNextProtocolTimeout(25);
+    await driver.sendCommand('Page.enable');
+
+    driver.setNextProtocolTimeout(5);
+    try {
+      await driver.sendCommand('Page.disable');
+      assert.fail('expected driver.sendCommand to timeout');
+    } catch (err) {
+      assert.equal(err.code, 'PROTOCOL_TIMEOUT');
+    }
   });
 
   it('will request default traceCategories', () => {

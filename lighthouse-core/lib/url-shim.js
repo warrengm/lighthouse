@@ -25,7 +25,7 @@ const listOfTlds = [
 ];
 
 const allowedProtocols = [
-  'https:', 'http:', 'chrome:',
+  'https:', 'http:', 'chrome:', 'chrome-extension:',
 ];
 
 /**
@@ -209,7 +209,7 @@ URLShim.URL = URL;
 URLShim.URLSearchParams = (typeof self !== 'undefined' && self.URLSearchParams) ||
     require('url').URLSearchParams;
 
-URLShim.NON_NETWORK_PROTOCOLS = ['blob', 'data'];
+URLShim.NON_NETWORK_PROTOCOLS = ['blob', 'data', 'intent'];
 
 URLShim.INVALID_URL_DEBUG_STRING =
     'Lighthouse was unable to determine the URL of some script executions. ' +
