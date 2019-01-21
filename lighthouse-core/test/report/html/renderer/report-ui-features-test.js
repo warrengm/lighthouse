@@ -100,7 +100,7 @@ describe('ReportUIFeatures', () => {
       renderer.renderReport(sampleResults, container);
 
       assert.equal(reportUIFeatures.json, undefined);
-      reportUIFeatures.initFeatures(Util.prepareReportResult(sampleResults));
+      reportUIFeatures.initFeatures(sampleResults);
       assert.ok(reportUIFeatures.json);
     });
   });
