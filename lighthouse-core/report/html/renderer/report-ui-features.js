@@ -134,72 +134,72 @@ class ReportUIFeatures {
   }
 
   _setupThirdPartyFilter() {
-    const pageTLDPlusOne = new URL(this.json.finalUrl).origin.split('.').slice(-2).join('.');
-
     // get all tables with a text url
     /** @type {Array<HTMLTableElement>} */
     const tables = Array.from(this._document.querySelectorAll('.lh-table'));
-    tables.filter(el => el.querySelector('td.lh-table-column--url'))
-      .filter(el => /** @type {Element} */ (el.closest('.lh-audit')).id !== 'uses-rel-preconnect')
-      .forEach((el, index) => {
-        /** @type {NodeListOf<HTMLElement>} */
-        const urlItems = el.querySelectorAll('.lh-text__url');
-        /** @type {Record<string, HTMLTableRowElement>} */
-        const thirdPartyRows = {};
+    const thirdPartyFilterAuditExclusions = tables
+      .filter(el => el.querySelector('td.lh-table-column--url'))
+      .filter(el => /** @type {Element} */ (el.closest('.lh-audit')).id !== 'uses-rel-preconnect');
 
-        for (const urlItem of urlItems) {
-          const isThirdParty = !urlItem.title.includes(`${pageTLDPlusOne}/`);
-          if (!isThirdParty) {
-            continue;
-          }
+    thirdPartyFilterAuditExclusions.forEach((tableEl, index) => {
+      /** @type {Record<string, HTMLTableRowElement>} */
+      const thirdPartyRows = this._getThirdPartyRows(tableEl, this.json.finalUrl);
 
-          const urlRow = urlItem.closest('tr');
-          if (urlRow) {
-            const rowPosition = Array.from(el.tBodies[0].children).indexOf(urlRow);
-            thirdPartyRows[`${rowPosition}`] = urlRow;
-          }
-        }
+      // create input box
+      const filterTemplate = this._dom.cloneTemplate('#tmpl-lh-3p-filter', this._document);
+      const filterInput = /** @type {HTMLInputElement} */ (filterTemplate.querySelector('input'));
+      const id = `lh-3p-filter-label--${index}`;
 
-        // create input box
-        const filterTemplate = this._dom.cloneTemplate('#tmpl-lh-3p-filter', this._document);
-        const filterInput = /** @type {HTMLInputElement} */ (filterTemplate.querySelector('input'));
-        const id = `lh-3p-filter-label--${index}`;
-
-        if (filterInput) {
-          filterInput.setAttribute('id', id);
-          filterInput.addEventListener('change', e => {
-            // remove elements from the dom and keep track of them to readd on uncheck
-            // why removing instead of hiding? nth-child(even) background-colors keep working
-            if (e.target instanceof HTMLInputElement && e.target.checked) {
-              Object.keys(thirdPartyRows).forEach(position => {
-                const row = thirdPartyRows[position];
-
-                if (position === '0') {
-                  el.tBodies[0].appendChild(row);
-                } else {
-                  Array.from(el.tBodies[0].children)[Number(position) - 1]
-                    .insertAdjacentElement('afterend', row);
-                }
-              });
-            } else {
-              Object.keys(thirdPartyRows).forEach(position => {
-                const row = thirdPartyRows[position];
-
-                if (row.parentNode) {
-                  row.parentNode.removeChild(row);
-                }
-              });
-            }
+      filterInput.setAttribute('id', id);
+      filterInput.addEventListener('change', e => {
+        // remove elements from the dom and keep track of them to readd on uncheck
+        // why removing instead of hiding? nth-child(even) background-colors keep working
+        if (e.target instanceof HTMLInputElement && e.target.checked) {
+          Object.entries(thirdPartyRows).forEach(([position, row]) => {
+            tableEl.tBodies[0].insertBefore(row, Array.from(tableEl.tBodies[0].children)[Number(position)]);
+          });
+        } else {
+          Object.keys(thirdPartyRows).forEach(position => {
+            const row = thirdPartyRows[position];
+            row.remove();
           });
         }
-
-        if (filterTemplate && el.parentNode) {
-          /** @type {Element} */ (filterTemplate.querySelector('label')).setAttribute('for', id);
-          /** @type {Element} */ (filterTemplate.querySelector('.lh-3p-filter-count')).innerHTML =
-            `${Object.keys(thirdPartyRows).length}`;
-          el.parentNode.insertBefore(filterTemplate, el);
-        }
       });
+
+      if (tableEl.parentNode) {
+        /** @type {Element} */ (filterTemplate.querySelector('label')).setAttribute('for', id);
+        /** @type {Element} */ (filterTemplate.querySelector('.lh-3p-filter-count')).textContent =
+          `${Object.keys(thirdPartyRows).length}`;
+        // Finally, add checkbox to the DOM
+        tableEl.parentNode.insertBefore(filterTemplate, tableEl);
+      }
+    });
+  }
+
+  /**
+   * @param {HTMLTableElement} el
+   * @param {string} finalUrl
+   */
+  _getThirdPartyRows(el, finalUrl) {
+    /** @type {NodeListOf<HTMLElement>} */
+    const urlItems = el.querySelectorAll('.lh-text__url');
+    const pageTLDPlusOne = new URL(finalUrl).origin.split('.').slice(-2).join('.');
+    /** @type {Record<string, HTMLTableRowElement>} */
+    const thirdPartyRows = {};
+    for (const urlItem of urlItems) {
+      const isThirdParty = !urlItem.title.includes(`${pageTLDPlusOne}/`);
+      if (!isThirdParty) {
+        continue;
+      }
+
+      const urlRowEl = urlItem.closest('tr');
+      if (urlRowEl) {
+        const rowPosition = Array.from(el.tBodies[0].children).indexOf(urlRowEl);
+        thirdPartyRows[`${rowPosition}`] = urlRowEl;
+      }
+    }
+
+    return thirdPartyRows;
   }
 
   _setupHeaderAnimation() {
