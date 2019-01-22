@@ -115,6 +115,22 @@ class URLShim extends URL {
   }
 
   /**
+   * Returns a primary domain for provided URL (e.g. http://www.example.com -> example.com).
+   * @param {string} hostname
+   * @returns {string}
+   */
+  static getRootDomain(hostname) {
+    const tld = URLShim.getTld(hostname);
+
+    // tld is .com or .co.uk which means we means that length is 1 to big
+    // .com => 2 & .co.uk => 3
+    const lengthOfTLD = tld.split('.').length;
+
+    // get TLD + root domain
+    return hostname.split('.').slice(-lengthOfTLD).join('.');
+  }
+
+  /**
    * Check if rootDomains matches
    *
    * @param {string} urlA
@@ -134,14 +150,9 @@ class URLShim extends URL {
       return false;
     }
 
-    const tldA = URLShim.getTld(urlAInfo.hostname);
-    const tldB = URLShim.getTld(urlBInfo.hostname);
-
     // get the string before the tld
-    const urlARootDomain = urlAInfo.hostname.replace(new RegExp(`${tldA}$`), '')
-      .split('.').splice(-1)[0];
-    const urlBRootDomain = urlBInfo.hostname.replace(new RegExp(`${tldB}$`), '')
-      .split('.').splice(-1)[0];
+    const urlARootDomain = URLShim.getRootDomain(urlAInfo.hostname);
+    const urlBRootDomain = URLShim.getRootDomain(urlBInfo.hostname);
 
     return urlARootDomain === urlBRootDomain;
   }

@@ -156,7 +156,8 @@ class ReportUIFeatures {
         // why removing instead of hiding? nth-child(even) background-colors keep working
         if (e.target instanceof HTMLInputElement && e.target.checked) {
           Object.entries(thirdPartyRows).forEach(([position, row]) => {
-            tableEl.tBodies[0].insertBefore(row, Array.from(tableEl.tBodies[0].children)[Number(position)]);
+            const childrenArr = Array.from(tableEl.tBodies[0].children);
+            tableEl.tBodies[0].insertBefore(row, childrenArr[Number(position)]);
           });
         } else {
           Object.keys(thirdPartyRows).forEach(position => {

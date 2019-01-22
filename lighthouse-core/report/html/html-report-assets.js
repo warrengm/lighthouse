@@ -17,6 +17,7 @@ const REPORT_JAVASCRIPT = [
   fs.readFileSync(__dirname + '/renderer/details-renderer.js', 'utf8'),
   fs.readFileSync(__dirname + '/renderer/crc-details-renderer.js', 'utf8'),
   fs.readFileSync(__dirname + '/../../lib/file-namer.js', 'utf8'),
+  //fs.readFileSync(__dirname + '/../../lib/url-shim.js', 'utf8'),
   fs.readFileSync(__dirname + '/renderer/logger.js', 'utf8'),
   fs.readFileSync(__dirname + '/renderer/report-ui-features.js', 'utf8'),
   fs.readFileSync(__dirname + '/renderer/category-renderer.js', 'utf8'),

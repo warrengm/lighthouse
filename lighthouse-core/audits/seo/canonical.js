@@ -45,16 +45,6 @@ function isValidRelativeOrAbsoluteURL(url) {
   }
 }
 
-/**
- * Returns a primary domain for provided URL (e.g. http://www.example.com -> example.com).
- * Note that it does not take second-level domains into account (.co.uk).
- * @param {URL} url
- * @returns {string}
- */
-function getPrimaryDomain(url) {
-  return url.hostname.split('.').slice(-2).join('.');
-}
-
 class Canonical extends Audit {
   /**
    * @return {LH.Audit.Meta}
@@ -151,7 +141,7 @@ class Canonical extends Audit {
 
         // bing and yahoo don't allow canonical URLs pointing to different domains, it's also
         // a common mistake to publish a page with canonical pointing to e.g. a test domain or localhost
-        if (getPrimaryDomain(canonicalURL) !== getPrimaryDomain(baseURL)) {
+        if (!URL.rootDomainsMatch(canonicalURL, baseURL)) {
           return {
             rawValue: false,
             explanation: `Points to a different domain (${canonicalURL})`,
