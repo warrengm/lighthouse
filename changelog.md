@@ -2,6 +2,10 @@
 # 4.1.0 (2019-01-28)
 [Full Changelog](https://github.com/googlechrome/lighthouse/compare/v4.0.0...v4.1.0)
 
+## New contributors!
+
+@castilloandres you da man, man.
+
 ## Core
 
 * font-size audit: count code points for text length ([#6973](https://github.com/googlechrome/lighthouse/pull/6973))
@@ -19,7 +23,7 @@
 ## Report / Viewer
 
 * renderer: do not attempt fireworks for devtools ([#7090](https://github.com/googlechrome/lighthouse/pull/7090))
-* allow loading RunnerResult json ([#7031](https://github.com/googlechrome/lighthouse/pull/7031))
+* viewer: allow loading RunnerResult json ([#7031](https://github.com/googlechrome/lighthouse/pull/7031))
 
 ## Misc
 
