@@ -141,7 +141,7 @@ class Canonical extends Audit {
 
         // bing and yahoo don't allow canonical URLs pointing to different domains, it's also
         // a common mistake to publish a page with canonical pointing to e.g. a test domain or localhost
-        if (!URL.rootDomainsMatch(canonicalURL, baseURL)) {
+        if (!URL.rootDomainsMatch(canonicalURL.href, baseURL.href)) {
           return {
             rawValue: false,
             explanation: `Points to a different domain (${canonicalURL})`,
