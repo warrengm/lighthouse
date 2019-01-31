@@ -237,6 +237,20 @@ class TraceProcessor {
       }
     }
 
+    // Support the case where everything else fails.
+    const navStartEvt = events.find(e => Boolean(e.name === 'navigationStart' && e.args &&
+      e.args.data && e.args.data.isLoadingMainFrame && e.args.data.documentLoaderURL));
+    if (navStartEvt && navStartEvt.args && navStartEvt.args.data) {
+      const frameId = navStartEvt.args.frame;
+      if (frameId) {
+        return {
+          pid: navStartEvt.pid,
+          tid: navStartEvt.tid,
+          frameId,
+        }
+      }
+    }
+
     throw new LHError(LHError.errors.NO_TRACING_STARTED);
   }
 
