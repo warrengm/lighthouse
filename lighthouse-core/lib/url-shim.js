@@ -115,7 +115,7 @@ class URLShim extends URL {
   }
 
   /**
-   * Returns a primary domain for provided URL (e.g. http://www.example.com -> example.com).
+   * Returns a primary domain for provided hostname (e.g. www.example.com -> example.com).
    * @param {string} hostname
    * @returns {string}
    */

@@ -116,8 +116,9 @@ describe('URL Shim', () => {
 
   describe('getRootDomain', () => {
     it('returns the correct rootDomain', () => {
+      assert.equal(URL.getRootDomain('www.example.com'), 'example.com');
       assert.equal(URL.getRootDomain('example.com'), 'example.com');
-      assert.equal(URL.getRootDomain('example.co.uk'), 'example.co.uk');
+      assert.equal(URL.getRootDomain('www.example.co.uk'), 'example.co.uk');
       assert.equal(URL.getRootDomain('example.com.br'), 'example.com.br');
       assert.equal(URL.getRootDomain('example.tokyo.jp'), 'tokyo.jp');
       assert.equal(URL.getRootDomain('sub.example.com'), 'example.com');

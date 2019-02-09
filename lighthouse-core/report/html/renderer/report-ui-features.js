@@ -27,6 +27,13 @@
 
 /** @typedef {import('./dom.js')} DOM */
 
+/**
+ * @param {HTMLTableElement} tableEl
+ * @return {Array<HTMLTableRowElement>}
+ */
+const getTableRows = tableEl => /** @type {Array<HTMLTableRowElement>} */
+  (Array.from(tableEl.tBodies[0].children));
+
 class ReportUIFeatures {
   /**
    * @param {DOM} dom
@@ -134,15 +141,17 @@ class ReportUIFeatures {
   }
 
   _setupThirdPartyFilter() {
+    const thirdPartyFilterAuditExclusions = ['uses-rel-preconnect'];
+
     // get all tables with a text url
     /** @type {Array<HTMLTableElement>} */
     const tables = Array.from(this._document.querySelectorAll('.lh-table'));
-    const thirdPartyFilterAuditExclusions = tables
+    const tablesWithUrls = tables
       .filter(el => el.querySelector('td.lh-table-column--url'))
-      .filter(el => /** @type {Element} */ (el.closest('.lh-audit')).id !== 'uses-rel-preconnect');
+      .filter(el =>!thirdPartyFilterAuditExclusions.includes(
+        /** @type {Element} */(el.closest('.lh-audit')).id));
 
-    thirdPartyFilterAuditExclusions.forEach((tableEl, index) => {
-      /** @type {Record<string, HTMLTableRowElement>} */
+    tablesWithUrls.forEach((tableEl, index) => {
       const thirdPartyRows = this._getThirdPartyRows(tableEl, this.json.finalUrl);
 
       // create input box
@@ -155,22 +164,22 @@ class ReportUIFeatures {
         // remove elements from the dom and keep track of them to readd on uncheck
         // why removing instead of hiding? nth-child(even) background-colors keep working
         if (e.target instanceof HTMLInputElement && e.target.checked) {
-          Object.entries(thirdPartyRows).forEach(([position, row]) => {
-            const childrenArr = Array.from(tableEl.tBodies[0].children);
-            tableEl.tBodies[0].insertBefore(row, childrenArr[Number(position)]);
-          });
+          for (const [position, row] of thirdPartyRows.entries()) {
+            const childrenArr = getTableRows(tableEl);
+            tableEl.tBodies[0].insertBefore(row, childrenArr[position]);
+          }
         } else {
-          Object.keys(thirdPartyRows).forEach(position => {
-            const row = thirdPartyRows[position];
+          for (const position of thirdPartyRows.keys()) {
+            const row = /** @type {HTMLTableRowElement} */ (thirdPartyRows.get(position));
             row.remove();
-          });
+          }
         }
       });
 
       if (tableEl.parentNode) {
         /** @type {Element} */ (filterTemplate.querySelector('label')).setAttribute('for', id);
         /** @type {Element} */ (filterTemplate.querySelector('.lh-3p-filter-count')).textContent =
-          `${Object.keys(thirdPartyRows).length}`;
+          `${thirdPartyRows.size}`;
         // Finally, add checkbox to the DOM
         tableEl.parentNode.insertBefore(filterTemplate, tableEl);
       }
@@ -180,13 +189,17 @@ class ReportUIFeatures {
   /**
    * @param {HTMLTableElement} el
    * @param {string} finalUrl
+   * @return {Map<number, HTMLTableRowElement>}
    */
   _getThirdPartyRows(el, finalUrl) {
     /** @type {NodeListOf<HTMLElement>} */
     const urlItems = el.querySelectorAll('.lh-text__url');
+    // Sadly I cannot reuse the getRootDomain code in url-shim as we don't load it inside the report.
+    // We run a gulp concat to build everything which loads renderer/util.js twice and throws an error
+    // because Util is already defined.
     const pageTLDPlusOne = new URL(finalUrl).origin.split('.').slice(-2).join('.');
-    /** @type {Record<string, HTMLTableRowElement>} */
-    const thirdPartyRows = {};
+    /** @type {Map<number, HTMLTableRowElement>} */
+    const thirdPartyRows = new Map();
     for (const urlItem of urlItems) {
       const isThirdParty = !urlItem.title.includes(`${pageTLDPlusOne}/`);
       if (!isThirdParty) {
@@ -195,8 +208,8 @@ class ReportUIFeatures {
 
       const urlRowEl = urlItem.closest('tr');
       if (urlRowEl) {
-        const rowPosition = Array.from(el.tBodies[0].children).indexOf(urlRowEl);
-        thirdPartyRows[`${rowPosition}`] = urlRowEl;
+        const rowPosition = getTableRows(el).indexOf(urlRowEl);
+        thirdPartyRows.set(rowPosition, urlRowEl);
       }
     }
 
