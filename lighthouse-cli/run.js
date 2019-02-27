@@ -57,7 +57,7 @@ function parseChromeFlags(flags = '') {
 function getDebuggableChrome(flags) {
   return ChromeLauncher.launch({
     port: flags.port,
-    chromeFlags: parseChromeFlags(flags.chromeFlags),
+    chromeFlags: parseChromeFlags(flags.chromeFlags + ' --enable-features=NetworkServiceInProcess'),
     logLevel: flags.logLevel,
   });
 }
