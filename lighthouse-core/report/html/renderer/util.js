@@ -95,6 +95,22 @@ class Util {
   }
 
   /**
+   * Poor man's implementation of i18n._formatIcuMessage()
+   * @param {{message: string, values: Object|undefined}} audit
+   * @return {string}
+   */
+  static basicMsgFormat({message, values}) {
+    let resolvedMsg = message;
+    for (const [valueName, value] of Object.entries(values)) {
+      // Look for `{valueName}` or `{valueName, number}`
+      // eslint-disable-next-line no-useless-escape
+      const re = new RegExp('\{\\s*?' + valueName + '\\b.*?\}');
+      resolvedMsg = resolvedMsg.replace(re, value);
+    }
+    return resolvedMsg;
+  }
+
+  /**
    * Used to determine if the "passed" for the purposes of showing up in the "failed" or "passed"
    * sections of the report.
    *
@@ -502,6 +518,9 @@ Util.UIStrings = {
   snippetExpandButtonLabel: 'Expand snippet',
   /** Label for button that only shows a few lines of the snippet when clicked */
   snippetCollapseButtonLabel: 'Collapse snippet',
+
+  /** Label shown above a list of collapsed to describe how many are in the group. The `{itemCount}` placeholder will be replaced with the number of audits, typically an integer between 1 and 30 */
+  auditCount: '{itemCount, number} audits',
 
   /** Explanation shown to users below performance results to inform them that the test was done with a 4G network connection and to warn them that the numbers they see will likely change slightly the next time they run Lighthouse. 'Lighthouse' becomes link text to additional documentation. */
   lsPerformanceCategoryDescription: '[Lighthouse](https://developers.google.com/web/tools/lighthouse/) analysis of the current page on an emulated mobile network. Values are estimated and may vary.',

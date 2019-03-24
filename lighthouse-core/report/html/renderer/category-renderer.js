@@ -285,8 +285,10 @@ class CategoryRenderer {
     }
 
     const itemCountEl = this.dom.find('.lh-audit-group__itemcount', clumpElement);
-    // TODO(i18n): support multiple locales here
-    itemCountEl.textContent = `${auditRefs.length} audits`;
+    itemCountEl.textContent = Util.basicMsgFormat({
+      message: Util.UIStrings.auditCount,
+      values: {itemCount: auditRefs.length},
+    });
 
     // Add all audit results to the clump.
     const auditElements = auditRefs.map(this.renderAudit.bind(this));

@@ -138,6 +138,18 @@ describe('util helpers', () => {
     assert.equal(descriptions.cpuThrottling, '2x slowdown (Simulated)');
   });
 
+  it('basicMsgFormat formats boring messageFormat strings with values', () => {
+    assert.equal(Util.basicMsgFormat({message: '{count} audits', values: {count: 5}}), '5 audits');
+    assert.equal(Util.basicMsgFormat({message: 'OK: {count}', values: {count: 3}}), 'OK: 3');
+    assert.equal(Util.basicMsgFormat({message: 'Cool {count}.', values: {count: 2}}), 'Cool 2.');
+    assert.equal(Util.basicMsgFormat({message: '.{count, number}.', values: {count: 1}}), '.1.');
+    assert.equal(Util.basicMsgFormat({message: 'OK: { count }', values: {count: 3}}), 'OK: 3');
+    const prefixOverlap = {cat: 'calico', category: 'Performance'};
+    assert.equal(Util.basicMsgFormat({message: 'Failures {category} {cat}', values: prefixOverlap}),
+      'Failures Performance calico'
+    );
+  });
+
   describe('#prepareReportResult', () => {
     it('corrects underscored `notApplicable` scoreDisplayMode', () => {
       const clonedSampleResult = JSON.parse(JSON.stringify(sampleResult));

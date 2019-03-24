@@ -4822,6 +4822,7 @@
   },
   "i18n": {
     "rendererFormattedStrings": {
+      "auditCount": "{itemCount, number} audits",
       "auditGroupExpandTooltip": "Show audits",
       "crcInitialNavigation": "Initial Navigation",
       "crcLongestDurationLabel": "Maximum critical path latency:",

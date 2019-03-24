@@ -1259,6 +1259,10 @@
     "message": "The URL you have provided appears to be invalid.",
     "description": "Error message explaining that the provided URL Lighthouse points to is not valid, and cannot be loaded."
   },
+  "lighthouse-core/report/html/renderer/util.js | auditCount": {
+    "message": "{itemCount, number} audits",
+    "description": "Label shown above a list of collapsed to describe how many are in the group. The `{itemCount}` placeholder will be replaced with the number of audits, typically an integer between 1 and 30"
+  },
   "lighthouse-core/report/html/renderer/util.js | auditGroupExpandTooltip": {
     "message": "Show audits",
     "description": "The tooltip text on an expandable chevron icon. Clicking the icon expands a section to reveal a list of audit results that was hidden by default."

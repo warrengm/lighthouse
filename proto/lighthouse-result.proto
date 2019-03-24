@@ -343,6 +343,9 @@ message I18n {
 
     // The label for the button to show only a few lines of a snippet
     string snippet_collapse_button_label = 19;
+
+    // The label describing how many audits are in the collapsed section below
+    string audit_count = 20;
   }
 
   // The message holding all formatted strings
