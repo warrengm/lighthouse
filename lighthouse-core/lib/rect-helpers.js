@@ -250,6 +250,7 @@ module.exports = {
   getRectOverlapArea,
   getRectAtCenter,
   getLargestRect,
+  getRectArea,
   getRectCenterPoint,
   getBoundingRect,
   getBoundingRectWithPadding,

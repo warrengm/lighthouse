@@ -5,11 +5,17 @@
  */
 'use strict';
 
-/* global getComputedStyle, getElementsInDocument, Node, getNodePath, getNodeSelector */
+/* global document, window, getComputedStyle, getElementsInDocument, Node, getNodePath, getNodeSelector */
 
 const Gatherer = require('../gatherer');
 const pageFunctions = require('../../../lib/page-functions.js');
-const {rectContainsString, rectContains} = require('../../../lib/rect-helpers');
+const {
+  rectContainsString,
+  rectContains,
+  getRectArea,
+  getRectCenterPoint,
+  getLargestRect,
+} = require('../../../lib/rect-helpers');
 
 const TARGET_SELECTORS = [
   'button',
@@ -37,7 +43,9 @@ const tapTargetsSelector = TARGET_SELECTORS.join(',');
  */
 /* istanbul ignore next */
 function elementIsVisible(element) {
-  const {overflowX, overflowY, display, visibility} = getComputedStyle(element);
+  const {overflowX, overflowY, display, visibility} = getComputedStyle(
+    element
+  );
 
   if (
     display === 'none' ||
@@ -94,6 +102,7 @@ function getVisibleClientRects(element) {
   // - tap targets audit doesn't consider different containers/layers
   // - having most content in an explicit scroll container is rare
   // - treating them as hidden only generates false passes, which is better than false failures
+  // TODO: is this still needed?
   clientRects = filterClientRectsWithinAncestorsVisibleScrollArea(element, clientRects);
 
   return clientRects;
@@ -225,13 +234,13 @@ function elementIsInTextBlock(element) {
  * @returns {boolean}
  */
 /* istanbul ignore next */
-function elementIsPositionFixedStickyOrAbsolute(element) {
+function elementIsPositionFixedOrSticky(element) {
   const {position} = getComputedStyle(element);
-  if (position === 'fixed' || position === 'absolute' || position === 'sticky') {
+  if (position === 'fixed' || position === 'sticky') {
     return true;
   }
   if (element.parentElement) {
-    return elementIsPositionFixedStickyOrAbsolute(element.parentElement);
+    return elementIsPositionFixedOrSticky(element.parentElement);
   }
   return false;
 }
@@ -250,6 +259,52 @@ function truncate(str, maxLength) {
 }
 
 /**
+ * @param {Element} el
+ * @param {{x: number, y: number}} elCenterPoint
+ */
+function elementCenterIsAtZAxisTop(el, elCenterPoint) {
+  const topEl = document.elementFromPoint(
+    elCenterPoint.x,
+    elCenterPoint.y - document.documentElement.scrollTop
+  );
+
+  const isTop = topEl === el || el.contains(topEl);
+
+  return (
+    isTop
+  );
+}
+
+function disableFixedAndStickyElementPointerEvents() {
+  const className = 'lighthouse-disable-point-events';
+  const styleTag = document.createElement('style');
+  styleTag.innerHTML = `.${className} { pointer-events: none }`;
+  document.body.appendChild(styleTag);
+
+  Array.from(document.querySelectorAll('*')).forEach(el => {
+    if (['fixed', 'sticky'].includes(/** @type string */(getComputedStyle(el).position))) {
+      el.classList.add(className);
+    }
+  });
+
+  return function undo() {
+    Array.from(document.getElementsByClassName(className)).forEach(el => {
+      el.classList.remove(className);
+    });
+    styleTag.remove();
+  };
+}
+
+/**
+ * @param {{x: number, y: number}} point
+ */
+function pointIsInViewport(point) {
+  const topOfScreen = document.documentElement.scrollTop;
+  const bottomOfScreen = topOfScreen + window.innerHeight - 1;
+  return point.y >= topOfScreen && point.y <= bottomOfScreen;
+}
+
+/**
  * @returns {LH.Artifacts.TapTarget[]}
  */
 /* istanbul ignore next */
@@ -257,10 +312,20 @@ function gatherTapTargets() {
   /** @type {LH.Artifacts.TapTarget[]} */
   const targets = [];
 
+  // Capture element positions relative to the top of the page
+  document.documentElement.scrollTop = 0;
+
   /** @type {Element[]} */
   // @ts-ignore - getElementsInDocument put into scope via stringification
   const tapTargetElements = getElementsInDocument(tapTargetsSelector);
 
+
+  /** @type {{
+    tapTargetElement: Element,
+    largestRectCenterPoint: {x: number, y: number},
+    visibleClientRects: ClientRect[]
+  }[]} */
+  const enhancedTapTargets = [];
   tapTargetElements.forEach(tapTargetElement => {
     // Filter out tap targets that are likely to cause false failures:
     if (elementHasAncestorTapTarget(tapTargetElement)) {
@@ -273,12 +338,8 @@ function gatherTapTargets() {
       // in the Web Content Accessibility Guidelines https://www.w3.org/TR/WCAG21/#target-size
       return;
     }
-    if (elementIsPositionFixedStickyOrAbsolute(tapTargetElement)) {
-      // Absolutely positioned elements might not be visible if they have a lower z-index
-      // than other tap targets, but if we don't ignore them we can get false failures.
-      //
-      // TODO: rewrite logic to use elementFromPoint to check if an element is visible
-      // (this should also mean we'd no longer need to check ancestor visible scroll area)
+    if (elementIsPositionFixedOrSticky(tapTargetElement)) {
+      // Fixed and sticky elements only overlap temporarily at certain scroll positions.
       return;
     }
 
@@ -287,16 +348,65 @@ function gatherTapTargets() {
       return;
     }
 
-    targets.push({
-      clientRects: visibleClientRects,
-      snippet: truncate(tapTargetElement.outerHTML, 300),
-      // @ts-ignore - getNodePath put into scope via stringification
-      path: getNodePath(tapTargetElement),
-      // @ts-ignore - getNodeSelector put into scope via stringification
-      selector: getNodeSelector(tapTargetElement),
-      href: /** @type {HTMLAnchorElement} */(tapTargetElement)['href'] || '',
+    const largestRect = getLargestRect(visibleClientRects);
+    const largestRectCenterPoint = getRectCenterPoint(largestRect);
+    // round so we can can assume whole numbers during in-viewport check
+    largestRectCenterPoint.x = Math.round(largestRectCenterPoint.x);
+    largestRectCenterPoint.y = Math.round(largestRectCenterPoint.y);
+
+    if (largestRectCenterPoint.x >= window.innerWidth) {
+      // we don't scroll sideways, so the center of this tap target is always hidden
+      return;
+    }
+
+    enhancedTapTargets.push({
+      tapTargetElement,
+      largestRectCenterPoint,
+      visibleClientRects,
     });
   });
+
+
+  enhancedTapTargets.sort(
+    (a, b) => {
+      return a.largestRectCenterPoint.y - b.largestRectCenterPoint.y;
+    }
+  );
+
+  // Disable point events so that tap targets below them don't get
+  // detected as non-tappable (they are tappable, just not while the viewport
+  // is at the current scroll position)
+  const reenableFixedAndStickyElementPointerEvents = disableFixedAndStickyElementPointerEvents();
+
+  let item;
+  while (item = enhancedTapTargets.shift()) {
+    const {tapTargetElement, largestRectCenterPoint, visibleClientRects} = item;
+
+    // todo: do soething to prevent infinite loop here
+    while (!pointIsInViewport(largestRectCenterPoint)) {
+      const finalScrollPos = document.documentElement.scrollHeight;
+      if (document.documentElement.scrollTop >= finalScrollPos) {
+        throw Error('scrolled all the way but not found');
+      }
+      document.documentElement.scrollTop += window.innerHeight;
+    }
+
+    const isTop = elementCenterIsAtZAxisTop(tapTargetElement, largestRectCenterPoint);
+
+    if (isTop) {
+      targets.push({
+        clientRects: visibleClientRects,
+        snippet: truncate(tapTargetElement.outerHTML, 300),
+        // @ts-ignore - getNodePath put into scope via stringification
+        path: getNodePath(tapTargetElement),
+        // @ts-ignore - getNodeSelector put into scope via stringification
+        selector: getNodeSelector(tapTargetElement),
+        href: /** @type {HTMLAnchorElement} */ (tapTargetElement)['href'] || '',
+      });
+    }
+  }
+
+  reenableFixedAndStickyElementPointerEvents();
 
   return targets;
 }
@@ -306,20 +416,28 @@ class TapTargets extends Gatherer {
    * @param {LH.Gatherer.PassContext} passContext
    * @return {Promise<LH.Artifacts.TapTarget[]>} All visible tap targets with their positions and sizes
    */
-  afterPass(passContext) {
+
+  async afterPass(passContext) {
     const expression = `(function() {
       const tapTargetsSelector = "${tapTargetsSelector}";
       ${pageFunctions.getElementsInDocumentString};
       ${filterClientRectsWithinAncestorsVisibleScrollArea.toString()};
-      ${elementIsPositionFixedStickyOrAbsolute.toString()};
+      ${elementIsPositionFixedOrSticky.toString()};
+      ${disableFixedAndStickyElementPointerEvents.toString()};
       ${elementIsVisible.toString()};
       ${elementHasAncestorTapTarget.toString()};
+      ${elementCenterIsAtZAxisTop.toString()}
       ${getVisibleClientRects.toString()};
+      ${pointIsInViewport.toString()};
       ${truncate.toString()};
       ${getClientRects.toString()};
       ${hasTextNodeSiblingsFormingTextBlock.toString()};
       ${elementIsInTextBlock.toString()};
       ${allClientRectsEmpty.toString()};
+      ${getRectArea.toString()};
+      ${getLargestRect.toString()};
+      // todo: consistently to sthString and sth.toString()
+      ${getRectCenterPoint.toString()};
       ${rectContainsString};
       ${pageFunctions.getNodePathString};
       ${pageFunctions.getNodeSelectorString};
@@ -327,6 +445,8 @@ class TapTargets extends Gatherer {
 
       return gatherTapTargets();
     })()`;
+
+    // require('fs').writeFileSync('gatherer.js', expression);
 
     return passContext.driver.evaluateAsync(expression, {useIsolation: true});
   }
