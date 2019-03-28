@@ -43,9 +43,7 @@ const tapTargetsSelector = TARGET_SELECTORS.join(',');
  */
 /* istanbul ignore next */
 function elementIsVisible(element) {
-  const {overflowX, overflowY, display, visibility} = getComputedStyle(
-    element
-  );
+  const {overflowX, overflowY, display, visibility} = getComputedStyle(element);
 
   if (
     display === 'none' ||
