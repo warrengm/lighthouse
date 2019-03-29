@@ -55,8 +55,9 @@ const traceData = {
       content: '1234567',
       finished: true,
     },
+    // This is an OOPIF request
     {
-      url: 'http://google.com/index.json',
+      url: 'http://google.com/oopif.json',
       _statusCode: 200,
       mimeType: 'application/json',
       requestId: 27,
@@ -64,9 +65,9 @@ const traceData = {
       transferSize: 8,
       resourceType: 'XHR',
       responseHeaders: [],
-      content: '1234567',
+      content: '12345678',
       finished: true,
-      sessionId: 'oopif', // ignore for being from oopif
+      sessionId: 'oopif',
     },
     {
       url: 'http://google.com/index.json',
@@ -125,7 +126,7 @@ describe('Optimized responses', () => {
     responseCompression = new ResponseCompression();
     const driver = Object.assign({}, mockDriver, {
       getRequestContent(id) {
-        return Promise.resolve(traceData.networkRecords[id].content);
+        return Promise.resolve(traceData.networkRecords.find(rec => rec.requestId === id).content);
       },
     });
 
@@ -138,7 +139,7 @@ describe('Optimized responses', () => {
   it('returns only text and non encoded responses', () => {
     return responseCompression.afterPass(options, createNetworkRequests(traceData))
       .then(artifact => {
-        assert.equal(artifact.length, 2);
+        assert.equal(artifact.length, 3);
         assert.ok(/index\.css$/.test(artifact[0].url));
         assert.ok(/index\.json$/.test(artifact[1].url));
       });
@@ -147,7 +148,7 @@ describe('Optimized responses', () => {
   it('computes sizes', () => {
     return responseCompression.afterPass(options, createNetworkRequests(traceData))
       .then(artifact => {
-        assert.equal(artifact.length, 2);
+        assert.equal(artifact.length, 3);
         assert.equal(artifact[0].resourceSize, 6);
         assert.equal(artifact[0].gzipSize, 26);
       });
@@ -157,7 +158,7 @@ describe('Optimized responses', () => {
     options.driver.getRequestContent = () => Promise.reject(new Error('Failed'));
     return responseCompression.afterPass(options, createNetworkRequests(traceData))
       .then(artifact => {
-        assert.equal(artifact.length, 2);
+        assert.equal(artifact.length, 3);
         assert.equal(artifact[0].resourceSize, 6);
         assert.equal(artifact[0].gzipSize, undefined);
       });
@@ -201,14 +202,7 @@ describe('Optimized responses', () => {
   // Change into SDK.networkRequest when examples are ready
   function createNetworkRequests(traceData) {
     traceData.networkRecords = traceData.networkRecords.map(record => {
-      record.url = record.url;
       record.statusCode = record._statusCode;
-      record.mimeType = record.mimeType;
-      record.resourceSize = record.resourceSize;
-      record.transferSize = record.transferSize;
-      record.responseHeaders = record.responseHeaders;
-      record.requestId = record.requestId;
-
       return record;
     });
 
