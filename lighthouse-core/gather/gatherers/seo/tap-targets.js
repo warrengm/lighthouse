@@ -263,7 +263,7 @@ function truncate(str, maxLength) {
 function elementCenterIsAtZAxisTop(el, elCenterPoint) {
   const topEl = document.elementFromPoint(
     elCenterPoint.x,
-    elCenterPoint.y - document.documentElement.scrollTop
+    elCenterPoint.y - window.scrollY
   );
 
   const isTop = topEl === el || el.contains(topEl);
@@ -297,9 +297,12 @@ function disableFixedAndStickyElementPointerEvents() {
  * @param {{x: number, y: number}} point
  */
 function pointIsInViewport(point) {
-  const topOfScreen = document.documentElement.scrollTop;
+  const topOfScreen = window.scrollY;
   const bottomOfScreen = topOfScreen + window.innerHeight - 1;
-  return point.y >= topOfScreen && point.y <= bottomOfScreen;
+
+  const isInViewport = point.y >= topOfScreen && point.y <= bottomOfScreen;
+
+  return isInViewport;
 }
 
 /**
@@ -311,7 +314,7 @@ function gatherTapTargets() {
   const targets = [];
 
   // Capture element positions relative to the top of the page
-  document.documentElement.scrollTop = 0;
+  window.scrollTo(0, 0);
 
   /** @type {Element[]} */
   // @ts-ignore - getElementsInDocument put into scope via stringification
@@ -380,13 +383,15 @@ function gatherTapTargets() {
   while (item = enhancedTapTargets.shift()) {
     const {tapTargetElement, largestRectCenterPoint, visibleClientRects} = item;
 
-    // todo: do soething to prevent infinite loop here
     while (!pointIsInViewport(largestRectCenterPoint)) {
-      const finalScrollPos = document.documentElement.scrollHeight;
-      if (document.documentElement.scrollTop >= finalScrollPos) {
-        throw Error('scrolled all the way but not found');
+      const previousScrollY = window.scrollY;
+      window.scrollTo(0, window.scrollY + window.innerHeight);
+
+      if (window.scrollY === previousScrollY) {
+        throw Error('scrolled all the way but not found ' + JSON.stringify({
+          largestRectCenterPoint, scrollY: window.scrollY, scrollHeight: document.documentElement.scrollHeight,
+        }, null, 2));
       }
-      document.documentElement.scrollTop += window.innerHeight;
     }
 
     const isTop = elementCenterIsAtZAxisTop(tapTargetElement, largestRectCenterPoint);
@@ -445,6 +450,8 @@ class TapTargets extends Gatherer {
     })()`;
 
     // require('fs').writeFileSync('gatherer.js', expression);
+
+    // await new Promise(resolve => setTimeout(resolve, 20000));
 
     return passContext.driver.evaluateAsync(expression, {useIsolation: true});
   }
