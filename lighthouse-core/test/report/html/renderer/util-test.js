@@ -189,4 +189,25 @@ describe('util helpers', () => {
       assert.deepStrictEqual(preparedResult.audits, sampleResult.audits);
     });
   });
+
+  describe('getTld', () => {
+    it('returns the correct tld', () => {
+      assert.equal(Util.getTld('example.com'), '.com');
+      assert.equal(Util.getTld('example.co.uk'), '.co.uk');
+      assert.equal(Util.getTld('example.com.br'), '.com.br');
+      assert.equal(Util.getTld('example.tokyo.jp'), '.jp');
+    });
+  });
+
+  describe('getRootDomain', () => {
+    it('returns the correct rootDomain', () => {
+      assert.equal(Util.getRootDomain('www.example.com'), 'example.com');
+      assert.equal(Util.getRootDomain('example.com'), 'example.com');
+      assert.equal(Util.getRootDomain('www.example.co.uk'), 'example.co.uk');
+      assert.equal(Util.getRootDomain('example.com.br'), 'example.com.br');
+      assert.equal(Util.getRootDomain('example.tokyo.jp'), 'tokyo.jp');
+      assert.equal(Util.getRootDomain('sub.example.com'), 'example.com');
+      assert.equal(Util.getRootDomain('sub.example.tokyo.jp'), 'tokyo.jp');
+    });
+  });
 });

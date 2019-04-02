@@ -153,10 +153,10 @@ class ReportUIFeatures {
 
     tablesWithUrls.forEach((tableEl, index) => {
       const thirdPartyRows = this._getThirdPartyRows(tableEl, this.json.finalUrl);
-  // no 3rd parties, no checkbox!
-  if (!thirdPartyRows.length) {
-    return;
-  }
+      // no 3rd parties, no checkbox!
+      if (!thirdPartyRows.size) {
+        return;
+      }
       // create input box
       const filterTemplate = this._dom.cloneTemplate('#tmpl-lh-3p-filter', this._document);
       const filterInput = /** @type {HTMLInputElement} */ (filterTemplate.querySelector('input'));
@@ -197,14 +197,11 @@ class ReportUIFeatures {
   _getThirdPartyRows(el, finalUrl) {
     /** @type {NodeListOf<HTMLElement>} */
     const urlItems = el.querySelectorAll('.lh-text__url');
-    // Sadly I cannot reuse the getRootDomain code in url-shim as we don't load it inside the report.
-    // We run a gulp concat to build everything which loads renderer/util.js twice and throws an error
-    // because Util is already defined.
-    const pageTLDPlusOne = new URL(finalUrl).origin.split('.').slice(-2).join('.');
+    const rootDomain = Util.getRootDomain(finalUrl);
     /** @type {Map<number, HTMLTableRowElement>} */
     const thirdPartyRows = new Map();
     for (const urlItem of urlItems) {
-      const isThirdParty = !urlItem.title.includes(`${pageTLDPlusOne}/`);
+      const isThirdParty = !urlItem.title.includes(`${rootDomain}/`);
       if (!isThirdParty) {
         continue;
       }

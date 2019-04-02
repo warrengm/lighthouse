@@ -29,6 +29,13 @@ const RATINGS = {
   ERROR: {label: 'error'},
 };
 
+// 25 most used tld plus one domains from http archive.
+// @see https://github.com/GoogleChrome/lighthouse/pull/5065#discussion_r191926212
+const listOfTlds = [
+  'com', 'co', 'gov', 'edu', 'ac', 'org', 'go', 'gob', 'or', 'net', 'in', 'ne', 'nic', 'gouv',
+  'web', 'spb', 'blog', 'jus', 'kiev', 'mil', 'wi', 'qc', 'ca', 'bel', 'on',
+];
+
 class Util {
   static get PASS_THRESHOLD() {
     return PASS_THRESHOLD;
@@ -360,6 +367,38 @@ class Util {
       hostname: parsedUrl.hostname,
       origin: parsedUrl.origin,
     };
+  }
+
+  /**
+   * Gets the tld of a domain
+   *
+   * @param {string} hostname
+   * @return {string} tld
+   */
+  static getTld(hostname) {
+    const tlds = hostname.split('.').slice(-2);
+
+    if (!listOfTlds.includes(tlds[0])) {
+      return `.${tlds[tlds.length - 1]}`;
+    }
+
+    return `.${tlds.join('.')}`;
+  }
+
+  /**
+   * Returns a primary domain for provided hostname (e.g. www.example.com -> example.com).
+   * @param {string} hostname
+   * @returns {string}
+   */
+  static getRootDomain(hostname) {
+    const tld = Util.getTld(hostname);
+
+    // tld is .com or .co.uk which means we means that length is 1 to big
+    // .com => 2 & .co.uk => 3
+    const splitTld = tld.split('.');
+
+    // get TLD + root domain
+    return hostname.split('.').slice(-splitTld.length).join('.');
   }
 
   /**

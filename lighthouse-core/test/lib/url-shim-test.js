@@ -106,23 +106,28 @@ describe('URL Shim', () => {
   });
 
   describe('getTld', () => {
+    // we just test if Util gets called as it has tests in util.js
     it('returns the correct tld', () => {
-      assert.equal(URL.getTld('example.com'), '.com');
-      assert.equal(URL.getTld('example.co.uk'), '.co.uk');
-      assert.equal(URL.getTld('example.com.br'), '.com.br');
-      assert.equal(URL.getTld('example.tokyo.jp'), '.jp');
+      const Util = require('../../report/html/renderer/util');
+      const originalFn = Util.getTld;
+      Util.getTld = jest.fn(() => '.com');
+      expect(URL.getTld('example.com')).toBe('.com')
+      expect(Util.getTld).toBeCalledWith('example.com');
+
+      Util.getTld = originalFn;
     });
   });
 
   describe('getRootDomain', () => {
+    // we just test if Util gets called as it has tests in util.js
     it('returns the correct rootDomain', () => {
-      assert.equal(URL.getRootDomain('www.example.com'), 'example.com');
-      assert.equal(URL.getRootDomain('example.com'), 'example.com');
-      assert.equal(URL.getRootDomain('www.example.co.uk'), 'example.co.uk');
-      assert.equal(URL.getRootDomain('example.com.br'), 'example.com.br');
-      assert.equal(URL.getRootDomain('example.tokyo.jp'), 'tokyo.jp');
-      assert.equal(URL.getRootDomain('sub.example.com'), 'example.com');
-      assert.equal(URL.getRootDomain('sub.example.tokyo.jp'), 'tokyo.jp');
+      const Util = require('../../report/html/renderer/util');
+      const originalFn = Util.getRootDomain;
+      Util.getRootDomain = jest.fn(() => 'example.com');
+      expect(URL.getRootDomain('www.example.com')).toBe('example.com')
+      expect(Util.getRootDomain).toBeCalledWith('www.example.com');
+
+      Util.getRootDomain = originalFn;
     });
   });
 
