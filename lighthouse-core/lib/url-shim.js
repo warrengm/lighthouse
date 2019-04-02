@@ -124,7 +124,7 @@ class URLShim extends URL {
 
     // tld is .com or .co.uk which means we means that length is 1 to big
     // .com => 2 & .co.uk => 3
-    const lengthOfTLD = tld.split('.').length;
+    const splitTld = tld.split('.');
 
     // get TLD + root domain
     return hostname.split('.').slice(-lengthOfTLD).join('.');
