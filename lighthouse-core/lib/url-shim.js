@@ -127,7 +127,7 @@ class URLShim extends URL {
     const splitTld = tld.split('.');
 
     // get TLD + root domain
-    return hostname.split('.').slice(-lengthOfTLD).join('.');
+    return hostname.split('.').slice(-splitTld.length).join('.');
   }
 
   /**

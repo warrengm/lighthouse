@@ -153,7 +153,10 @@ class ReportUIFeatures {
 
     tablesWithUrls.forEach((tableEl, index) => {
       const thirdPartyRows = this._getThirdPartyRows(tableEl, this.json.finalUrl);
-
+  // no 3rd parties, no checkbox!
+  if (!thirdPartyRows.length) {
+    return;
+  }
       // create input box
       const filterTemplate = this._dom.cloneTemplate('#tmpl-lh-3p-filter', this._document);
       const filterInput = /** @type {HTMLInputElement} */ (filterTemplate.querySelector('input'));
