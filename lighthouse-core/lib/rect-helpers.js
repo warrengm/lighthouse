@@ -68,6 +68,7 @@ function filterOutRectsContainedByOthers(rects) {
 /**
  * @param {LH.Artifacts.Rect} rect
  */
+/* istanbul ignore next */
 function getRectCenterPoint(rect) {
   return {
     x: rect.left + rect.width / 2,
@@ -208,6 +209,7 @@ function getRectAtCenter(rect, centerRectSize) {
 /**
  * @param {LH.Artifacts.Rect} rect
  */
+/* istanbul ignore next */
 function getRectArea(rect) {
   return rect.width * rect.height;
 }
@@ -215,6 +217,7 @@ function getRectArea(rect) {
 /**
  * @param {LH.Artifacts.Rect[]} rects
  */
+/* istanbul ignore next */
 function getLargestRect(rects) {
   let largestRect = rects[0];
   for (const rect of rects) {
