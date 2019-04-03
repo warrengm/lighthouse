@@ -267,22 +267,19 @@ function elementCenterIsAtZAxisTop(el, elCenterPoint) {
     elCenterPoint.y - window.scrollY
   );
 
-  const isTop = topEl === el || el.contains(topEl);
-
-  return (
-    isTop
-  );
+  return topEl === el || el.contains(topEl);
 }
 
 /* istanbul ignore next */
 function disableFixedAndStickyElementPointerEvents() {
-  const className = 'lighthouse-disable-point-events';
+  const className = 'lighthouse-disable-pointer-events';
   const styleTag = document.createElement('style');
   styleTag.innerHTML = `.${className} { pointer-events: none !important }`;
   document.body.appendChild(styleTag);
 
   Array.from(document.querySelectorAll('*')).forEach(el => {
-    if (['fixed', 'sticky'].includes(/** @type string */(getComputedStyle(el).position))) {
+    const position = /** @type string */(getComputedStyle(el).position);
+    if (position === 'fixed' || position === 'sticky') {
       el.classList.add(className);
     }
   });
@@ -303,9 +300,7 @@ function pointIsInViewport(point) {
   const topOfScreen = window.scrollY;
   const bottomOfScreen = topOfScreen + window.innerHeight - 1;
 
-  const isInViewport = point.y >= topOfScreen && point.y <= bottomOfScreen;
-
-  return isInViewport;
+  return point.y >= topOfScreen && point.y <= bottomOfScreen;
 }
 
 /**
@@ -354,7 +349,7 @@ function gatherTapTargets() {
 
     const largestRect = getLargestRect(visibleClientRects);
     const largestRectCenterPoint = getRectCenterPoint(largestRect);
-    // round so we can can assume whole numbers during in-viewport check
+    // round so we can can assume whole numbers during the in-viewport check
     largestRectCenterPoint.x = Math.round(largestRectCenterPoint.x);
     largestRectCenterPoint.y = Math.round(largestRectCenterPoint.y);
 
@@ -370,14 +365,14 @@ function gatherTapTargets() {
     });
   });
 
-
+  // Sort tap targets so we can go through them from the top of the page to the bottom
   enhancedTapTargets.sort(
     (a, b) => {
       return a.largestRectCenterPoint.y - b.largestRectCenterPoint.y;
     }
   );
 
-  // Disable point events so that tap targets below them don't get
+  // Disable pointer events so that tap targets below them don't get
   // detected as non-tappable (they are tappable, just not while the viewport
   // is at the current scroll position)
   const reenableFixedAndStickyElementPointerEvents = disableFixedAndStickyElementPointerEvents();
