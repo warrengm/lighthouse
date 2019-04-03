@@ -439,9 +439,8 @@ class TapTargets extends Gatherer {
       ${allClientRectsEmpty.toString()};
       ${getRectArea.toString()};
       ${getLargestRect.toString()};
-      // todo: consistently to sthString and sth.toString()
       ${getRectCenterPoint.toString()};
-      ${rectContainsString};
+      ${rectContains.toString()};
       ${pageFunctions.getNodePathString};
       ${pageFunctions.getNodeSelectorString};
       ${gatherTapTargets.toString()};

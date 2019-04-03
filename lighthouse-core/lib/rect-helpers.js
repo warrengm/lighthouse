@@ -29,11 +29,6 @@ function rectContains(rect1, rect2) {
     rect2.left >= rect1.left;
 }
 
-
-const rectContainsString = `
-  ${rectContains.toString()};
-`;
-
 /**
  * @param {LH.Artifacts.Rect[]} rects
  * @returns {LH.Artifacts.Rect[]}
@@ -247,7 +242,6 @@ function allRectsContainedWithinEachOther(rectListA, rectListB) {
 module.exports = {
   rectContainsPoint,
   rectContains,
-  rectContainsString,
   addRectWidthAndHeight,
   addRectTopAndBottom,
   getRectOverlapArea,
