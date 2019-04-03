@@ -93,13 +93,15 @@
     <br/><br/>
 
     <!-- Only target that's being overlapped should fail, the overlapping one shouldn't -->
-    <div>
-      <a style="display: block; width: 100px; height: 30px;background: #ddd;">
-        too small target
-      </a>
-      <a style="display: block; width: 100px; height: 100px;background: #aaa;">
-        big enough target
-      </a>
+    <div style="position: relative; height: 200px;">
+      <div style="position: absolute;">
+        <a style="display: block; width: 100px; height: 30px;background: #ddd;">
+          too small target
+        </a>
+        <a style="display: block; width: 100px; height: 100px;background: #aaa;">
+          big enough target
+        </a>
+      </div>
     </div>
 
     <br/><br/>
