@@ -48,7 +48,7 @@ const createOrReturnURL = (value) => {
   }
 
   return new URL(value);
-}
+};
 
 class Util {
   static get PASS_THRESHOLD() {

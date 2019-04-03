@@ -111,7 +111,7 @@ describe('URL Shim', () => {
       const Util = require('../../report/html/renderer/util');
       const originalFn = Util.getTld;
       Util.getTld = jest.fn(() => '.com');
-      expect(URL.getTld('example.com')).toBe('.com')
+      expect(URL.getTld('example.com')).toBe('.com');
       expect(Util.getTld).toBeCalledWith('example.com');
 
       Util.getTld = originalFn;
@@ -124,7 +124,7 @@ describe('URL Shim', () => {
       const Util = require('../../report/html/renderer/util');
       const originalFn = Util.getRootDomain;
       Util.getRootDomain = jest.fn(() => 'example.com');
-      expect(URL.getRootDomain('www.example.com')).toBe('example.com')
+      expect(URL.getRootDomain('www.example.com')).toBe('example.com');
       expect(Util.getRootDomain).toBeCalledWith('www.example.com');
 
       Util.getRootDomain = originalFn;

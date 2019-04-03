@@ -6,7 +6,7 @@
 'use strict';
 
 const assert = require('assert');
-global.URL = require('url').URL;
+const URL = global.URL = require('url').URL;
 const Util = require('../../../../report/html/renderer/util.js');
 const sampleResult = require('../../../results/sample_v2.json');
 
