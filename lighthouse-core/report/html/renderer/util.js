@@ -539,6 +539,9 @@ Util.UIStrings = {
   lsPerformanceCategoryDescription: '[Lighthouse](https://developers.google.com/web/tools/lighthouse/) analysis of the current page on an emulated mobile network. Values are estimated and may vary.',
   /** Title of the lab data section of the Performance category. Within this section are various speed metrics which quantify the pageload performance into values presented in seconds and milliseconds. "Lab" is an abbreviated form of "laboratory", and refers to the fact that the data is from a controlled test of a website, not measurements from real users visiting that site.  */
   labDataTitle: 'Lab Data',
+
+  /** This label is shown above a table next to the checkbox to hide 3rd party resources */
+  thirdPartyResourcesLabel: 'Show 3rd party resources',
 };
 
 if (typeof module !== 'undefined' && module.exports) {

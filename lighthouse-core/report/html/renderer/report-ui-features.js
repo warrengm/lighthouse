@@ -23,7 +23,7 @@
  * the report.
  */
 
-/* globals self URL Blob CustomEvent getFilenamePrefix window */
+/* globals self URL Blob CustomEvent getFilenamePrefix Util window */
 
 /** @typedef {import('./dom.js')} DOM */
 
@@ -183,6 +183,8 @@ class ReportUIFeatures {
         /** @type {Element} */ (filterTemplate.querySelector('label')).setAttribute('for', id);
         /** @type {Element} */ (filterTemplate.querySelector('.lh-3p-filter-count')).textContent =
           `${thirdPartyRows.size}`;
+        /** @type {Element} */ (filterTemplate.querySelector('.lh-3p-ui-string')).textContent =
+          `${Util.UIStrings.thirdPartyResourcesLabel}`;
         // Finally, add checkbox to the DOM
         tableEl.parentNode.insertBefore(filterTemplate, tableEl);
       }
