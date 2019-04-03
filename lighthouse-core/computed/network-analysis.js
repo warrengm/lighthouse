@@ -35,9 +35,8 @@ class NetworkAnalysis {
     /** @type {Map<string, number>} */
     const serverResponseTimeByOrigin = new Map();
     for (const [origin, summary] of responseTimeSummaries.entries()) {
-      /** @type {number} */
-      // @ts-ignore - satisfy the type checker that entry exists.
-      const rttForOrigin = rttByOrigin.get(origin);
+      // Not all origins have usable timing data, we'll default to using no additional latency.
+      const rttForOrigin = rttByOrigin.get(origin) || minimumRtt;
       additionalRttByOrigin.set(origin, rttForOrigin - minimumRtt);
       serverResponseTimeByOrigin.set(origin, summary.median);
     }
@@ -58,7 +57,7 @@ class NetworkAnalysis {
     const records = await NetworkRecords.request(devtoolsLog, context);
     const throughput = NetworkAnalyzer.estimateThroughput(records);
     const rttAndServerResponseTime = NetworkAnalysis.computeRTTAndServerResponseTime(records);
-    return {records, throughput, ...rttAndServerResponseTime};
+    return {throughput, ...rttAndServerResponseTime};
   }
 }
 

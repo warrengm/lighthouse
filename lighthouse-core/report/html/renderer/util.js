@@ -29,8 +29,9 @@ const RATINGS = {
   ERROR: {label: 'error'},
 };
 
-// 25 most used tld plus one domains from http archive.
+// 25 most used tld plus one domains (aka public suffixes) from http archive.
 // @see https://github.com/GoogleChrome/lighthouse/pull/5065#discussion_r191926212
+// The canonical list is https://publicsuffix.org/learn/ but we're only using subset to conserve bytes
 const listOfTlds = [
   'com', 'co', 'gov', 'edu', 'ac', 'org', 'go', 'gob', 'or', 'net', 'in', 'ne', 'nic', 'gouv',
   'web', 'spb', 'blog', 'jus', 'kiev', 'mil', 'wi', 'qc', 'ca', 'bel', 'on',
@@ -99,46 +100,6 @@ class Util {
     for (const [key, value] of Object.entries(rendererFormattedStrings)) {
       Util.UIStrings[key] = value;
     }
-  }
-
-  /**
-   * @param {string|Array<string|number>=} displayValue
-   * @return {string}
-   */
-  static formatDisplayValue(displayValue) {
-    if (typeof displayValue === 'string') return displayValue;
-    if (!displayValue) return '';
-
-    const replacementRegex = /%([0-9]*(\.[0-9]+)?d|s)/;
-    const template = /** @type {string} */ (displayValue[0]);
-    if (typeof template !== 'string') {
-      // First value should always be the format string, but we don't want to fail to build
-      // a report, return a placeholder.
-      return 'UNKNOWN';
-    }
-
-    let output = template;
-    for (const replacement of displayValue.slice(1)) {
-      if (!replacementRegex.test(output)) {
-        // eslint-disable-next-line no-console
-        console.warn('Too many replacements given');
-        break;
-      }
-
-      output = output.replace(replacementRegex, match => {
-        const granularity = Number(match.match(/[0-9.]+/)) || 1;
-        return match === '%s' ?
-          replacement.toLocaleString() :
-          (Math.round(Number(replacement) / granularity) * granularity).toLocaleString();
-      });
-    }
-
-    if (replacementRegex.test(output)) {
-      // eslint-disable-next-line no-console
-      console.warn('Not enough replacements given');
-    }
-
-    return output;
   }
 
   /**
@@ -488,6 +449,48 @@ class Util {
     // When testing, use a locale with more exciting numeric formatting
     if (Util.numberDateLocale === 'en-XA') Util.numberDateLocale = 'de';
   }
+
+  /**
+   * Returns only lines that are near a message, or the first few lines if there are
+   * no line messages.
+   * @param {LH.Audit.Details.SnippetValue['lines']} lines
+   * @param {LH.Audit.Details.SnippetValue['lineMessages']} lineMessages
+   * @param {number} surroundingLineCount Number of lines to include before and after
+   * the message. If this is e.g. 2 this function might return 5 lines.
+   */
+  static filterRelevantLines(lines, lineMessages, surroundingLineCount) {
+    if (lineMessages.length === 0) {
+      // no lines with messages, just return the first bunch of lines
+      return lines.slice(0, surroundingLineCount * 2 + 1);
+    }
+
+    const minGapSize = 3;
+    const lineNumbersToKeep = new Set();
+    // Sort messages so we can check lineNumbersToKeep to see how big the gap to
+    // the previous line is.
+    lineMessages = lineMessages.sort((a, b) => (a.lineNumber || 0) - (b.lineNumber || 0));
+    lineMessages.forEach(({lineNumber}) => {
+      let firstSurroundingLineNumber = lineNumber - surroundingLineCount;
+      let lastSurroundingLineNumber = lineNumber + surroundingLineCount;
+
+      while (firstSurroundingLineNumber < 1) {
+        // make sure we still show (surroundingLineCount * 2 + 1) lines in total
+        firstSurroundingLineNumber++;
+        lastSurroundingLineNumber++;
+      }
+      // If only a few lines would be omitted normally then we prefer to include
+      // extra lines to avoid the tiny gap
+      if (lineNumbersToKeep.has(firstSurroundingLineNumber - minGapSize - 1)) {
+        firstSurroundingLineNumber -= minGapSize;
+      }
+      for (let i = firstSurroundingLineNumber; i <= lastSurroundingLineNumber; i++) {
+        const surroundingLineNumber = i;
+        lineNumbersToKeep.add(surroundingLineNumber);
+      }
+    });
+
+    return lines.filter(line => lineNumbersToKeep.has(line.lineNumber));
+  }
 }
 
 /**
@@ -534,6 +537,11 @@ Util.UIStrings = {
   crcInitialNavigation: 'Initial Navigation',
   /** Label of value shown in the summary of critical request chains. Refers to the total amount of time (milliseconds) of the longest critical path chain/sequence of network requests. Example value: 2310 ms */
   crcLongestDurationLabel: 'Maximum critical path latency:',
+
+  /** Label for button that shows all lines of the snippet when clicked */
+  snippetExpandButtonLabel: 'Expand snippet',
+  /** Label for button that only shows a few lines of the snippet when clicked */
+  snippetCollapseButtonLabel: 'Collapse snippet',
 
   /** Explanation shown to users below performance results to inform them that the test was done with a 4G network connection and to warn them that the numbers they see will likely change slightly the next time they run Lighthouse. 'Lighthouse' becomes link text to additional documentation. */
   lsPerformanceCategoryDescription: '[Lighthouse](https://developers.google.com/web/tools/lighthouse/) analysis of the current page on an emulated mobile network. Values are estimated and may vary.',

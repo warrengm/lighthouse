@@ -24,7 +24,6 @@
  */
 
 /** @typedef {import('./dom.js')} DOM */
-/** @typedef {import('./details-renderer.js').DetailsJSON} DetailsJSON */
 
 /* globals self, Util, DetailsRenderer, CategoryRenderer, PerformanceCategoryRenderer, PwaCategoryRenderer */
 
@@ -47,6 +46,8 @@ class ReportRenderer {
   renderReport(result, container) {
     // Mutate the UIStrings if necessary (while saving originals)
     const originalUIStrings = JSON.parse(JSON.stringify(Util.UIStrings));
+
+    this._dom.setLighthouseChannel(result.configSettings.channel || 'unknown');
 
     const report = Util.prepareReportResult(result);
 
@@ -208,7 +209,7 @@ class ReportRenderer {
 
     // Fireworks
     const scoresAll100 = report.reportCategories.every(cat => cat.score === 1);
-    if (scoresAll100) {
+    if (!this._dom.isDevTools() && scoresAll100) {
       headerContainer.classList.add('score100');
       this._dom.find('.lh-header', headerContainer).addEventListener('click', _ => {
         headerContainer.classList.toggle('fireworks-paused');
