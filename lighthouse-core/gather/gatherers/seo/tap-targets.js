@@ -388,9 +388,7 @@ function gatherTapTargets() {
       window.scrollTo(0, window.scrollY + window.innerHeight);
 
       if (window.scrollY === previousScrollY) {
-        throw Error('scrolled all the way but not found ' + JSON.stringify({
-          largestRectCenterPoint, scrollY: window.scrollY, scrollHeight: document.documentElement.scrollHeight,
-        }, null, 2));
+        throw Error('Scrolled all the way down but element not found');
       }
     }
 
