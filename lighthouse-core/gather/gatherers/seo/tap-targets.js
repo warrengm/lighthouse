@@ -10,7 +10,6 @@
 const Gatherer = require('../gatherer');
 const pageFunctions = require('../../../lib/page-functions.js');
 const {
-  rectContainsString,
   rectContains,
   getRectArea,
   getRectCenterPoint,
@@ -368,10 +367,7 @@ function gatherTapTargets() {
 
   const viewportHeight = window.innerHeight;
 
-  let item;
-  while (item = enhancedTapTargets.shift()) {
-    const {tapTargetElement, largestRectCenterPoint, visibleClientRects} = item;
-
+  for (const {tapTargetElement, largestRectCenterPoint, visibleClientRects} of enhancedTapTargets) {
     const targetScrollY = Math.floor(largestRectCenterPoint.y / viewportHeight) * viewportHeight;
     if (window.scrollY !== targetScrollY) {
       window.scrollTo(0, window.scrollY + window.innerHeight);
