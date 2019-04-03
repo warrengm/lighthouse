@@ -148,7 +148,7 @@ class ReportUIFeatures {
     const tables = Array.from(this._document.querySelectorAll('.lh-table'));
     const tablesWithUrls = tables
       .filter(el => el.querySelector('td.lh-table-column--url'))
-      .filter(el =>!thirdPartyFilterAuditExclusions.includes(
+      .filter(el => !thirdPartyFilterAuditExclusions.includes(
         /** @type {Element} */(el.closest('.lh-audit')).id));
 
     tablesWithUrls.forEach((tableEl, index) => {
@@ -203,7 +203,7 @@ class ReportUIFeatures {
     /** @type {Map<number, HTMLTableRowElement>} */
     const thirdPartyRows = new Map();
     for (const urlItem of urlItems) {
-      const isThirdParty = !urlItem.title.includes(`${rootDomain}/`);
+      const isThirdParty = !(urlItem.dataset.url || '').includes(`${rootDomain}/`);
       if (!isThirdParty) {
         continue;
       }
