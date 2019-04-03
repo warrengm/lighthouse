@@ -260,6 +260,7 @@ function truncate(str, maxLength) {
  * @param {Element} el
  * @param {{x: number, y: number}} elCenterPoint
  */
+/* istanbul ignore next */
 function elementCenterIsAtZAxisTop(el, elCenterPoint) {
   const topEl = document.elementFromPoint(
     elCenterPoint.x,
@@ -273,6 +274,7 @@ function elementCenterIsAtZAxisTop(el, elCenterPoint) {
   );
 }
 
+/* istanbul ignore next */
 function disableFixedAndStickyElementPointerEvents() {
   const className = 'lighthouse-disable-point-events';
   const styleTag = document.createElement('style');
@@ -296,6 +298,7 @@ function disableFixedAndStickyElementPointerEvents() {
 /**
  * @param {{x: number, y: number}} point
  */
+/* istanbul ignore next */
 function pointIsInViewport(point) {
   const topOfScreen = window.scrollY;
   const bottomOfScreen = topOfScreen + window.innerHeight - 1;
@@ -417,8 +420,7 @@ class TapTargets extends Gatherer {
    * @param {LH.Gatherer.PassContext} passContext
    * @return {Promise<LH.Artifacts.TapTarget[]>} All visible tap targets with their positions and sizes
    */
-
-  async afterPass(passContext) {
+  afterPass(passContext) {
     const expression = `(function() {
       const tapTargetsSelector = "${tapTargetsSelector}";
       ${pageFunctions.getElementsInDocumentString};
@@ -446,10 +448,6 @@ class TapTargets extends Gatherer {
 
       return gatherTapTargets();
     })()`;
-
-    // require('fs').writeFileSync('gatherer.js', expression);
-
-    // await new Promise(resolve => setTimeout(resolve, 20000));
 
     return passContext.driver.evaluateAsync(expression, {useIsolation: true});
   }
