@@ -293,17 +293,6 @@ function disableFixedAndStickyElementPointerEvents() {
 }
 
 /**
- * @param {{x: number, y: number}} point
- */
-/* istanbul ignore next */
-function pointIsInViewport(point) {
-  const topOfScreen = window.scrollY;
-  const bottomOfScreen = topOfScreen + window.innerHeight - 1;
-
-  return point.y >= topOfScreen && point.y <= bottomOfScreen;
-}
-
-/**
  * @returns {LH.Artifacts.TapTarget[]}
  */
 /* istanbul ignore next */
@@ -377,15 +366,16 @@ function gatherTapTargets() {
   // is at the current scroll position)
   const reenableFixedAndStickyElementPointerEvents = disableFixedAndStickyElementPointerEvents();
 
+  const viewportHeight = window.innerHeight;
+
   let item;
   while (item = enhancedTapTargets.shift()) {
     const {tapTargetElement, largestRectCenterPoint, visibleClientRects} = item;
 
-    while (!pointIsInViewport(largestRectCenterPoint)) {
-      const previousScrollY = window.scrollY;
+    const targetScrollY = Math.floor(largestRectCenterPoint.y / viewportHeight) * viewportHeight;
+    if (window.scrollY !== targetScrollY) {
       window.scrollTo(0, window.scrollY + window.innerHeight);
-
-      if (window.scrollY === previousScrollY) {
+      if (window.scrollY !== targetScrollY) {
         throw Error('Scrolled all the way down but element not found');
       }
     }
@@ -426,7 +416,6 @@ class TapTargets extends Gatherer {
       ${elementHasAncestorTapTarget.toString()};
       ${elementCenterIsAtZAxisTop.toString()}
       ${getVisibleClientRects.toString()};
-      ${pointIsInViewport.toString()};
       ${truncate.toString()};
       ${getClientRects.toString()};
       ${hasTextNodeSiblingsFormingTextBlock.toString()};
