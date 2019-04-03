@@ -370,8 +370,9 @@ function gatherTapTargets() {
   for (const {tapTargetElement, largestRectCenterPoint, visibleClientRects} of enhancedTapTargets) {
     const targetScrollY = Math.floor(largestRectCenterPoint.y / viewportHeight) * viewportHeight;
     if (window.scrollY !== targetScrollY) {
+      const previousScrollY = window.scrollY;
       window.scrollTo(0, window.scrollY + window.innerHeight);
-      if (window.scrollY !== targetScrollY) {
+      if (window.scrollY === previousScrollY) {
         throw Error('Scrolled all the way down but element not found');
       }
     }
