@@ -122,7 +122,7 @@ function filterClientRectsWithinAncestorsVisibleScrollArea(element, clientRects)
     const parentBCR = parent.getBoundingClientRect();
     clientRects = clientRects.filter(cr => rectContains(parentBCR, cr));
   }
-  if (parent.parentElement && parent.parentElement.tagName !== 'BODY') {
+  if (parent.parentElement && parent.parentElement !== document.documentElement) {
     return filterClientRectsWithinAncestorsVisibleScrollArea(
       parent,
       clientRects
