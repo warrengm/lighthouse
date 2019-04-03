@@ -276,7 +276,7 @@ function elementCenterIsAtZAxisTop(el, elCenterPoint) {
 function disableFixedAndStickyElementPointerEvents() {
   const className = 'lighthouse-disable-point-events';
   const styleTag = document.createElement('style');
-  styleTag.innerHTML = `.${className} { pointer-events: none }`;
+  styleTag.innerHTML = `.${className} { pointer-events: none !important }`;
   document.body.appendChild(styleTag);
 
   Array.from(document.querySelectorAll('*')).forEach(el => {
