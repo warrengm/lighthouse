@@ -103,18 +103,18 @@ class URLShim extends URL {
 
   /**
    * Returns a primary domain for provided hostname (e.g. www.example.com -> example.com).
-   * @param {string} hostname
+   * @param {string|Window["URL"]} url hostname or URL object
    * @returns {string}
    */
-  static getRootDomain(hostname) {
-    return Util.getRootDomain(hostname);
+  static getRootDomain(url) {
+    return Util.getRootDomain(url);
   }
 
   /**
    * Check if rootDomains matches
    *
-   * @param {string} urlA
-   * @param {string} urlB
+   * @param {string|URL} urlA
+   * @param {string|URL} urlB
    */
   static rootDomainsMatch(urlA, urlB) {
     let urlAInfo;
@@ -131,8 +131,8 @@ class URLShim extends URL {
     }
 
     // get the string before the tld
-    const urlARootDomain = URLShim.getRootDomain(urlAInfo.hostname);
-    const urlBRootDomain = URLShim.getRootDomain(urlBInfo.hostname);
+    const urlARootDomain = URLShim.getRootDomain(urlAInfo);
+    const urlBRootDomain = URLShim.getRootDomain(urlBInfo);
 
     return urlARootDomain === urlBRootDomain;
   }

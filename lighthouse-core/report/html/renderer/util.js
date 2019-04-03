@@ -37,6 +37,19 @@ const listOfTlds = [
   'web', 'spb', 'blog', 'jus', 'kiev', 'mil', 'wi', 'qc', 'ca', 'bel', 'on',
 ];
 
+
+/**
+ * @param {string|URL} value
+ * @return {URL}
+ */
+const createOrReturnURL = (value) => {
+  if (value instanceof URL) {
+    return value;
+  }
+
+  return new URL(value);
+}
+
 class Util {
   static get PASS_THRESHOLD() {
     return PASS_THRESHOLD;
@@ -348,10 +361,11 @@ class Util {
 
   /**
    * Returns a primary domain for provided hostname (e.g. www.example.com -> example.com).
-   * @param {string} hostname
+   * @param {string|Window["URL"]} url hostname or URL object
    * @returns {string}
    */
-  static getRootDomain(hostname) {
+  static getRootDomain(url) {
+    const hostname = createOrReturnURL(url).hostname;
     const tld = Util.getTld(hostname);
 
     // tld is .com or .co.uk which means we means that length is 1 to big

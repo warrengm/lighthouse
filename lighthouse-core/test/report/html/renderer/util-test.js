@@ -6,6 +6,7 @@
 'use strict';
 
 const assert = require('assert');
+global.URL = require('url').URL;
 const Util = require('../../../../report/html/renderer/util.js');
 const sampleResult = require('../../../results/sample_v2.json');
 
@@ -168,14 +169,24 @@ describe('util helpers', () => {
   });
 
   describe('getRootDomain', () => {
-    it('returns the correct rootDomain', () => {
-      assert.equal(Util.getRootDomain('www.example.com'), 'example.com');
-      assert.equal(Util.getRootDomain('example.com'), 'example.com');
-      assert.equal(Util.getRootDomain('www.example.co.uk'), 'example.co.uk');
-      assert.equal(Util.getRootDomain('example.com.br'), 'example.com.br');
-      assert.equal(Util.getRootDomain('example.tokyo.jp'), 'tokyo.jp');
-      assert.equal(Util.getRootDomain('sub.example.com'), 'example.com');
-      assert.equal(Util.getRootDomain('sub.example.tokyo.jp'), 'tokyo.jp');
+    it('returns the correct rootDomain from a string', () => {
+      assert.equal(Util.getRootDomain('https://www.example.com/index.html'), 'example.com');
+      assert.equal(Util.getRootDomain('https://example.com'), 'example.com');
+      assert.equal(Util.getRootDomain('https://www.example.co.uk'), 'example.co.uk');
+      assert.equal(Util.getRootDomain('https://example.com.br/app/'), 'example.com.br');
+      assert.equal(Util.getRootDomain('https://example.tokyo.jp'), 'tokyo.jp');
+      assert.equal(Util.getRootDomain('https://sub.example.com'), 'example.com');
+      assert.equal(Util.getRootDomain('https://sub.example.tokyo.jp'), 'tokyo.jp');
+    });
+
+    it('returns the correct rootDomain from an URL object', () => {
+      assert.equal(Util.getRootDomain(new URL('https://www.example.com/index.html')), 'example.com');
+      assert.equal(Util.getRootDomain(new URL('https://example.com')), 'example.com');
+      assert.equal(Util.getRootDomain(new URL('https://www.example.co.uk')), 'example.co.uk');
+      assert.equal(Util.getRootDomain(new URL('https://example.com.br/app/')), 'example.com.br');
+      assert.equal(Util.getRootDomain(new URL('https://example.tokyo.jp')), 'tokyo.jp');
+      assert.equal(Util.getRootDomain(new URL('https://sub.example.com')), 'example.com');
+      assert.equal(Util.getRootDomain(new URL('https://sub.example.tokyo.jp')), 'tokyo.jp');
     });
   });
 });
