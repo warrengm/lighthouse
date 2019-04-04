@@ -11,6 +11,8 @@
 
 /* global self */
 
+/** @typedef {import('url').URL} OriginalURL */
+
 const Util = require('../report/html/renderer/util.js');
 
 // Type cast so tsc sees window.URL and require('url').URL as sufficiently equivalent.
@@ -103,7 +105,7 @@ class URLShim extends URL {
 
   /**
    * Returns a primary domain for provided hostname (e.g. www.example.com -> example.com).
-   * @param {string|Window["URL"]} url hostname or URL object
+   * @param {string|OriginalURL} url hostname or URL object
    * @returns {string}
    */
   static getRootDomain(url) {
@@ -113,15 +115,15 @@ class URLShim extends URL {
   /**
    * Check if rootDomains matches
    *
-   * @param {string|URL} urlA
-   * @param {string|URL} urlB
+   * @param {string|OriginalURL} urlA
+   * @param {string|OriginalURL} urlB
    */
   static rootDomainsMatch(urlA, urlB) {
     let urlAInfo;
     let urlBInfo;
     try {
-      urlAInfo = new URL(urlA);
-      urlBInfo = new URL(urlB);
+      urlAInfo = Util.createOrReturnURL(urlA);
+      urlBInfo = Util.createOrReturnURL(urlB);
     } catch (err) {
       return false;
     }

@@ -35,6 +35,14 @@ const UIStrings = {
 
 const str_ = i18n.createMessageInstanceIdFn(__filename, UIStrings);
 
+/**
+ * @typedef CanonicalURLData
+ * @property {Set<string>} uniqueCanonicalURLs
+ * @property {Set<string>} hreflangURLs
+ * @property {LH.Artifacts.LinkElement|undefined} invalidCanonicalLink
+ * @property {LH.Artifacts.LinkElement|undefined} relativeCanonicallink
+ */
+
 class Canonical extends Audit {
   /**
    * @return {LH.Audit.Meta}

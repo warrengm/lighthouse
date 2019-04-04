@@ -18,6 +18,8 @@
 
 /* globals self URL */
 
+/** @typedef {import('url').URL} URL */
+
 const ELLIPSIS = '\u2026';
 const NBSP = '\xa0';
 const PASS_THRESHOLD = 0.9;
@@ -36,19 +38,6 @@ const listOfTlds = [
   'com', 'co', 'gov', 'edu', 'ac', 'org', 'go', 'gob', 'or', 'net', 'in', 'ne', 'nic', 'gouv',
   'web', 'spb', 'blog', 'jus', 'kiev', 'mil', 'wi', 'qc', 'ca', 'bel', 'on',
 ];
-
-
-/**
- * @param {string|URL} value
- * @return {URL}
- */
-const createOrReturnURL = (value) => {
-  if (value instanceof URL) {
-    return value;
-  }
-
-  return new URL(value);
-};
 
 class Util {
   static get PASS_THRESHOLD() {
@@ -344,6 +333,18 @@ class Util {
   }
 
   /**
+   * @param {string|URL} value
+   * @return {URL}
+   */
+  static createOrReturnURL(value) {
+    if (value instanceof URL) {
+      return value;
+    }
+
+    return new URL(/** @type {string} */ (value));
+  };
+
+  /**
    * Gets the tld of a domain
    *
    * @param {string} hostname
@@ -361,11 +362,11 @@ class Util {
 
   /**
    * Returns a primary domain for provided hostname (e.g. www.example.com -> example.com).
-   * @param {string|Window["URL"]} url hostname or URL object
+   * @param {string|URL} url hostname or URL object
    * @returns {string}
    */
   static getRootDomain(url) {
-    const hostname = createOrReturnURL(url).hostname;
+    const hostname = Util.createOrReturnURL(url).hostname;
     const tld = Util.getTld(hostname);
 
     // tld is .com or .co.uk which means we means that length is 1 to big
