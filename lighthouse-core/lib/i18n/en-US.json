@@ -1319,6 +1319,10 @@
     "message": "Expand snippet",
     "description": "Label for button that shows all lines of the snippet when clicked"
   },
+  "lighthouse-core/report/html/renderer/util.js | thirdPartyResourcesLabel": {
+    "message": "Show 3rd party resources",
+    "description": "This label is shown above a table next to the checkbox to hide 3rd party resources"
+  },
   "lighthouse-core/report/html/renderer/util.js | toplevelWarningsMessage": {
     "message": "There were issues affecting this run of Lighthouse:",
     "description": "Label shown preceding any important warnings that may have invalidated the entire report. For example, if the user has Chrome extensions installed, they may add enough performance overhead that Lighthouse's performance metrics are unreliable. If shown, this will be displayed at the top of the report UI."
