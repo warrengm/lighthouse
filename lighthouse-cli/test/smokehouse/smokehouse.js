@@ -43,7 +43,7 @@ function resolveLocalOrCwd(payloadPath) {
  * @param {string} url
  * @param {string} configPath
  * @param {boolean=} isDebug
- * @return {Smokehouse.ExpectedRunResult}
+ * @return {Smokehouse.ExpectedLHR}
  */
 function runLighthouse(url, configPath, isDebug) {
   isDebug = isDebug || Boolean(process.env.LH_SMOKE_DEBUG);
@@ -60,9 +60,9 @@ function runLighthouse(url, configPath, isDebug) {
     '--port=0',
   ];
 
-  // Save artifacts
-  args.push('-GA');
-
+  if (isDebug) {
+    args.push('-GA');
+  }
 
   if (process.env.APPVEYOR) {
     // Appveyor is hella slow already, disable CPU throttling so we're not 16x slowdown
@@ -102,15 +102,11 @@ function runLighthouse(url, configPath, isDebug) {
   }
 
   if (runResults.status === PAGE_HUNG_EXIT_CODE) {
-    return {
-      lhr: {requestedUrl: url, finalUrl: url, errorCode: 'PAGE_HUNG', audits: {}},
-    };
+    return {requestedUrl: url, finalUrl: url, errorCode: 'PAGE_HUNG', audits: {}};
   }
 
   if (runResults.status === INSECURE_DOCUMENT_REQUEST_EXIT_CODE) {
-    return {
-      lhr: {requestedUrl: url, finalUrl: url, errorCode: 'INSECURE_DOCUMENT_REQUEST', audits: {}},
-    };
+    return {requestedUrl: url, finalUrl: url, errorCode: 'INSECURE_DOCUMENT_REQUEST', audits: {}};
   }
 
   const lhr = fs.readFileSync(outputPath, 'utf8');
@@ -120,12 +116,7 @@ function runLighthouse(url, configPath, isDebug) {
     fs.unlinkSync(outputPath);
   }
 
-  const artifacts = JSON.parse(fs.readFileSync('./latest-run/artifacts.json').toString());
-
-  return {
-    lhr: JSON.parse(lhr),
-    artifacts,
-  };
+  return JSON.parse(lhr);
 }
 
 const cli = yargs
@@ -140,7 +131,7 @@ const cli = yargs
   .argv;
 
 const configPath = resolveLocalOrCwd(cli['config-path']);
-/** @type {Smokehouse.ExpectedRunResult[]} */
+/** @type {Smokehouse.ExpectedLHR[]} */
 const expectations = require(resolveLocalOrCwd(cli['expectations-path']));
 
 // Loop sequentially over expectations, comparing against Lighthouse run, and
@@ -148,10 +139,10 @@ const expectations = require(resolveLocalOrCwd(cli['expectations-path']));
 let passingCount = 0;
 let failingCount = 0;
 expectations.forEach(expected => {
-  console.log(`Doing a run of '${expected.lhr.requestedUrl}'...`);
-  const results = runLighthouse(expected.lhr.requestedUrl, configPath, cli.debug);
+  console.log(`Doing a run of '${expected.requestedUrl}'...`);
+  const results = runLighthouse(expected.requestedUrl, configPath, cli.debug);
 
-  console.log(`Asserting expected results match those found. (${expected.lhr.requestedUrl})`);
+  console.log(`Asserting expected results match those found. (${expected.requestedUrl})`);
   const collated = collateResults(results, expected);
   const counts = report(collated);
   passingCount += counts.passed;

@@ -21,23 +21,10 @@
 
   export type ExpectedLHR = Pick<LH.Result, 'audits' | 'finalUrl' | 'requestedUrl'> & { errorCode?: string }
 
-  export type ExpectedRunResult = {
-    lhr: ExpectedLHR,
-    artifacts?: Partial<LH.Artifacts>
-  }
-
-  export interface RunComparison {
-    assertions: Comparison[];
+  export interface LHRComparison {
+    audits: Comparison[];
     errorCode: Comparison;
     finalUrl: Comparison;
-  }
-
-  export interface Assertion{
-    category: string;
-    actual: any;
-    expected: any;
-    equal: boolean;
-    diff: Smokehouse.Difference | null;
   }
 
   export interface TestDfn {
