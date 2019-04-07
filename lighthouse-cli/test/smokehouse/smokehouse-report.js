@@ -103,44 +103,73 @@ function findDifference(path, actual, expected) {
 }
 
 /**
- * Collate results into comparisons of actual and expected scores on each audit.
- * @param {Smokehouse.ExpectedLHR} actual
- * @param {Smokehouse.ExpectedLHR} expected
- * @return {Smokehouse.LHRComparison}
+ * @param {string} name
+ * @param {any} actualResult
+ * @param {any} expectedResult
+ * @returns {Smokehouse.Assertion}
  */
-function collateResults(actual, expected) {
-  const auditNames = Object.keys(expected.audits);
-  const collatedAudits = auditNames.map(auditName => {
-    const actualResult = actual.audits[auditName];
-    if (!actualResult) {
-      throw new Error(`Config did not trigger run of expected audit ${auditName}`);
-    }
-
-    const expectedResult = expected.audits[auditName];
-    const diff = findDifference(auditName, actualResult, expectedResult);
-
-    return {
-      category: auditName,
-      actual: actualResult,
-      expected: expectedResult,
-      equal: !diff,
-      diff,
-    };
-  });
+function makeAssertion(name, actualResult, expectedResult) {
+  const diff = findDifference(name, actualResult, expectedResult);
 
   return {
-    audits: collatedAudits,
+    category: name,
+    actual: actualResult,
+    expected: expectedResult,
+    equal: !diff,
+    diff,
+  };
+}
+
+/**
+ * Collate results into comparisons of actual and expected scores on each audit.
+ * @param {Smokehouse.ExpectedRunResult} actual
+ * @param {Smokehouse.ExpectedRunResult} expected
+ * @return {Smokehouse.RunComparison}
+ */
+function collateResults(actual, expected) {
+  /** @type {Smokehouse.Assertion[]} */
+  const artifactAssertions = [];
+  if (expected.artifacts) {
+    Object.keys(expected.artifacts).map(artifactName => {
+      const actualResult = /** @type {any} */ (actual.artifacts)[artifactName];
+      if (!actualResult) {
+        throw new Error(`Config run did not generate artifact ${artifactName}`);
+      }
+
+      const expectedResult = /** @type {any} */(expected.artifacts)[artifactName];
+      return makeAssertion(artifactName + ' artifact', actualResult, expectedResult);
+    });
+  }
+
+  /** @type {Smokehouse.Assertion[]} */
+  const auditAssertions = [];
+  if (expected.lhr.audits) {
+    Object.keys(expected.lhr.audits).map(auditName => {
+      const actualResult = actual.lhr.audits[auditName];
+      if (!actualResult) {
+        throw new Error(`Config did not trigger run of expected audit ${auditName}`);
+      }
+
+      const expectedResult = expected.lhr.audits[auditName];
+      return makeAssertion(auditName + ' audit', actualResult, expectedResult);
+    });
+  }
+
+  const assertions = [...artifactAssertions, ...auditAssertions];
+
+  return {
+    assertions,
     errorCode: {
       category: 'error code',
-      actual: actual.errorCode,
-      expected: expected.errorCode,
-      equal: actual.errorCode === expected.errorCode,
+      actual: actual.lhr.errorCode,
+      expected: expected.lhr.errorCode,
+      equal: actual.lhr.errorCode === expected.lhr.errorCode,
     },
     finalUrl: {
       category: 'final url',
-      actual: actual.finalUrl,
-      expected: expected.finalUrl,
-      equal: actual.finalUrl === expected.finalUrl,
+      actual: actual.lhr.finalUrl,
+      expected: expected.lhr.finalUrl,
+      equal: actual.lhr.finalUrl === expected.lhr.finalUrl,
     },
   };
 }
@@ -199,22 +228,22 @@ function reportAssertion(assertion) {
 /**
  * Log all the comparisons between actual and expected test results, then print
  * summary. Returns count of passed and failed tests.
- * @param {Smokehouse.LHRComparison} results
+ * @param {Smokehouse.RunComparison} results
  * @return {{passed: number, failed: number}}
  */
 function report(results) {
   let correctCount = 0;
   let failedCount = 0;
 
-  [results.finalUrl, results.errorCode, ...results.audits].forEach(auditAssertion => {
-    if (auditAssertion.equal) {
+  [results.finalUrl, results.errorCode, ...results.assertions].forEach(assertion => {
+    if (assertion.equal) {
       correctCount++;
     } else {
       failedCount++;
     }
 
-    if (!auditAssertion.equal || VERBOSE) {
-      reportAssertion(auditAssertion);
+    if (!assertion.equal || VERBOSE) {
+      reportAssertion(assertion);
     }
   });
 

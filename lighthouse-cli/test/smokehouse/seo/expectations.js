@@ -225,5 +225,10 @@ module.exports = [
         },
       },
     },
+    artifacts: {
+      TapTargets: {
+        length: 11,
+      },
+    },
   },
 ];
