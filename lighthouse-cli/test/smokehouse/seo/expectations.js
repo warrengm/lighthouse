@@ -145,7 +145,8 @@ module.exports = [
     },
   },
   {
-    lhr: {// Note: most scores are null (audit error) because the page 403ed.
+    lhr: {
+      // Note: most scores are null (audit error) because the page 403ed.
       requestedUrl: BASE_URL + 'seo-failure-cases.html?status_code=403',
       finalUrl: BASE_URL + 'seo-failure-cases.html?status_code=403',
       audits: {

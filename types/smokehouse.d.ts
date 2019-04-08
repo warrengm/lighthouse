@@ -33,7 +33,7 @@
     finalUrl: Comparison;
   }
 
-  export interface Assertion{
+  export interface Assertion {
     category: string;
     actual: any;
     expected: any;
