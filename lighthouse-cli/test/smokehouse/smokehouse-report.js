@@ -161,9 +161,9 @@ function collateResults(actual, expected) {
     assertions,
     errorCode: {
       category: 'error code',
-      actual: actual.lhr.errorCode,
-      expected: expected.lhr.errorCode,
-      equal: actual.lhr.errorCode === expected.lhr.errorCode,
+      actual: actual.errorCode,
+      expected: expected.errorCode,
+      equal: actual.errorCode === expected.errorCode,
     },
     finalUrl: {
       category: 'final url',

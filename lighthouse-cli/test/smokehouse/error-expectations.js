@@ -10,18 +10,18 @@
  */
 module.exports = [
   {
+    errorCode: 'PAGE_HUNG',
     lhr: {
       requestedUrl: 'http://localhost:10200/infinite-loop.html',
       finalUrl: 'http://localhost:10200/infinite-loop.html',
-      errorCode: 'PAGE_HUNG',
       audits: {},
     },
   },
   {
+    errorCode: 'INSECURE_DOCUMENT_REQUEST',
     lhr: {
       requestedUrl: 'https://expired.badssl.com',
       finalUrl: 'https://expired.badssl.com',
-      errorCode: 'INSECURE_DOCUMENT_REQUEST',
       audits: {},
     },
   },

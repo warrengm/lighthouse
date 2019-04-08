@@ -102,29 +102,26 @@ function runLighthouse(url, configPath, isDebug) {
     console.error(`STDERR: ${runResults.stderr}`);
   }
 
+  let errorCode;
+  let lhr = {requestedUrl: url, finalUrl: url, audits: {}};
   if (runResults.status === PAGE_HUNG_EXIT_CODE) {
-    return {
-      lhr: {requestedUrl: url, finalUrl: url, errorCode: 'PAGE_HUNG', audits: {}},
-    };
-  }
-
-  if (runResults.status === INSECURE_DOCUMENT_REQUEST_EXIT_CODE) {
-    return {
-      lhr: {requestedUrl: url, finalUrl: url, errorCode: 'INSECURE_DOCUMENT_REQUEST', audits: {}},
-    };
-  }
-
-  const lhr = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
-  if (isDebug) {
-    console.log('LHR output available at: ', outputPath);
-  } else if (fs.existsSync(outputPath)) {
-    fs.unlinkSync(outputPath);
+    errorCode = 'PAGE_HUNG';
+  } else if (runResults.status === INSECURE_DOCUMENT_REQUEST_EXIT_CODE) {
+    errorCode = 'INSECURE_DOCUMENT_REQUEST';
+  } else {
+    lhr = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
+    if (isDebug) {
+      console.log('LHR output available at: ', outputPath);
+    } else if (fs.existsSync(outputPath)) {
+      fs.unlinkSync(outputPath);
+    }
   }
 
   const artifacts = JSON.parse(
     fs.readFileSync(`${artifactsDirectory}/artifacts.json`).toString());
 
   return {
+    errorCode,
     lhr,
     artifacts,
   };
