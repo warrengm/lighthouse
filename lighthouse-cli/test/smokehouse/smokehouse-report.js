@@ -128,23 +128,24 @@ function makeAssertion(name, actualResult, expectedResult) {
  */
 function collateResults(actual, expected) {
   /** @type {Smokehouse.Assertion[]} */
-  const artifactAssertions = [];
+  let artifactAssertions = [];
   if (expected.artifacts) {
-    Object.keys(expected.artifacts).map(artifactName => {
-      const actualResult = /** @type {any} */ (actual.artifacts)[artifactName];
+    const artifactNames = /** @type {(keyof LH.Artifacts)[]} */ (Object.keys(expected.artifacts));
+    artifactAssertions = artifactNames.map(artifactName => {
+      const actualResult = (actual.artifacts || {})[artifactName];
       if (!actualResult) {
         throw new Error(`Config run did not generate artifact ${artifactName}`);
       }
 
-      const expectedResult = /** @type {any} */(expected.artifacts)[artifactName];
+      const expectedResult = (expected.artifacts || {})[artifactName];
       return makeAssertion(artifactName + ' artifact', actualResult, expectedResult);
     });
   }
 
   /** @type {Smokehouse.Assertion[]} */
-  const auditAssertions = [];
+  let auditAssertions = [];
   if (expected.lhr.audits) {
-    Object.keys(expected.lhr.audits).map(auditName => {
+    auditAssertions = Object.keys(expected.lhr.audits).map(auditName => {
       const actualResult = actual.lhr.audits[auditName];
       if (!actualResult) {
         throw new Error(`Config did not trigger run of expected audit ${auditName}`);
