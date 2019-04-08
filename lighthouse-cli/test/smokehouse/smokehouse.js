@@ -64,7 +64,6 @@ function runLighthouse(url, configPath, isDebug) {
   // Save artifacts
   args.push(`-GA=${artifactsDirectory}`);
 
-
   if (process.env.APPVEYOR) {
     // Appveyor is hella slow already, disable CPU throttling so we're not 16x slowdown
     // see https://github.com/GoogleChrome/lighthouse/issues/4891
