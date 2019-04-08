@@ -106,7 +106,7 @@ function findDifference(path, actual, expected) {
  * @param {string} name
  * @param {any} actualResult
  * @param {any} expectedResult
- * @returns {Smokehouse.Assertion}
+ * @returns {Smokehouse.Comparison}
  */
 function makeAssertion(name, actualResult, expectedResult) {
   const diff = findDifference(name, actualResult, expectedResult);
@@ -124,10 +124,10 @@ function makeAssertion(name, actualResult, expectedResult) {
  * Collate results into comparisons of actual and expected scores on each audit.
  * @param {Smokehouse.ExpectedRunResult} actual
  * @param {Smokehouse.ExpectedRunResult} expected
- * @return {Smokehouse.RunComparison}
+ * @return {Smokehouse.Comparison[]}
  */
 function collateResults(actual, expected) {
-  /** @type {Smokehouse.Assertion[]} */
+  /** @type {Smokehouse.Comparison[]} */
   let artifactAssertions = [];
   if (expected.artifacts) {
     const artifactNames = /** @type {(keyof LH.Artifacts)[]} */ (Object.keys(expected.artifacts));
@@ -142,7 +142,7 @@ function collateResults(actual, expected) {
     });
   }
 
-  /** @type {Smokehouse.Assertion[]} */
+  /** @type {Smokehouse.Comparison[]} */
   let auditAssertions = [];
   if (expected.lhr.audits) {
     auditAssertions = Object.keys(expected.lhr.audits).map(auditName => {
@@ -156,23 +156,22 @@ function collateResults(actual, expected) {
     });
   }
 
-  const assertions = [...artifactAssertions, ...auditAssertions];
-
-  return {
-    assertions,
-    errorCode: {
+  return [
+    {
       category: 'error code',
       actual: actual.errorCode,
       expected: expected.errorCode,
       equal: actual.errorCode === expected.errorCode,
     },
-    finalUrl: {
+    {
       category: 'final url',
       actual: actual.lhr.finalUrl,
       expected: expected.lhr.finalUrl,
       equal: actual.lhr.finalUrl === expected.lhr.finalUrl,
     },
-  };
+    ...artifactAssertions,
+    ...auditAssertions,
+  ];
 }
 
 /**
@@ -229,14 +228,14 @@ function reportAssertion(assertion) {
 /**
  * Log all the comparisons between actual and expected test results, then print
  * summary. Returns count of passed and failed tests.
- * @param {Smokehouse.RunComparison} results
+ * @param {Smokehouse.Comparison[]} comparisons
  * @return {{passed: number, failed: number}}
  */
-function report(results) {
+function report(comparisons) {
   let correctCount = 0;
   let failedCount = 0;
 
-  [results.finalUrl, results.errorCode, ...results.assertions].forEach(assertion => {
+  comparisons.forEach(assertion => {
     if (assertion.equal) {
       correctCount++;
     } else {

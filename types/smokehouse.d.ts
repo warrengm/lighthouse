@@ -27,20 +27,6 @@
     artifacts?: Partial<LH.Artifacts>
   }
 
-  export interface RunComparison {
-    assertions: Comparison[];
-    errorCode: Comparison;
-    finalUrl: Comparison;
-  }
-
-  export interface Assertion {
-    category: string;
-    actual: any;
-    expected: any;
-    equal: boolean;
-    diff: Smokehouse.Difference | null;
-  }
-
   export interface TestDfn {
     id: string;
     expectations: string;
