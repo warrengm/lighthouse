@@ -50,6 +50,7 @@ function runLighthouse(url, configPath, isDebug) {
 
   const command = 'node';
   const outputPath = `smokehouse-${Math.round(Math.random() * 100000)}.report.json`;
+  const artifactsDirectory = './.tmp/smokehouse-artifacts';
   const args = [
     'lighthouse-cli/index.js',
     url,
@@ -61,7 +62,7 @@ function runLighthouse(url, configPath, isDebug) {
   ];
 
   // Save artifacts
-  args.push('-GA');
+  args.push(`-GA=${artifactsDirectory}`);
 
 
   if (process.env.APPVEYOR) {
@@ -120,7 +121,8 @@ function runLighthouse(url, configPath, isDebug) {
     fs.unlinkSync(outputPath);
   }
 
-  const artifacts = JSON.parse(fs.readFileSync('./latest-run/artifacts.json').toString());
+  const artifacts = JSON.parse(
+    fs.readFileSync(`${artifactsDirectory}/artifacts.json`).toString());
 
   return {
     lhr,
