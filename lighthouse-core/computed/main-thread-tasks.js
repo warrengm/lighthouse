@@ -109,7 +109,7 @@ class MainThreadTasks {
       if (!currentTask) {
         // We can't start a task with an end event
         if (event.ph === 'E') {
-          throw new Error('Fatal trace logic error');
+          throw new Error('Fatal trace logic error - unexpected end event');
         }
 
         currentTask = MainThreadTasks._createNewTaskNode(event);
@@ -125,7 +125,8 @@ class MainThreadTasks {
         currentTask = newTask;
       } else {
         if (currentTask.event.ph !== 'B') {
-          throw new Error('Fatal trace logic error');
+          throw new Error(
+            `Fatal trace logic error - expected start event, got ${currentTask.event.ph}`);
         }
 
         // We're ending an event, update the end time and the currentTask to its parent
@@ -147,11 +148,16 @@ class MainThreadTasks {
 
   /**
    * @param {TaskNode} task
+   * @param {TaskNode|undefined} parent
    * @return {number}
    */
-  static _computeRecursiveSelfTime(task) {
+  static _computeRecursiveSelfTime(task, parent) {
+    if (parent && task.endTime > parent.endTime) {
+      throw new Error('Fatal trace logic error - child cannot end after parent');
+    }
+
     const childTime = task.children
-      .map(MainThreadTasks._computeRecursiveSelfTime)
+      .map(child => MainThreadTasks._computeRecursiveSelfTime(child, task))
       .reduce((sum, child) => sum + child, 0);
     task.duration = task.endTime - task.startTime;
     task.selfTime = task.duration - childTime;
@@ -236,7 +242,7 @@ class MainThreadTasks {
     for (const task of tasks) {
       if (task.parent) continue;
 
-      MainThreadTasks._computeRecursiveSelfTime(task);
+      MainThreadTasks._computeRecursiveSelfTime(task, undefined);
       MainThreadTasks._computeRecursiveAttributableURLs(task, [], priorTaskData);
       MainThreadTasks._computeRecursiveTaskGroup(task);
     }

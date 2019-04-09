@@ -46,8 +46,6 @@ declare global {
       /** Descriptions of the groups referenced by CategoryMembers. */
       categoryGroups?: Record<string, Result.ReportGroup>;
 
-
-      // Additional non-LHR-lite information.
       /** The config settings used for these results. */
       configSettings: Config.Settings;
       /** List of top-level warnings for this Lighthouse run. */
@@ -100,18 +98,6 @@ declare global {
         title: string;
         /** A brief description of the purpose of the display group. */
         description?: string;
-      }
-
-      /**
-       * A description of configuration used for gathering.
-       */
-      export interface RuntimeConfig {
-        environment: {
-          name: 'Device Emulation'|'Network Throttling'|'CPU Throttling';
-          description: string;
-        }[];
-        blockedUrlPatterns: string[];
-        extraHeaders: Crdp.Network.Headers;
       }
     }
   }

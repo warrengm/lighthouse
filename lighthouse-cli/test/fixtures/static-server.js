@@ -75,6 +75,10 @@ function requestHandler(request, response) {
       headers['Content-Type'] = 'image/gif';
     } else if (filePath.endsWith('.jpg') || filePath.endsWith('.jpeg')) {
       headers['Content-Type'] = 'image/jpeg';
+    } else if (filePath.endsWith('.webp')) {
+      headers['Content-Type'] = 'image/webp';
+    } else if (filePath.endsWith('.json')) {
+      headers['Content-Type'] = 'application/json';
     }
 
     let delay = 0;
