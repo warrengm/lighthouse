@@ -43,13 +43,14 @@ function resolveLocalOrCwd(payloadPath) {
  * @param {string} url
  * @param {string} configPath
  * @param {boolean=} isDebug
- * @return {Smokehouse.ExpectedLHR}
+ * @return {Smokehouse.ExpectedRunResult}
  */
 function runLighthouse(url, configPath, isDebug) {
   isDebug = isDebug || Boolean(process.env.LH_SMOKE_DEBUG);
 
   const command = 'node';
   const outputPath = `smokehouse-${Math.round(Math.random() * 100000)}.report.json`;
+  const artifactsDirectory = './.tmp/smokehouse-artifacts';
   const args = [
     'lighthouse-cli/index.js',
     url,
@@ -60,9 +61,8 @@ function runLighthouse(url, configPath, isDebug) {
     '--port=0',
   ];
 
-  if (isDebug) {
-    args.push('-GA');
-  }
+  // Save artifacts
+  args.push(`-GA=${artifactsDirectory}`);
 
   if (process.env.APPVEYOR) {
     // Appveyor is hella slow already, disable CPU throttling so we're not 16x slowdown
@@ -101,22 +101,29 @@ function runLighthouse(url, configPath, isDebug) {
     console.error(`STDERR: ${runResults.stderr}`);
   }
 
+  let errorCode;
+  let lhr = {requestedUrl: url, finalUrl: url, audits: {}};
   if (runResults.status === PAGE_HUNG_EXIT_CODE) {
-    return {requestedUrl: url, finalUrl: url, errorCode: 'PAGE_HUNG', audits: {}};
+    errorCode = 'PAGE_HUNG';
+  } else if (runResults.status === INSECURE_DOCUMENT_REQUEST_EXIT_CODE) {
+    errorCode = 'INSECURE_DOCUMENT_REQUEST';
+  } else {
+    lhr = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
+    if (isDebug) {
+      console.log('LHR output available at: ', outputPath);
+    } else if (fs.existsSync(outputPath)) {
+      fs.unlinkSync(outputPath);
+    }
   }
 
-  if (runResults.status === INSECURE_DOCUMENT_REQUEST_EXIT_CODE) {
-    return {requestedUrl: url, finalUrl: url, errorCode: 'INSECURE_DOCUMENT_REQUEST', audits: {}};
-  }
+  const artifacts = JSON.parse(
+    fs.readFileSync(`${artifactsDirectory}/artifacts.json`).toString());
 
-  const lhr = fs.readFileSync(outputPath, 'utf8');
-  if (isDebug) {
-    console.log('LHR output available at: ', outputPath);
-  } else if (fs.existsSync(outputPath)) {
-    fs.unlinkSync(outputPath);
-  }
-
-  return JSON.parse(lhr);
+  return {
+    errorCode,
+    lhr,
+    artifacts,
+  };
 }
 
 const cli = yargs
@@ -131,7 +138,7 @@ const cli = yargs
   .argv;
 
 const configPath = resolveLocalOrCwd(cli['config-path']);
-/** @type {Smokehouse.ExpectedLHR[]} */
+/** @type {Smokehouse.ExpectedRunResult[]} */
 const expectations = require(resolveLocalOrCwd(cli['expectations-path']));
 
 // Loop sequentially over expectations, comparing against Lighthouse run, and
@@ -139,10 +146,10 @@ const expectations = require(resolveLocalOrCwd(cli['expectations-path']));
 let passingCount = 0;
 let failingCount = 0;
 expectations.forEach(expected => {
-  console.log(`Doing a run of '${expected.requestedUrl}'...`);
-  const results = runLighthouse(expected.requestedUrl, configPath, cli.debug);
+  console.log(`Doing a run of '${expected.lhr.requestedUrl}'...`);
+  const results = runLighthouse(expected.lhr.requestedUrl, configPath, cli.debug);
 
-  console.log(`Asserting expected results match those found. (${expected.requestedUrl})`);
+  console.log(`Asserting expected results match those found. (${expected.lhr.requestedUrl})`);
   const collated = collateResults(results, expected);
   const counts = report(collated);
   passingCount += counts.passed;
