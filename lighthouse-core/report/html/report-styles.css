@@ -82,6 +82,7 @@
   --chevron-size: 12px;
   --circle-size: calc(3 * var(--header-font-size));
 
+  /* TODO(cjamcl) clean up unused variables. */
   --color-black-100: #F5F5F5;
   --color-black-200: #E0E0E0;
   --color-black-400: #BDBDBD;
