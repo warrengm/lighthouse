@@ -102,8 +102,8 @@
   --score-container-width: 160px;
   --score-number-font-size-big: 42px;
   --score-number-font-size: 34px;
-  --score-size-big: 120px;
-  --score-size: 96px;
+  --circle-size-big: 120px;
+  --circle-size: 96px;
   --score-title-font-size-big: 28px;
   --score-title-font-size: 20px;
   --score-title-line-height-big: 36px;
@@ -143,8 +143,8 @@
     --score-container-width: 112px;
     --score-number-font-size-big: 34px;
     --score-number-font-size: 26px;
-    --score-size-big: 96px;
-    --score-size: 72px;
+    --circle-size-big: 96px;
+    --circle-size: 72px;
     --score-title-font-size-big: 22px;
     --score-title-font-size: 14px;
     --score-title-line-height-big: 26px;
