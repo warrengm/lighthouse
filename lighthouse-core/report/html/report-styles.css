@@ -152,33 +152,6 @@
     --section-padding: 24px;
     --topbar-height: 32px;
   }
-
-  .two-col.audits .audit {
-    width: auto;
-  }
-  .two-col.audits .audit:nth-child(2n) {
-    float: none;
-  }
-  .two-col.audits .audit:nth-child(2n+1) {
-    float: none;
-  }
-  #audits-performance-metrics .audit:nth-child(6n+2) {
-    border-top: none;
-  }
-
-  #screenshots {
-    -webkit-column-count: 5;
-    -webkit-column-gap: 12px;
-  }
-  #screenshots div:nth-child(2n) {
-    display: none;
-  }
-  .audit .secondary {
-    display: none;
-  }
-  /* #section-runtimesettings .items .item {
-    display: block;
-  } */
 }
 
 .lh-vars.lh-devtools {
