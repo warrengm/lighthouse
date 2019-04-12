@@ -576,8 +576,6 @@ limitations under the License.
       stroke-linecap: round;
       width: var(--score-size);
       height: var(--score-size);
-      font-size: var(--score-number-fontsize);
-      font-family: 'Roboto Mono', monospace;
     }
 
     .lh-category .lh-gauge {
@@ -608,15 +606,16 @@ limitations under the License.
       height: var(--inset-size);
       position: absolute;
       border-radius: inherit;
-      font-size: var(--score-number-fontsize);
-      line-height: var(--score-number-fontsize);
+      font-family: var(--monospace-font-family);
+      font-size: var(--score-number-font-size);
+      line-height: var(--score-number-font-size);
       text-align: center;
       top: calc(var(--score-size) / 3);
     }
 
     .lh-category .lh-gauge__percentage {
-      font-size: var(--score-number-fontsize-big);
-      line-height: var(--score-number-fontsize-big);
+      font-size: var(--score-number-font-size-big);
+      line-height: var(--score-number-font-size-big);
       top: calc(var(--score-size-big) / 3);
     }
 
