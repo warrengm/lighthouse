@@ -32,7 +32,7 @@ function getFlags(manualArgv) {
           'lighthouse <url> --output=json --output-path=./report.json --save-assets',
           'Save trace, screenshots, and named JSON report.')
       .example(
-          'lighthouse <url> --disable-device-emulation --throttling-method=provided',
+          'lighthouse <url> --emulated-form-factor=none --throttling-method=provided',
           'Disable device emulation and all throttling')
       .example(
           'lighthouse <url> --chrome-flags="--window-size=412,660"',
