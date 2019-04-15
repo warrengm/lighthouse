@@ -80,7 +80,7 @@ function find(query, context = document) {
 
 /**
  * @param {Error} err
- * @return {HTMLAnchorElement}
+ * @return {HTMLButtonElement}
  */
 function buildReportErrorLink(err) {
   const issueBody = `
@@ -95,17 +95,20 @@ ${err.stack}
 \`\`\`
     `;
 
-  const url = new URL('https://github.com/GoogleChrome/lighthouse/issues/new');
-
-  const errorTitle = err.message.substring(0, MAX_ISSUE_ERROR_LENGTH);
-  url.searchParams.append('title', `Extension Error: ${errorTitle}`);
-  url.searchParams.append('body', issueBody.trim());
-
-  const reportErrorEl = document.createElement('a');
+  const reportErrorEl = document.createElement('button');
   reportErrorEl.className = 'button button--report-error';
-  reportErrorEl.href = url.href;
-  reportErrorEl.textContent = 'Report Error';
-  reportErrorEl.target = '_blank';
+  reportErrorEl.textContent = 'Copy to clipboard';
+
+  reportErrorEl.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(issueBody);
+      reportErrorEl.textContent = 'Copied to clipboard';
+      setTimeout(() => {
+        reportErrorEl.textContent = 'Copy to clipboard';
+      }, 1000);
+    } catch (err) {
+    }
+  });
 
   return reportErrorEl;
 }
@@ -176,13 +179,13 @@ async function onGenerateReportButtonClick(background, settings) {
     // Close popup once report is opened in a new tab
     window.close();
   } catch (err) {
-    let message = err.message;
+    let message = err.friendlyMessage || err.message;
     let includeReportLink = true;
 
     // Check for errors in how the user ran Lighthouse and replace with a more
     // helpful message (and remove 'Report Error' link).
     for (const [test, replacement] of Object.entries(NON_BUG_ERROR_MESSAGES)) {
-      if (message.includes(test)) {
+      if (err.message.includes(test)) {
         message = replacement;
         includeReportLink = false;
         break;
