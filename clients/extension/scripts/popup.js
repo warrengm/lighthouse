@@ -32,8 +32,6 @@ const NON_BUG_ERROR_MESSAGES = {
       ' with http:// or https://.',
 };
 
-const MAX_ISSUE_ERROR_LENGTH = 60;
-
 const subpageVisibleClass = 'subpage--visible';
 
 /** @type {?URL} */
