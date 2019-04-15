@@ -1070,9 +1070,6 @@ Object {
       "cpuQuietThresholdMs": 1000,
       "gatherers": Array [
         Object {
-          "path": "scripts",
-        },
-        Object {
           "path": "css-usage",
         },
         Object {
@@ -1083,9 +1080,6 @@ Object {
         },
         Object {
           "path": "chrome-console-messages",
-        },
-        Object {
-          "path": "accessibility",
         },
         Object {
           "path": "anchor-elements",
@@ -1100,6 +1094,9 @@ Object {
           "path": "meta-elements",
         },
         Object {
+          "path": "script-elements",
+        },
+        Object {
           "path": "dobetterweb/appcache",
         },
         Object {
@@ -1107,9 +1104,6 @@ Object {
         },
         Object {
           "path": "dobetterweb/domstats",
-        },
-        Object {
-          "path": "dobetterweb/js-libraries",
         },
         Object {
           "path": "dobetterweb/optimized-images",
@@ -1134,6 +1128,9 @@ Object {
         },
         Object {
           "path": "seo/tap-targets",
+        },
+        Object {
+          "path": "accessibility",
         },
       ],
       "networkQuietThresholdMs": 1000,
