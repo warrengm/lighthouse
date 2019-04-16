@@ -85,15 +85,26 @@ class GatherRunner {
    * pre-redirect starting URL.
    * @param {Driver} driver
    * @param {LH.Gatherer.PassContext} passContext
-   * @return {Promise<void>}
+   * @return {Promise<{pageLoadError?: LH.LighthouseError}>}
    */
   static async loadPage(driver, passContext) {
-    const finalUrl = await driver.gotoURL(passContext.url, {
-      waitForFCP: passContext.passConfig.recordTrace,
-      waitForLoad: true,
-      passContext,
-    });
-    passContext.url = finalUrl;
+    try {
+      const finalUrl = await driver.gotoURL(passContext.url, {
+        waitForFCP: passContext.passConfig.recordTrace,
+        waitForLoad: true,
+        passContext,
+      });
+      passContext.url = finalUrl;
+
+      return {};
+    } catch (err) {
+      // If it's one of our loading-based LHErrors, we'll treat it as a page load error.
+      if (err.code === 'NO_FCP' || err.code === 'PAGE_HUNG') {
+        return {pageLoadError: err};
+      }
+
+      throw err;
+    }
   }
 
   /**
@@ -139,7 +150,7 @@ class GatherRunner {
    * Returns an error if the original network request failed or wasn't found.
    * @param {string} url The URL of the original requested page.
    * @param {Array<LH.Artifacts.NetworkRequest>} networkRecords
-   * @return {LHError|undefined}
+   * @return {LH.LighthouseError|undefined}
    */
   static getPageLoadError(url, networkRecords) {
     const mainRecord = networkRecords.find(record => {
@@ -240,7 +251,9 @@ class GatherRunner {
     if (recordTrace) await driver.beginTrace(settings);
 
     // Navigate.
-    await GatherRunner.loadPage(driver, passContext);
+    let {pageLoadError} = await GatherRunner.loadPage(driver, passContext);
+    // If the driver was offline, a page load error might be expected, so do not save it.
+    if (!driver.online) pageLoadError = undefined;
     log.timeEnd(status);
 
     const pStatus = {msg: `Running pass methods`, id: `lh:gather:pass`};
@@ -254,7 +267,9 @@ class GatherRunner {
         id: `lh:gather:pass:${gatherer.name}`,
       };
       log.time(status);
-      const artifactPromise = Promise.resolve().then(_ => gatherer.pass(passContext));
+      const artifactPromise = pageLoadError ?
+        Promise.reject(pageLoadError) :
+        Promise.resolve().then(_ => gatherer.pass(passContext));
 
       const gathererResult = gathererResults[gatherer.name] || [];
       gathererResult.push(artifactPromise);
@@ -263,6 +278,8 @@ class GatherRunner {
     }
     log.timeEnd(status);
     log.timeEnd(pStatus);
+
+    passContext.pageLoadError = pageLoadError;
   }
 
   /**
@@ -295,14 +312,11 @@ class GatherRunner {
     const networkRecords = NetworkRecorder.recordsFromLogs(devtoolsLog);
     log.timeEnd(status);
 
-    let pageLoadError = GatherRunner.getPageLoadError(passContext.url, networkRecords);
+    // Prefer the page load error from networks if we have one as it's more specific than NO_FCP.
+    let pageLoadError = GatherRunner.getPageLoadError(passContext.url, networkRecords) ||
+      passContext.pageLoadError;
     // If the driver was offline, a page load error is expected, so do not save it.
     if (!driver.online) pageLoadError = undefined;
-
-    if (pageLoadError) {
-      log.error('GatherRunner', pageLoadError.message, passContext.url);
-      passContext.LighthouseRunWarnings.push(pageLoadError.friendlyMessage);
-    }
 
     // Expose devtoolsLog, networkRecords, and trace (if present) to gatherers
     /** @type {LH.Gatherer.LoadData} */
@@ -336,11 +350,14 @@ class GatherRunner {
 
       const gathererResult = gathererResults[gatherer.name] || [];
       gathererResult.push(artifactPromise);
-      gathererResults[gatherer.name] = gathererResult;
+      // Override the gatherer result if we encountered a pageLoadError to ensure the last error wins.
+      gathererResults[gatherer.name] = pageLoadError ? [artifactPromise] : gathererResult;
       await artifactPromise.catch(() => {});
       log.timeEnd(status);
     }
     log.timeEnd(apStatus);
+
+    passContext.pageLoadError = pageLoadError;
 
     // Resolve on tracing data using passName from config.
     return passData;
@@ -469,6 +486,8 @@ class GatherRunner {
           baseArtifacts,
           // *pass() functions and gatherers can push to this warnings array.
           LighthouseRunWarnings: baseArtifacts.LighthouseRunWarnings,
+          // *pass() functions will set the pageLoadError if they encounter one
+          pageLoadError: /** @type {LH.LighthouseError|undefined} */ (undefined),
         };
 
         await driver.setThrottling(options.settings, passConfig);
@@ -482,6 +501,12 @@ class GatherRunner {
           baseArtifacts.WebAppManifest = await GatherRunner.getWebAppManifest(passContext);
         }
         const passData = await GatherRunner.afterPass(passContext, gathererResults);
+
+        if (passContext.pageLoadError) {
+          const {message, friendlyMessage} = passContext.pageLoadError;
+          log.error('GatherRunner', message, passContext.url);
+          passContext.LighthouseRunWarnings.push(friendlyMessage || message);
+        }
 
         // Save devtoolsLog, but networkRecords are discarded and not added onto artifacts.
         baseArtifacts.devtoolsLogs[passConfig.passName] = passData.devtoolsLog;

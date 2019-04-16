@@ -13,6 +13,8 @@ const assert = require('assert');
 const Config = require('../../config/config');
 const unresolvedPerfLog = require('./../fixtures/unresolved-perflog.json');
 const NetworkRequest = require('../../lib/network-request.js');
+const LHError = require('../../lib/lh-error.js');
+const networkRecordsToDevtoolsLog = require('../network-records-to-devtools-log.js');
 
 class TestGatherer extends Gatherer {
   constructor() {
@@ -95,7 +97,7 @@ describe('GatherRunner', function() {
     };
 
     const passContext = {
-      requestedUrl: url1,
+      url: url1,
       settings: {},
       passConfig: {},
     };
@@ -103,6 +105,26 @@ describe('GatherRunner', function() {
     return GatherRunner.loadPage(driver, passContext).then(_ => {
       assert.equal(passContext.url, url2);
     });
+  });
+
+  it('loads a page and returns a pageLoadError', async () => {
+    const url = 'https://example.com';
+    const error = new LHError(LHError.errors.NO_FCP);
+    const driver = {
+      gotoURL() {
+        return Promise.reject(error);
+      },
+    };
+
+    const passContext = {
+      url,
+      settings: {},
+      passConfig: {},
+    };
+
+    const {pageLoadError} = await GatherRunner.loadPage(driver, passContext);
+    expect(pageLoadError).toEqual(error);
+    expect(passContext.url).toEqual(url);
   });
 
   it('collects benchmark as an artifact', async () => {
@@ -594,6 +616,48 @@ describe('GatherRunner', function() {
       assert.equal(calledDevtoolsLogCollect, true);
       assert.strictEqual(passData.devtoolsLog[0], fakeDevtoolsMessage);
     });
+  });
+
+  it('fails artifacts with page load errors', async () => {
+    const url = 'https://example.com';
+    const driver = Object.assign({}, fakeDriver, {online: true});
+    // This page load error should be overriden by NO_DOCUMENT_REQUEST for being more specific
+    const pageLoadError = new LHError(LHError.errors.NO_FCP);
+
+    const passConfig = {
+      gatherers: [
+        {instance: new TestGatherer()},
+      ],
+    };
+
+    const gathererResults = {TestGatherer: [pageLoadError]};
+    await GatherRunner.afterPass({url, driver, passConfig}, gathererResults);
+    expect(gathererResults.TestGatherer).toHaveLength(1);
+    await expect(gathererResults.TestGatherer[0]).rejects.toHaveProperty('code',
+      'NO_DOCUMENT_REQUEST');
+  });
+
+  it('fails artifacts with previous page load errors', async () => {
+    const url = 'https://example.com';
+    const driver = Object.assign({}, fakeDriver, {
+      online: true,
+      endDevtoolsLog() {
+        return networkRecordsToDevtoolsLog([{url}]);
+      },
+    });
+
+    const pageLoadError = new LHError(LHError.errors.NO_FCP);
+
+    const passConfig = {
+      gatherers: [
+        {instance: new TestGatherer()},
+      ],
+    };
+
+    const gathererResults = {TestGatherer: [pageLoadError]};
+    await GatherRunner.afterPass({url, driver, passConfig, pageLoadError}, gathererResults);
+    expect(gathererResults.TestGatherer).toHaveLength(1);
+    await expect(gathererResults.TestGatherer[0]).rejects.toEqual(pageLoadError);
   });
 
   it('does as many passes as are required', () => {
