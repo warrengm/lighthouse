@@ -96,8 +96,8 @@ async function begin() {
 
   // show deprecation message for disableDeviceEmulation
   if (cliFlags.disableDeviceEmulation) {
-    log.warn('config', 'The "--disable-device-emulation" option is deprecated.' +
-      ' Please use "--emulated-form-factor=none" instead.');
+    log.warn('config', 'The "--disable-device-emulation" has been removed in v5.' +
+        ' Please use "--emulated-form-factor=none" instead.');
   }
 
   if (cliFlags.extraHeaders) {
