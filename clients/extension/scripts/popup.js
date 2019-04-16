@@ -12,7 +12,18 @@
  * Lighthouse itself, mapped to more useful strings to report to the user.
  */
 const NON_BUG_ERROR_MESSAGES = {
-  'Another debugger': 'You probably have DevTools open. Close DevTools to use Lighthouse',
+  // The user tries to review an error page or has network issues
+  'ERRORED_DOCUMENT_REQUEST': 'Unable to load the page. Please verify the url you ' +
+      'are trying to review.',
+  'FAILED_DOCUMENT_REQUEST': 'Unable to load the page. Please verify the url you ' +
+      'are trying to review.',
+  'DNS_FAILURE': 'DNS servers could not resolve the provided domain.',
+  'INSECURE_DOCUMENT_REQUEST': 'The URL you have provided does not have valid' +
+      ' SSL certificate.',
+  'INVALID_URL': 'Lighthouse can only audit URLs that start' +
+      ' with http:// or https://.',
+
+  // chrome extension API errors
   'multiple tabs': 'You probably have multiple tabs open to the same origin. ' +
       'Close the other tabs to use Lighthouse.',
   // The extension debugger API is forbidden from attaching to the web store.
@@ -21,14 +32,7 @@ const NON_BUG_ERROR_MESSAGES = {
       'Chrome Web Store. If necessary, use the Lighthouse CLI to do so.',
   'Cannot access a chrome': 'The Lighthouse extension cannot audit ' +
       'Chrome-specific urls. If necessary, use the Lighthouse CLI to do so.',
-  // The user tries to review an error page or has network issues
-  'Unable to load the page': 'Unable to load the page. Please verify the url you ' +
-      'are trying to review.',
   'Cannot access contents of the page': 'Lighthouse can only audit URLs that start' +
-      ' with http:// or https://.',
-  'INSECURE_DOCUMENT_REQUEST': 'The URL you have provided does not have valid' +
-      ' security credentials.',
-  'INVALID_URL': 'Lighthouse can only audit URLs that start' +
       ' with http:// or https://.',
 };
 
@@ -86,7 +90,7 @@ function buildReportErrorLink(err) {
 **Lighthouse Commit**: ${getLighthouseCommitHash()}
 **Chrome Version**: ${getChromeVersion()}
 **Initial URL**: ${siteURL}
-**Error Message**: ${err.message}
+**Error Message**: ${err.friendlyMessage || err.message}
 **Stack Trace**:
 \`\`\`
 ${err.stack}
@@ -184,7 +188,7 @@ async function onGenerateReportButtonClick(background, settings) {
     // Check for errors in how the user ran Lighthouse and replace with a more
     // helpful message (and remove 'Report Error' link).
     for (const [test, replacement] of Object.entries(NON_BUG_ERROR_MESSAGES)) {
-      if (err.message.includes(test)) {
+      if (err.message.includes(test) || err.friendlyMessage.includes(test)) {
         message = replacement;
         includeReportLink = false;
         break;
