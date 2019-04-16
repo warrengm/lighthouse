@@ -99,6 +99,7 @@ ${err.stack}
 
   reportErrorEl.addEventListener('click', async () => {
     try {
+      // @ts-ignore
       await navigator.clipboard.writeText(issueBody);
       reportErrorEl.textContent = 'Copied to clipboard';
       setTimeout(() => {
