@@ -13,6 +13,7 @@ const Printer = require('./printer.js');
 const ChromeLauncher = require('chrome-launcher');
 
 const yargsParser = require('yargs-parser');
+const LHError = require('../lighthouse-core/lib/lh-error.js');
 const lighthouse = require('../lighthouse-core/index.js');
 const log = require('lighthouse-logger');
 const getFilenamePrefix = require('../lighthouse-core/lib/file-namer.js').getFilenamePrefix;
@@ -215,6 +216,10 @@ async function runLighthouse(url, flags, config) {
 
     await potentiallyKillChrome(launchedChrome);
     process.removeListener('unhandledRejection', handleTheUnhandled);
+    if (runnerResult && runnerResult.lhr.runtimeError) {
+      const {runtimeError} = runnerResult.lhr;
+      handleError({...runtimeError, friendlyMessage: runtimeError.message, name: 'LHError'});
+    }
 
     return runnerResult;
   } catch (err) {

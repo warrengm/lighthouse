@@ -99,7 +99,7 @@ class GatherRunner {
       return {};
     } catch (err) {
       // If it's one of our loading-based LHErrors, we'll treat it as a page load error.
-      if (err instanceof LHError && err.lhrRuntimeError) {
+      if (err.code === 'NO_FCP') {
         return {pageLoadError: err};
       }
 
