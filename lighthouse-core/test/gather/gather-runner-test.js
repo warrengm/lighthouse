@@ -16,6 +16,8 @@ const NetworkRequest = require('../../lib/network-request.js');
 const LHError = require('../../lib/lh-error.js');
 const networkRecordsToDevtoolsLog = require('../network-records-to-devtools-log.js');
 
+jest.mock('../../lib/stack-collector.js', () => () => Promise.resolve([]));
+
 class TestGatherer extends Gatherer {
   constructor() {
     super();
