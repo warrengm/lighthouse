@@ -110,7 +110,7 @@ function loadConfig(configPath) {
 
 /**
  * @param {string} expectationsPath
- * @return {Smokehouse.ExpectedRunResult[]}
+ * @return {Smokehouse.ExpectedRunnerResult[]}
  */
 function loadExpectations(expectationsPath) {
   return require(expectationsPath);

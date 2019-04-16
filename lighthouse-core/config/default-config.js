@@ -102,7 +102,6 @@ const defaultConfig = {
       'viewport-dimensions',
       'runtime-exceptions',
       'chrome-console-messages',
-      'accessibility',
       'anchor-elements',
       'image-elements',
       'link-elements',
@@ -111,7 +110,6 @@ const defaultConfig = {
       'dobetterweb/appcache',
       'dobetterweb/doctype',
       'dobetterweb/domstats',
-      'dobetterweb/js-libraries',
       'dobetterweb/optimized-images',
       'dobetterweb/password-inputs-with-prevented-paste',
       'dobetterweb/response-compression',
@@ -120,6 +118,8 @@ const defaultConfig = {
       'seo/embedded-content',
       'seo/robots-txt',
       'seo/tap-targets',
+      // Always run axe last because it scrolls the page down to the bottom
+      'accessibility',
     ],
   },
   {

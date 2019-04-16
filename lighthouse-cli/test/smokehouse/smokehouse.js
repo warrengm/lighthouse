@@ -43,7 +43,7 @@ function resolveLocalOrCwd(payloadPath) {
  * @param {string} url
  * @param {string} configPath
  * @param {boolean=} isDebug
- * @return {Smokehouse.ExpectedRunResult}
+ * @return {Smokehouse.ExpectedRunnerResult}
  */
 function runLighthouse(url, configPath, isDebug) {
   isDebug = isDebug || Boolean(process.env.LH_SMOKE_DEBUG);
@@ -57,12 +57,10 @@ function runLighthouse(url, configPath, isDebug) {
     `--config-path=${configPath}`,
     `--output-path=${outputPath}`,
     '--output=json',
+    `-GA=${artifactsDirectory}`,
     '--quiet',
     '--port=0',
   ];
-
-  // Save artifacts
-  args.push(`-GA=${artifactsDirectory}`);
 
   if (process.env.APPVEYOR) {
     // Appveyor is hella slow already, disable CPU throttling so we're not 16x slowdown
@@ -117,7 +115,7 @@ function runLighthouse(url, configPath, isDebug) {
   }
 
   const artifacts = JSON.parse(
-    fs.readFileSync(`${artifactsDirectory}/artifacts.json`).toString());
+    fs.readFileSync(`${artifactsDirectory}/artifacts.json`, 'utf8'));
 
   return {
     errorCode,
@@ -138,7 +136,7 @@ const cli = yargs
   .argv;
 
 const configPath = resolveLocalOrCwd(cli['config-path']);
-/** @type {Smokehouse.ExpectedRunResult[]} */
+/** @type {Smokehouse.ExpectedRunnerResult[]} */
 const expectations = require(resolveLocalOrCwd(cli['expectations-path']));
 
 // Loop sequentially over expectations, comparing against Lighthouse run, and

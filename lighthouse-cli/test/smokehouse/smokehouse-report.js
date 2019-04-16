@@ -103,16 +103,16 @@ function findDifference(path, actual, expected) {
 }
 
 /**
- * @param {string} name
+ * @param {string} name – name of the value being asserted on (e.g. the result of a certain audit)
  * @param {any} actualResult
  * @param {any} expectedResult
- * @returns {Smokehouse.Comparison}
+ * @return {Smokehouse.Comparison}
  */
-function makeAssertion(name, actualResult, expectedResult) {
+function makeComparison(name, actualResult, expectedResult) {
   const diff = findDifference(name, actualResult, expectedResult);
 
   return {
-    category: name,
+    name,
     actual: actualResult,
     expected: expectedResult,
     equal: !diff,
@@ -121,50 +121,49 @@ function makeAssertion(name, actualResult, expectedResult) {
 }
 
 /**
- * Collate results into comparisons of actual and expected scores on each audit.
- * @param {Smokehouse.ExpectedRunResult} actual
- * @param {Smokehouse.ExpectedRunResult} expected
+ * Collate results into comparisons of actual and expected scores on each audit/artifact.
+ * @param {Smokehouse.ExpectedRunnerResult} actual
+ * @param {Smokehouse.ExpectedRunnerResult} expected
  * @return {Smokehouse.Comparison[]}
  */
 function collateResults(actual, expected) {
   /** @type {Smokehouse.Comparison[]} */
   let artifactAssertions = [];
   if (expected.artifacts) {
-    const artifactNames = /** @type {(keyof LH.Artifacts)[]} */ (Object.keys(expected.artifacts));
+    const expectedArtifacts = expected.artifacts;
+    const artifactNames = /** @type {(keyof LH.Artifacts)[]} */ (Object.keys(expectedArtifacts));
     artifactAssertions = artifactNames.map(artifactName => {
       const actualResult = (actual.artifacts || {})[artifactName];
       if (!actualResult) {
         throw new Error(`Config run did not generate artifact ${artifactName}`);
       }
 
-      const expectedResult = (expected.artifacts || {})[artifactName];
-      return makeAssertion(artifactName + ' artifact', actualResult, expectedResult);
+      const expectedResult = expectedArtifacts[artifactName];
+      return makeComparison(artifactName + ' artifact', actualResult, expectedResult);
     });
   }
 
   /** @type {Smokehouse.Comparison[]} */
   let auditAssertions = [];
-  if (expected.lhr.audits) {
-    auditAssertions = Object.keys(expected.lhr.audits).map(auditName => {
-      const actualResult = actual.lhr.audits[auditName];
-      if (!actualResult) {
-        throw new Error(`Config did not trigger run of expected audit ${auditName}`);
-      }
+  auditAssertions = Object.keys(expected.lhr.audits).map(auditName => {
+    const actualResult = actual.lhr.audits[auditName];
+    if (!actualResult) {
+      throw new Error(`Config did not trigger run of expected audit ${auditName}`);
+    }
 
-      const expectedResult = expected.lhr.audits[auditName];
-      return makeAssertion(auditName + ' audit', actualResult, expectedResult);
-    });
-  }
+    const expectedResult = expected.lhr.audits[auditName];
+    return makeComparison(auditName + ' audit', actualResult, expectedResult);
+  });
 
   return [
     {
-      category: 'error code',
+      name: 'error code',
       actual: actual.errorCode,
       expected: expected.errorCode,
       equal: actual.errorCode === expected.errorCode,
     },
     {
-      category: 'final url',
+      name: 'final url',
       actual: actual.lhr.finalUrl,
       expected: expected.lhr.finalUrl,
       equal: actual.lhr.finalUrl === expected.lhr.finalUrl,
@@ -194,9 +193,9 @@ function reportAssertion(assertion) {
 
   if (assertion.equal) {
     if (isPlainObject(assertion.actual)) {
-      console.log(`  ${log.greenify(log.tick)} ${assertion.category}`);
+      console.log(`  ${log.greenify(log.tick)} ${assertion.name}`);
     } else {
-      console.log(`  ${log.greenify(log.tick)} ${assertion.category}: ` +
+      console.log(`  ${log.greenify(log.tick)} ${assertion.name}: ` +
           log.greenify(assertion.actual));
     }
   } else {
@@ -213,7 +212,7 @@ function reportAssertion(assertion) {
 `;
       console.log(msg);
     } else {
-      console.log(`  ${log.redify(log.cross)} ${assertion.category}:
+      console.log(`  ${log.redify(log.cross)} ${assertion.name}:
               expected: ${JSON.stringify(assertion.expected)}
                  found: ${JSON.stringify(assertion.actual)}
 `);
