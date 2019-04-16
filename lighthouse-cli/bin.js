@@ -94,6 +94,12 @@ async function begin() {
     cliFlags.outputPath = 'stdout';
   }
 
+  // show deprecation message for disableDeviceEmulation
+  if (cliFlags.disableDeviceEmulation) {
+    log.warn('config', 'The "--disable-device-emulation" option is deprecated.' +
+      ' Please use "--emulated-form-factor=none" instead.');
+  }
+
   if (cliFlags.extraHeaders) {
     // TODO: LH.Flags.extraHeaders is actually a string at this point, but needs to be
     // copied over to LH.Settings.extraHeaders, which is LH.Crdp.Network.Headers. Force
