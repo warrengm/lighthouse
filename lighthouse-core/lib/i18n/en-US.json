@@ -1321,7 +1321,7 @@
   },
   "lighthouse-core/report/html/renderer/util.js | thirdPartyResourcesLabel": {
     "message": "Show 3rd party resources",
-    "description": "Label for checkbox that toggles the visibility of \"3rd party resources\" in the adjacent table. \"3rd party resources\" are any items in the table that came from another domain that likely isn't owned or controlled by the developer of the webpage."
+    "description": "This label is shown above a table next to the checkbox to hide 3rd party resources"
   },
   "lighthouse-core/report/html/renderer/util.js | toplevelWarningsMessage": {
     "message": "There were issues affecting this run of Lighthouse:",
