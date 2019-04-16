@@ -203,7 +203,8 @@ class ReportUIFeatures {
     for (const urlItem of urlItems) {
       const datasetUrl = (urlItem.dataset.url || '');
       // the : check is used for domains that specify a port (google.com:8080/index.html)
-      const isThirdParty = !datasetUrl.includes(`${rootDomain}/`) && !datasetUrl.includes(`${rootDomain}:`);
+      const isThirdParty = !datasetUrl.includes(`${rootDomain}/`) &&
+        !datasetUrl.includes(`${rootDomain}:`);
       if (!isThirdParty) {
         continue;
       }
