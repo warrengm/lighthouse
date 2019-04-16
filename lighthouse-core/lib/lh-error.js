@@ -22,7 +22,7 @@ const UIStrings = {
   /** Error message explaining that Lighthouse could not load the requested URL and the steps that might be taken to fix the unreliability. */
   pageLoadFailedWithDetails: 'Lighthouse was unable to reliably load the page you requested. Make sure you are testing the correct URL and that the server is properly responding to all requests. (Details: {errorDetails})',
   /** Error message explaining that the credentials included in the Lighthouse run were invalid, so the URL cannot be accessed. securityMessages will be replaced with one or more strings from the browser explaining what was insecure about the page load. */
-  pageLoadFailedInsecure: 'The URL you have provided does not have valid security credentials. {securityMessages}',
+  pageLoadFailedInsecure: 'The URL you have provided does not have valid SSL certificate. {securityMessages}',
   /** Error message explaining that Chrome has encountered an error during the Lighthouse run, and that Chrome should be restarted. */
   internalChromeError: 'An internal Chrome error occurred. Please restart Chrome and try re-running Lighthouse.',
   /** Error message explaining that fetching the resources of the webpage has taken longer than the maximum time. */
