@@ -177,6 +177,7 @@ describe('util helpers', () => {
       assert.equal(Util.getRootDomain('https://example.tokyo.jp'), 'tokyo.jp');
       assert.equal(Util.getRootDomain('https://sub.example.com'), 'example.com');
       assert.equal(Util.getRootDomain('https://sub.example.tokyo.jp'), 'tokyo.jp');
+      assert.equal(Util.getRootDomain('http://localhost'), 'localhost');
     });
 
     it('returns the correct rootDomain from an URL object', () => {
@@ -187,6 +188,7 @@ describe('util helpers', () => {
       assert.equal(Util.getRootDomain(new URL('https://example.tokyo.jp')), 'tokyo.jp');
       assert.equal(Util.getRootDomain(new URL('https://sub.example.com')), 'example.com');
       assert.equal(Util.getRootDomain(new URL('https://sub.example.tokyo.jp')), 'tokyo.jp');
+      assert.equal(Util.getRootDomain(new URL('http://localhost')), 'localhost');
     });
   });
 });
