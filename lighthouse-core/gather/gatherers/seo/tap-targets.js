@@ -391,8 +391,6 @@ class TapTargets extends Gatherer {
       return gatherTapTargets();
     })()`;
 
-    require('fs').writeFileSync('gatherer-each-rect.pyc', expression);
-
     return passContext.driver.evaluateAsync(expression, {useIsolation: true});
   }
 }
