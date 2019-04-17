@@ -219,7 +219,12 @@ async function runLighthouse(url, flags, config) {
     process.removeListener('unhandledRejection', handleTheUnhandled);
     if (runnerResult && runnerResult.lhr.runtimeError) {
       const {runtimeError} = runnerResult.lhr;
-      handleError({...runtimeError, friendlyMessage: runtimeError.message, name: 'LHError'});
+      handleError({
+        name: 'LHError',
+        friendlyMessage: runtimeError.message,
+        lhrRuntimeError: true,
+        ...runtimeError,
+      });
     }
 
     return runnerResult;
