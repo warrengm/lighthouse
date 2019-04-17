@@ -258,12 +258,6 @@ function gatherTapTargets() {
     clientRects: ClientRect[]
   }[]} */
   const tapTargetsWithClientRects = [];
-
-  // Disable pointer events so that tap targets below them don't get
-  // detected as non-tappable (they are tappable, just not while the viewport
-  // is at the current scroll position)
-  const reenableFixedAndStickyElementPointerEvents = disableFixedAndStickyElementPointerEvents();
-
   tapTargetElements.forEach(tapTargetElement => {
     // Filter out tap targets that are likely to cause false failures:
     if (elementHasAncestorTapTarget(tapTargetElement)) {
@@ -289,6 +283,11 @@ function gatherTapTargets() {
       clientRects: getClientRects(tapTargetElement),
     });
   });
+
+  // Disable pointer events so that tap targets below them don't get
+  // detected as non-tappable (they are tappable, just not while the viewport
+  // is at the current scroll position)
+  const reenableFixedAndStickyElementPointerEvents = disableFixedAndStickyElementPointerEvents();
 
   /** @type {{
     tapTargetElement: Element,
