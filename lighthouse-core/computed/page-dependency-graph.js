@@ -43,7 +43,7 @@ class PageDependencyGraph {
           if (frame.url) scriptURLs.add(frame.url);
         }
 
-        stack = stack.parent
+        stack = stack.parent;
       }
 
       return Array.from(scriptURLs);
