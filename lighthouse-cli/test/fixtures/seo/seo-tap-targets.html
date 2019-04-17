@@ -103,6 +103,24 @@
 
     <br/><br/>
 
+    <!--Similar to previous test, except that the position absolute child isn't hidden by "overflow: hidden" on the parent. -->
+      <div style="overflow: hidden"></div>
+      <a
+        data-gathered-target="child-client-rect-overlapping-other-target"
+        data-failing-target
+        style="display: block; height: 40px; width: 40px; background: #fca; float: left; position: relative;">
+        <div style="background: #afa; height: 40px; width: 30px; position: absolute; left: 30px">
+          left    
+        </div>
+      </a>
+      <a
+        data-failing-target
+        data-gathered-target="tap-target-overlapped-by-other-targets-position-absolute-child-rect"
+        style="display: block; height: 40px; width: 60px; background: yellowgreen; float: left">right</a>
+    </div>
+
+    <br/><br/>
+
     <div style="position: relative">
       <a
         data-gathered-target="position-absolute-tap-target-fully-contained-in-other-target"
