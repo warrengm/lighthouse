@@ -83,20 +83,21 @@ function runLighthouse(url, configPath, isDebug) {
     runResults = spawnSync(command, args, {encoding: 'utf8', stdio: ['pipe', 'pipe', 'inherit']});
   } while (runResults.status === PROTOCOL_TIMEOUT_EXIT_CODE && runCount <= RETRIES);
 
+  if (isDebug) {
+    console.log(`STDOUT: ${runResults.stdout}`);
+    console.error(`STDERR: ${runResults.stderr}`);
+  }
+
   if (runResults.status === PROTOCOL_TIMEOUT_EXIT_CODE) {
     console.error(`Lighthouse debugger connection timed out ${RETRIES} times. Giving up.`);
     process.exit(1);
   } else if (runResults.status !== 0
      && runResults.status !== PAGE_HUNG_EXIT_CODE
-     && runResults.status !== INSECURE_DOCUMENT_REQUEST_EXIT_CODE) {
+     && runResults.status !== INSECURE_DOCUMENT_REQUEST_EXIT_CODE
+     && !fs.existsSync(outputPath)) {
     console.error(`Lighthouse run failed with exit code ${runResults.status}. stderr to follow:`);
     console.error(runResults.stderr);
     process.exit(runResults.status);
-  }
-
-  if (isDebug) {
-    console.log(`STDOUT: ${runResults.stdout}`);
-    console.error(`STDERR: ${runResults.stderr}`);
   }
 
   let errorCode;
