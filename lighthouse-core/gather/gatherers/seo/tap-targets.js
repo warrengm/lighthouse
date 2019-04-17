@@ -168,22 +168,6 @@ function elementIsInTextBlock(element) {
 }
 
 /**
- * @param {Element} element
- * @returns {boolean}
- */
-/* istanbul ignore next */
-function elementIsPositionFixedOrSticky(element) {
-  const {position} = getComputedStyle(element);
-  if (position === 'fixed' || position === 'sticky') {
-    return true;
-  }
-  if (element.parentElement) {
-    return elementIsPositionFixedOrSticky(element.parentElement);
-  }
-  return false;
-}
-
-/**
  * @param {string} str
  * @param {number} maxLength
  * @returns {string}
@@ -270,10 +254,6 @@ function gatherTapTargets() {
       // in the Web Content Accessibility Guidelines https://www.w3.org/TR/WCAG21/#target-size
       return;
     }
-    if (elementIsPositionFixedOrSticky(tapTargetElement)) {
-      // Fixed and sticky elements only overlap temporarily at certain scroll positions.
-      return;
-    }
     if (!elementIsVisible(tapTargetElement)) {
       return;
     }
@@ -303,6 +283,9 @@ function gatherTapTargets() {
 
     // Filter out client rects that are invisible, e.g because they are in a position absolute element
     // with a lower z-index than the main contnet
+    // This will also filter out all position fixed or sticky tap targets elements because we disable pointer
+    // events on them before running this. That's the correct behavior because whether a position fixed/stick
+    // element overlaps with another tap target depends on the scroll position.
     visibleClientRects = visibleClientRects.filter(rect => {
       // Just checking the center can cause false failures for large partially hidden tap targets,
       // but that should be a rare edge case
@@ -344,7 +327,6 @@ class TapTargets extends Gatherer {
     const expression = `(function() {
       const tapTargetsSelector = "${tapTargetsSelector}";
       ${pageFunctions.getElementsInDocumentString};
-      ${elementIsPositionFixedOrSticky.toString()};
       ${disableFixedAndStickyElementPointerEvents.toString()};
       ${elementIsVisible.toString()};
       ${elementHasAncestorTapTarget.toString()};

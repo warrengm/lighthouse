@@ -229,12 +229,12 @@ module.exports = [
               {
                 'tapTarget': {
                   'type': 'node',
-                  'path': '2,HTML,1,BODY,3,DIV,23,A',
+                  'path': '2,HTML,1,BODY,3,DIV,24,A',
                   'selector': 'body > div > a',
                 },
                 'overlappingTarget': {
                   'type': 'node',
-                  'path': '2,HTML,1,BODY,3,DIV,24,A',
+                  'path': '2,HTML,1,BODY,3,DIV,25,A',
                   'selector': 'body > div > a',
                 },
                 'tapTargetScore': 1920,

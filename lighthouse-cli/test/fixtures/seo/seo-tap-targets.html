@@ -27,9 +27,19 @@
   <!-- Big tap target, but it's invisible because it's behind the main content div -->
   <a style="background: red; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: -1;"></a>
 
-  <a style="background: red; position: sticky; top: 0; left: 0; display: block; width: 100vw; height: 40px; z-index: 1;">sticky</a>
+  <a style="background: red; position: sticky; top: 0; left: 0; display: block; width: 100vw; height: 30px; z-index: 1;">sticky</a>
 
   <div style="background: white; padding: 20px;">
+
+    <div style="height: 300px">
+      <a
+        data-gathered-target="large-link-at-bottom-of-page"
+        style="background: #afa; position: absolute; top: 0; display: block; width: calc(100% - 40px); height: 300px;">
+        This link is intentionally placed at the top of the page, so that the sticky header tap area is overlapped by it.
+        It should not though because overlap with a sticky element depends on the scroll position.
+      </a>
+    </div>
+      
     <h1>SEO Tap targets</h1>
 
     <!-- Invisible nodes don't cause failures -->
@@ -170,14 +180,6 @@
       This is <a>a link in a text block.</a>
       This is <a>a link in a text block.</a>
     </p>
-
-    <a
-      data-gathered-target="large-link-at-bottom-of-page"
-      style="background: #afa; display: block; width: 100%; height: 800px;">
-      This link is intentionally placed at the bottom of the page, so that when we've scrolled
-      to the bottom of the page it overlaps with the sticky header. (Should not fail though
-      because the overlap depends on the current scroll position.)
-    </a>
   </div>
 </body>
 </html>
