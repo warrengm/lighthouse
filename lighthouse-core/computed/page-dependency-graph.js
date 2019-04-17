@@ -31,13 +31,19 @@ class PageDependencyGraph {
     if (!record.initiator) return [];
     if (record.initiator.url) return [record.initiator.url];
     if (record.initiator.type === 'script') {
+      // Script initiators have the stack of callFrames from all functions that led to this request.
+      // If async stacks are enabled, then the stack will also have the parent functions that asynchronously
+      // led to this request chained in the `parent` property.
       /** @type {Set<string>} */
       const scriptURLs = new Set();
-      for (let stack = record.initiator.stack; stack; stack = stack.parent) {
+      let stack = record.initiator.stack;
+      while (stack) {
         const callFrames = stack.callFrames || [];
         for (const frame of callFrames) {
           if (frame.url) scriptURLs.add(frame.url);
         }
+
+        stack = stack.parent
       }
 
       return Array.from(scriptURLs);

@@ -1399,6 +1399,9 @@ class Driver {
   }
 
   /**
+   * Enables `Debugger` domain to receive async stacktrace information on network request initiators.
+   * This is critical for tracing certain performance simulation situations.
+   *
    * @return {Promise<void>}
    */
   async enableAsyncStacks() {
