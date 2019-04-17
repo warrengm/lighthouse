@@ -72,31 +72,6 @@ function elementIsVisible(element) {
 }
 
 /**
- *
- * @param {Element} element
- * @param {LH.Artifacts.Rect[]} clientRects
- * @returns {LH.Artifacts.Rect[]}
- */
-/* istanbul ignore next */
-function filterClientRectsWithinAncestorsVisibleScrollArea(element, clientRects) {
-  const parent = element.parentElement;
-  if (!parent) {
-    return clientRects;
-  }
-  if (getComputedStyle(parent).overflowY !== 'visible') {
-    const parentBCR = parent.getBoundingClientRect();
-    clientRects = clientRects.filter(cr => rectContains(parentBCR, cr));
-  }
-  if (parent.parentElement && parent.parentElement !== document.documentElement) {
-    return filterClientRectsWithinAncestorsVisibleScrollArea(
-      parent,
-      clientRects
-    );
-  }
-  return clientRects;
-}
-
-/**
  * @param {Element} element
  * @returns {LH.Artifacts.Rect[]}
  */
@@ -370,7 +345,6 @@ class TapTargets extends Gatherer {
     const expression = `(function() {
       const tapTargetsSelector = "${tapTargetsSelector}";
       ${pageFunctions.getElementsInDocumentString};
-      ${filterClientRectsWithinAncestorsVisibleScrollArea.toString()};
       ${elementIsPositionFixedOrSticky.toString()};
       ${disableFixedAndStickyElementPointerEvents.toString()};
       ${elementIsVisible.toString()};
