@@ -7,6 +7,17 @@
 const BASE_URL = 'http://localhost:10200/seo/';
 const URLSearchParams = require('url').URLSearchParams;
 
+const fs = require('fs');
+const tapTargetsTestPageHtml =
+  fs.readFileSync(__dirname + '/../../fixtures/seo/seo-tap-targets.html', 'utf-8');
+const expectedGatheredTapTargetsMatch =
+  /** @type {string[]} */(tapTargetsTestPageHtml.match(/data-gathered-target=".*?"/g));
+const expectedGatheredTapTargets = expectedGatheredTapTargetsMatch.map(gatheredTargetName => ({
+  snippet: new RegExp(gatheredTargetName),
+}));
+const expectedFailingTapTargetsMatch =
+  /** @type {string[]} */(tapTargetsTestPageHtml.match(/data-failing-target/g));
+
 /**
  * @param {[string, string][]} headers
  * @return {string}
@@ -190,28 +201,22 @@ module.exports = [
       audits: {
         'tap-targets': {
           score: (() => {
-            const PASSING_TAP_TARGETS = 14;
-            const TOTAL_TAP_TARGETS = 15;
+            const totalTapTargets = expectedGatheredTapTargets.length;
+            const passingTapTargets = totalTapTargets - expectedFailingTapTargetsMatch.length;
             const SCORE_FACTOR = 0.89;
-            return Math.floor(PASSING_TAP_TARGETS / TOTAL_TAP_TARGETS * SCORE_FACTOR * 100) / 100;
+            return Math.round(passingTapTargets / totalTapTargets * SCORE_FACTOR * 100) / 100;
           })(),
           details: {
             items: [
               {
                 'tapTarget': {
                   'type': 'node',
-                  'snippet': '<a ' +
-                   'style="display: block; width: 100px; height: 30px;background: #ddd;">' +
-                   '\n          too small target\n        </a>',
-                  'path': '2,HTML,1,BODY,3,DIV,25,DIV,1,DIV,0,A',
+                  'path': '2,HTML,1,BODY,3,DIV,25,DIV,0,DIV,1,A',
                   'selector': 'div > div > div > a',
                 },
                 'overlappingTarget': {
                   'type': 'node',
-                  'snippet': '<a ' +
-                    'style="display: block; width: 100px; height: 100px;background: #aaa;">' +
-                    '\n          big enough target\n        </a>',
-                  'path': '2,HTML,1,BODY,3,DIV,25,DIV,1,DIV,1,A',
+                  'path': '2,HTML,1,BODY,3,DIV,25,DIV,0,DIV,2,A',
                   'selector': 'div > div > div > a',
                 },
                 'size': '100x30',
@@ -227,9 +232,7 @@ module.exports = [
       },
     },
     artifacts: {
-      TapTargets: {
-        length: 14,
-      },
+      TapTargets: expectedGatheredTapTargets,
     },
   },
 ];
