@@ -33,6 +33,7 @@ function collectAllScriptElements() {
       devtoolsNodePath: getNodePath(script),
       content: script.src ? null : script.text,
       requestId: null,
+      nodeId: null,
     };
   });
 }
@@ -58,7 +59,17 @@ class ScriptElements extends Gatherer {
     })()`, {useIsolation: true});
 
     for (const script of scripts) {
-      if (script.content) script.requestId = mainResource.requestId;
+      if (script.content) {
+        script.requestId = mainResource.requestId;
+      }
+      try {
+        const {element} = await driver.querySelector(`script[src$="${script.src}"]`);
+        script.nodeId = element.nodeId;
+        console.log(script);
+        const stackTraces =
+          await driver.sendCommand('DOM.getNodeStackTraces', {nodeId: element.nodeId});
+        script.nodeStackTraces = stackTraces;
+      } catch (e) {}
     }
 
     const scriptRecords = loadData.networkRecords

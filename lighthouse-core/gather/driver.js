@@ -1405,6 +1405,19 @@ class Driver {
   }
 
   /**
+   * Enables stack traces for DOM Nodes.
+   * @return {Promise<void>}
+   */
+  async enableDomStacks() {
+    try {
+      await this.sendCommand('DOM.setNodeStackTracesEnabled', {enable: true});
+    } catch (e) {
+      // Ignore. Consider removing the try/catch after this method is no longer
+      // experimental.
+    }
+  }
+
+  /**
    * @param {LH.Config.Settings} settings
    * @return {Promise<void>}
    */
