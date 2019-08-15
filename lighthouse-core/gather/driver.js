@@ -1145,6 +1145,7 @@ class Driver {
     } else if (waitForLoad) {
       const passConfig = /** @type {Partial<LH.Config.Pass>} */ (passContext.passConfig || {});
       let {pauseAfterLoadMs, networkQuietThresholdMs, cpuQuietThresholdMs} = passConfig;
+      let pierceIframes = passContext.settings && passContext.settings.pierceIframes;
       let maxWaitMs = passContext.settings && passContext.settings.maxWaitForLoad;
       let maxFCPMs = passContext.settings && passContext.settings.maxWaitForFcp;
 
@@ -1156,7 +1157,7 @@ class Driver {
       if (typeof maxFCPMs !== 'number') maxFCPMs = constants.defaultSettings.maxWaitForFcp;
       /* eslint-enable max-len */
 
-      if (!waitForFCP) maxFCPMs = undefined;
+      if (!waitForFCP || pierceIframes) maxFCPMs = undefined;
       await this._waitForFullyLoaded(pauseAfterLoadMs, networkQuietThresholdMs, cpuQuietThresholdMs,
           maxWaitMs, maxFCPMs);
     }

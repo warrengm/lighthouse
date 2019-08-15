@@ -121,6 +121,8 @@ declare global {
       precomputedLanternData?: PrecomputedLanternData | null;
       /** The budget.json object for LightWallet. */
       budgets?: Array<Budget> | null;
+      /** Whether to check iframes for key trace events, particular related to first paint. */
+      pierceIframes?: boolean;
     }
 
     /**

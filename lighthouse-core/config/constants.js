@@ -52,6 +52,7 @@ const defaultSettings = {
   disableStorageReset: false,
   emulatedFormFactor: 'mobile',
   channel: 'node',
+  pierceIframes: false,
 
   // the following settings have no defaults but we still want ensure that `key in settings`
   // in config will work in a typechecked way

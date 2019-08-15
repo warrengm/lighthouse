@@ -473,9 +473,10 @@ class TraceProcessor {
    * Finds key trace events, identifies main process/thread, and returns timings of trace events
    * in milliseconds since navigation start in addition to the standard microsecond monotonic timestamps.
    * @param {LH.Trace} trace
+   * @param {LH.Config.Settings} settings
    * @return {TraceOfTabWithoutFCP}
   */
-  static computeTraceOfTab(trace) {
+  static computeTraceOfTab(trace, settings) {
     // Parse the trace for our key events and sort them by timestamp. Note: sort
     // *must* be stable to keep events correctly nested.
     const keyEvents = this.filteredTraceSort(trace.traceEvents, e => {
@@ -488,8 +489,10 @@ class TraceProcessor {
     // Find the inspected frame
     const mainFrameIds = this.findMainFrameIds(keyEvents);
 
-    // Filter to just events matching the frame ID for sanity
-    const frameEvents = keyEvents.filter(e => e.args.frame === mainFrameIds.frameId);
+    // Filter to just events matching the main (top-level) frame ID for sanity, unless we're
+    // piercing iframes
+    const frameEvents = settings.pierceIframes ?
+      keyEvents : keyEvents.filter(e => e.args.frame === mainFrameIds.frameId);
 
     // Our navStart will be the last frame navigation in the trace
     const navigationStart = frameEvents.filter(this._isNavigationStartOfInterest).pop();

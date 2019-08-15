@@ -104,6 +104,7 @@ function getFlags(manualArgv) {
         'throttling.downloadThroughputKbps': 'Controls emulated network download throughput',
         'throttling.uploadThroughputKbps': 'Controls emulated network upload throughput',
         'throttling.cpuSlowdownMultiplier': 'Controls simulated + emulated CPU throttling',
+        'pierce-iframes': 'Check for key events (such as first paint) in iframes, in addition to the main document',
         'gather-mode':
             'Collect artifacts from a connected browser and save to disk. (Artifacts folder path may optionally be provided). If audit-mode is not also enabled, the run will quit early.',
         'audit-mode': 'Process saved artifacts from disk. (Artifacts folder path may be provided, otherwise defaults to ./latest-run/)',

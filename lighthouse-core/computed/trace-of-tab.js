@@ -33,13 +33,14 @@ class TraceOfTab {
    * Finds key trace events, identifies main process/thread, and returns timings of trace events
    * in milliseconds since navigation start in addition to the standard microsecond monotonic timestamps.
    * @param {LH.Trace} trace
+   * @param {LH.Audit.Context} context
    * @return {Promise<LH.Artifacts.TraceOfTab>}
   */
-  static async compute_(trace) {
+  static async compute_(trace, context) {
     // Trace of tab doesn't require FCP to exist, but all of LH requires it.
     // We'll check that we got an FCP here and re-type accordingly so all of our consumers don't
     // have to repeat this check.
-    const traceOfTab = await LHTraceProcessor.computeTraceOfTab(trace);
+    const traceOfTab = await LHTraceProcessor.computeTraceOfTab(trace, context.settings);
     const {timings, timestamps, firstContentfulPaintEvt} = traceOfTab;
     const {firstContentfulPaint: firstContentfulPaintTiming} = timings;
     const {firstContentfulPaint: firstContentfulPaintTs} = timestamps;
