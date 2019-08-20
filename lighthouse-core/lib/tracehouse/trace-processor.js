@@ -473,10 +473,10 @@ class TraceProcessor {
    * Finds key trace events, identifies main process/thread, and returns timings of trace events
    * in milliseconds since navigation start in addition to the standard microsecond monotonic timestamps.
    * @param {LH.Trace} trace
-   * @param {LH.Config.Settings} settings
+   * @param {{pid: number, tid: number, frameId: string}} [frameIds]
    * @return {TraceOfTabWithoutFCP}
   */
-  static computeTraceOfTab(trace, settings) {
+  static computeTraceOfTab(trace, frameIds) {
     // Parse the trace for our key events and sort them by timestamp. Note: sort
     // *must* be stable to keep events correctly nested.
     const keyEvents = this.filteredTraceSort(trace.traceEvents, e => {
@@ -486,17 +486,21 @@ class TraceProcessor {
           e.cat === '__metadata';
     });
 
-    // Find the inspected frame
-    const mainFrameIds = this.findMainFrameIds(keyEvents);
+    const isTopLevelFrame = !frameIds;
+    if (!frameIds) {
+      // Find the inspected frame
+      frameIds = this.findMainFrameIds(keyEvents);
+    }
 
-    // Filter to just events matching the main (top-level) frame ID for sanity, unless we're
-    // piercing iframes
-    const frameEvents = settings.pierceIframes ?
-      keyEvents : keyEvents.filter(e => e.args.frame === mainFrameIds.frameId);
+    const frameEvents = keyEvents.filter(e => e.args.frame === frameIds.frameId);
 
     // Our navStart will be the last frame navigation in the trace
     const navigationStart = frameEvents.filter(this._isNavigationStartOfInterest).pop();
     if (!navigationStart) throw this.createNoNavstartError();
+
+    if (!frameIds.ts) {
+      frameIds.tid = navigationStart.ts;
+    }
 
     // Find our first paint of this frame
     const firstPaint = frameEvents.find(e => e.name === 'firstPaint' && e.ts > navigationStart.ts);
@@ -535,10 +539,10 @@ class TraceProcessor {
     // subset all trace events to just our tab's process (incl threads other than main)
     // stable-sort events to keep them correctly nested.
     const processEvents = TraceProcessor
-      .filteredTraceSort(trace.traceEvents, e => e.pid === mainFrameIds.pid);
+      .filteredTraceSort(trace.traceEvents, e => e.pid === frameIds.pid);
 
     const mainThreadEvents = processEvents
-      .filter(e => e.tid === mainFrameIds.tid);
+      .filter(e => e.tid === frameIds.tid);
 
     // traceEnd must exist since at least navigationStart event was verified as existing.
     const traceEnd = trace.traceEvents.reduce((max, evt) => {
@@ -558,6 +562,14 @@ class TraceProcessor {
       load: getTimestamp(load),
       domContentLoaded: getTimestamp(domContentLoaded),
     };
+
+    // Create child traces.
+    const childFrameIds = keyEvents
+      .filter(e => e.name === 'FrameComittedInBrowser' &&
+          e.args.frame != frameIds.frameId && e.args.data.parent == frameIds.frameId)
+      // NOTE: we fall back to the navigationStart tid above.
+      .map(e => ({pid: e.args.pid, tid: 0, frameId: e.args.data.frame}));
+    const childTraces = childFrameIds.map(ids => this.computeTraceOfTab(trace, ids));
 
     /** @param {number} ts */
     const getTiming = (ts) => (ts - navigationStart.ts) / 1000;
@@ -579,7 +591,7 @@ class TraceProcessor {
       timestamps,
       processEvents,
       mainThreadEvents,
-      mainFrameIds,
+      mainFrameIds: frameIds,
       navigationStartEvt: navigationStart,
       firstPaintEvt: firstPaint,
       firstContentfulPaintEvt: firstContentfulPaint,
@@ -587,6 +599,7 @@ class TraceProcessor {
       loadEvt: load,
       domContentLoadedEvt: domContentLoaded,
       fmpFellBack,
+      childTraces,
     };
   }
 }
