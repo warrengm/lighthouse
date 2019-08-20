@@ -474,7 +474,7 @@ declare global {
       export interface TraceTimes {
         navigationStart: number;
         firstPaint?: number;
-        firstContentfulPaint: number;
+        firstContentfulPaint?: number;
         firstMeaningfulPaint?: number;
         traceEnd: number;
         load?: number;
@@ -497,7 +497,7 @@ declare global {
         /** The trace event marking firstPaint, if it was found. */
         firstPaintEvt?: TraceEvent;
         /** The trace event marking firstContentfulPaint, if it was found. */
-        firstContentfulPaintEvt: TraceEvent;
+        firstContentfulPaintEvt?: TraceEvent;
         /** The trace event marking firstMeaningfulPaint, if it was found. */
         firstMeaningfulPaintEvt?: TraceEvent;
         /** The trace event marking loadEventEnd, if it was found. */
@@ -509,6 +509,8 @@ declare global {
          * firstMeaningfulPaintCandidate events had to be attempted.
          */
         fmpFellBack: boolean;
+        /** Traces of any child frames. */
+        childTraces: TraceOfTab[];
       }
 
       /** Information on a tech stack (e.g. a JS library) used by the page. */
