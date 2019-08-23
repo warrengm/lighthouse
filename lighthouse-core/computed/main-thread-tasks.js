@@ -11,13 +11,32 @@ const TraceOfTab = require('./trace-of-tab.js');
 
 class MainThreadTasks {
   /**
+   * @param {LH.Artifacts.TraceOfTab} traceOfTab
+   * @param {Array<LH.Artifacts.TaskNode>} outputArray
+   * @return {Promise<void>}
+   */
+  static async _coalesceChildFrameTasks(traceOfTab, outputArray) {
+    for (const t of traceOfTab.childTraces) {
+      const threadTasks =
+        await MainThreadTasks_.getMainThreadTasks(t.mainThreadEvents, t.timestamps.traceEnd);
+      outputArray.push(...threadTasks);
+      this._coalesceChildFrameTasks(t, outputArray);
+    }
+  }
+
+  /**
    * @param {LH.Trace} trace
    * @param {LH.Audit.Context} context
    * @return {Promise<Array<LH.Artifacts.TaskNode>>}
    */
   static async compute_(trace, context) {
-    const {mainThreadEvents, timestamps} = await TraceOfTab.request(trace, context);
-    return MainThreadTasks_.getMainThreadTasks(mainThreadEvents, timestamps.traceEnd);
+    const traceOfTab = await TraceOfTab.request(trace, context);
+    const tasks = await MainThreadTasks_.getMainThreadTasks(
+      traceOfTab.mainThreadEvents, traceOfTab.timestamps.traceEnd);
+    if (context.settings.pierceIframes) {
+      this._coalesceChildFrameTasks(traceOfTab, tasks);
+    }
+    return tasks;
   }
 }
 

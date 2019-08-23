@@ -8,6 +8,7 @@
 const makeComputedArtifact = require('../computed-artifact.js');
 const LanternMetric = require('./lantern-metric.js');
 const BaseNode = require('../../lib/dependency-graph/base-node.js');
+const LHError = require('../../lib/lh-error.js');
 
 /** @typedef {BaseNode.Node} Node */
 /** @typedef {import('../../lib/dependency-graph/cpu-node')} CPUNode */
@@ -172,6 +173,9 @@ class LanternFirstContentfulPaint extends LanternMetric {
    * @return {Node}
    */
   static getOptimisticGraph(dependencyGraph, traceOfTab) {
+    if (traceOfTab.timestamps.firstContentfulPaint == null) {
+      throw new LHError(LHError.errors.NO_FCP);
+    }
     return this.getFirstPaintBasedGraph(
       dependencyGraph,
       traceOfTab.timestamps.firstContentfulPaint,
@@ -188,6 +192,9 @@ class LanternFirstContentfulPaint extends LanternMetric {
    * @return {Node}
    */
   static getPessimisticGraph(dependencyGraph, traceOfTab) {
+    if (traceOfTab.timestamps.firstContentfulPaint == null) {
+      throw new LHError(LHError.errors.NO_FCP);
+    }
     return this.getFirstPaintBasedGraph(
       dependencyGraph,
       traceOfTab.timestamps.firstContentfulPaint,

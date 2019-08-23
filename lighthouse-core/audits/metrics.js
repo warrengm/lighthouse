@@ -15,6 +15,7 @@ const Interactive = require('../computed/metrics/interactive.js');
 const SpeedIndex = require('../computed/metrics/speed-index.js');
 const EstimatedInputLatency = require('../computed/metrics/estimated-input-latency.js');
 const TotalBlockingTime = require('../computed/metrics/total-blocking-time.js');
+const LHError = require('../lib/lh-error.js');
 
 class Metrics extends Audit {
   /**
@@ -61,6 +62,11 @@ class Metrics extends Audit {
     const speedIndex = await requestOrUndefined(SpeedIndex, metricComputationData);
     const estimatedInputLatency = await EstimatedInputLatency.request(metricComputationData, context); // eslint-disable-line max-len
     const totalBlockingTime = await TotalBlockingTime.request(metricComputationData, context); // eslint-disable-line max-len
+
+    if (traceOfTab.timings.firstContentfulPaint == null ||
+        traceOfTab.timestamps.firstContentfulPaint == null) {
+      throw new LHError(LHError.errors.NO_FCP);
+    }
 
     /** @type {UberMetricsItem} */
     const metrics = {

@@ -468,12 +468,31 @@ class TraceProcessor {
     evt.name === SCHEDULABLE_TASK_TITLE_ALT3;
   }
 
+  /**
+   * Overrides paint timings in traceOfTab with the timings of the earliest child frame paint, if
+   * traceOfTab has a later paint time or lacks paint timings.
+   * @param {LH.Artifacts.TraceOfTab} traceOfTab
+   */
+  static coalescePaintTimings(traceOfTab) {
+    for (const child of traceOfTab.childTraces) {
+      this.coalescePaintTimings(child);
+      const pairs = [[traceOfTab.timings, child.timings], [traceOfTab.timestamps, child.timestamps]];
+      for (const [coalesced, child] of pairs) {
+        coalesced.firstPaint = Math.min(child.firstPaint || Infinity, coalesced.firstPaint || Infinity);
+        coalesced.firstContentfulPaint =
+          Math.min(child.firstContentfulPaint || Infinity, coalesced.firstContentfulPaint || Infinity);
+        coalesced.firstMeaningfulPaint =
+          Math.min(child.firstMeaningfulPaint || Infinity, coalesced.firstMeaningfulPaint || Infinity);
+      }
+    }
+  }
 
   /**
    * Finds key trace events, identifies main process/thread, and returns timings of trace events
    * in milliseconds since navigation start in addition to the standard microsecond monotonic timestamps.
    * @param {LH.Trace} trace
-   * @param {{pid: number, tid: number, frameId: string}} [frameIds]
+   * @param {{pid: number, tid: number, frameId: string}} [frameIds] The IDs of frame to trace. If
+   *   omitted, the top-level frame will be traced.
    * @return {TraceOfTabWithoutFCP}
   */
   static computeTraceOfTab(trace, frameIds) {
@@ -486,20 +505,15 @@ class TraceProcessor {
           e.cat === '__metadata';
     });
 
-    const isTopLevelFrame = !frameIds;
-    if (!frameIds) {
-      // Find the inspected frame
-      frameIds = this.findMainFrameIds(keyEvents);
-    }
-
-    const frameEvents = keyEvents.filter(e => e.args.frame === frameIds.frameId);
+    const tabFrameIds = frameIds || this.findMainFrameIds(keyEvents);
+    const frameEvents = keyEvents.filter(e => e.args.frame === tabFrameIds.frameId);
 
     // Our navStart will be the last frame navigation in the trace
     const navigationStart = frameEvents.filter(this._isNavigationStartOfInterest).pop();
     if (!navigationStart) throw this.createNoNavstartError();
 
-    if (!frameIds.ts) {
-      frameIds.tid = navigationStart.ts;
+    if (!tabFrameIds.tid) {
+      tabFrameIds.tid = navigationStart.tid;
     }
 
     // Find our first paint of this frame
@@ -539,10 +553,10 @@ class TraceProcessor {
     // subset all trace events to just our tab's process (incl threads other than main)
     // stable-sort events to keep them correctly nested.
     const processEvents = TraceProcessor
-      .filteredTraceSort(trace.traceEvents, e => e.pid === frameIds.pid);
+      .filteredTraceSort(trace.traceEvents, e => e.pid === tabFrameIds.pid);
 
     const mainThreadEvents = processEvents
-      .filter(e => e.tid === frameIds.tid);
+      .filter(e => e.tid === tabFrameIds.tid);
 
     // traceEnd must exist since at least navigationStart event was verified as existing.
     const traceEnd = trace.traceEvents.reduce((max, evt) => {
@@ -565,10 +579,11 @@ class TraceProcessor {
 
     // Create child traces.
     const childFrameIds = keyEvents
-      .filter(e => e.name === 'FrameComittedInBrowser' &&
-          e.args.frame != frameIds.frameId && e.args.data.parent == frameIds.frameId)
+      .filter(e => e.name === 'FrameCommittedInBrowser' &&
+          e.args.data && e.args.data.parent == tabFrameIds.frameId)
       // NOTE: we fall back to the navigationStart tid above.
-      .map(e => ({pid: e.args.pid, tid: 0, frameId: e.args.data.frame}));
+      // @ts-ignore e.args.data is not undefined.
+      .map(e => ({pid: e.args.data.processId, tid: 0, frameId: e.args.data.frame}));
     const childTraces = childFrameIds.map(ids => this.computeTraceOfTab(trace, ids));
 
     /** @param {number} ts */
@@ -591,7 +606,7 @@ class TraceProcessor {
       timestamps,
       processEvents,
       mainThreadEvents,
-      mainFrameIds: frameIds,
+      mainFrameIds: tabFrameIds,
       navigationStartEvt: navigationStart,
       firstPaintEvt: firstPaint,
       firstContentfulPaintEvt: firstContentfulPaint,

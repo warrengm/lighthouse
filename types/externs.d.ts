@@ -231,6 +231,7 @@ declare global {
             processId?: number;
           }[];
           page?: string;
+          parent?: string;  // Parent frame, if applicable
           readyState?: number;
           requestId?: string;
           stackTrace?: {

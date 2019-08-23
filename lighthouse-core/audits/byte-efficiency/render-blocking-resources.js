@@ -18,6 +18,7 @@ const NetworkRequest = require('../../lib/network-request.js');
 const TraceOfTab = require('../../computed/trace-of-tab.js');
 const LoadSimulator = require('../../computed/load-simulator.js');
 const FirstContentfulPaint = require('../../computed/metrics/first-contentful-paint.js');
+const LHError = require('../../lib/lh-error.js');
 
 /** @typedef {import('../../lib/dependency-graph/simulator/simulator')} Simulator */
 /** @typedef {import('../../lib/dependency-graph/base-node.js').Node} Node */
@@ -93,6 +94,11 @@ class RenderBlockingResources extends Audit {
     const metricComputationData = {trace, devtoolsLog, simulator, settings: metricSettings};
     // @ts-ignore - TODO(bckenny): allow optional `throttling` settings
     const fcpSimulation = await FirstContentfulPaint.request(metricComputationData, context);
+
+    if (traceOfTab.timestamps.firstContentfulPaint == null) {
+      throw new LHError(LHError.errors.NO_FCP);
+    }
+
     const fcpTsInMs = traceOfTab.timestamps.firstContentfulPaint / 1000;
 
     const nodesByUrl = getNodesAndTimingByUrl(fcpSimulation.optimisticEstimate.nodeTimings);

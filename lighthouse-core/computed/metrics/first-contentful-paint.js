@@ -8,6 +8,7 @@
 const makeComputedArtifact = require('../computed-artifact.js');
 const ComputedMetric = require('./metric.js');
 const LanternFirstContentfulPaint = require('./lantern-first-contentful-paint.js');
+const LHError = require('../../lib/lh-error.js');
 
 class FirstContentfulPaint extends ComputedMetric {
   /**
@@ -25,7 +26,10 @@ class FirstContentfulPaint extends ComputedMetric {
    */
   static async computeObservedMetric(data) {
     const {traceOfTab} = data;
-
+    if (traceOfTab.timings.firstContentfulPaint == null ||
+        traceOfTab.timestamps.firstContentfulPaint == null) {
+      throw new LHError(LHError.errors.NO_FCP);
+    }
     return {
       timing: traceOfTab.timings.firstContentfulPaint,
       timestamp: traceOfTab.timestamps.firstContentfulPaint,

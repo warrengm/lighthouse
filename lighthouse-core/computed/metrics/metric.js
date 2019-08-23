@@ -57,6 +57,10 @@ class ComputedMetric {
 
     TracingProcessor.assertHasToplevelEvents(augmentedData.traceOfTab.mainThreadEvents);
 
+    if (settings.pierceIframes) {
+      TracingProcessor.coalescePaintTimings(augmentedData.traceOfTab);
+    }
+
     switch (settings.throttlingMethod) {
       case 'simulate':
         return this.computeSimulatedMetric(augmentedData, context);

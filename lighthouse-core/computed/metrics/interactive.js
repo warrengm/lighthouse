@@ -88,6 +88,9 @@ class Interactive extends ComputedMetric {
    * @return {{cpuQuietPeriod: TimePeriod, networkQuietPeriod: TimePeriod, cpuQuietPeriods: Array<TimePeriod>, networkQuietPeriods: Array<TimePeriod>}}
    */
   static findOverlappingQuietPeriods(longTasks, networkRecords, traceOfTab) {
+    if (traceOfTab.timestamps.firstContentfulPaint == null) {
+      throw new LHError(LHError.errors.NO_FCP);
+    }
     const FcpTsInMs = traceOfTab.timestamps.firstContentfulPaint / 1000;
 
     /** @type {function(TimePeriod):boolean} */
@@ -172,7 +175,7 @@ class Interactive extends ComputedMetric {
 
     const timestamp = Math.max(
       cpuQuietPeriod.start,
-      traceOfTab.timestamps.firstContentfulPaint / 1000,
+      (traceOfTab.timestamps.firstContentfulPaint || 0) / 1000,
       traceOfTab.timestamps.domContentLoaded / 1000
     ) * 1000;
     const timing = (timestamp - traceOfTab.timestamps.navigationStart) / 1000;
