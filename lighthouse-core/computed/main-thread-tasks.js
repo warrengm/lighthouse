@@ -13,20 +13,23 @@ class MainThreadTasks {
   /**
    * @param {LH.Artifacts.TraceOfTab} traceOfTab
    * @param {Array<LH.Artifacts.TaskNode>} outputArray
+   * @param {Set<string>} seenThreads A set of threads that have been processed already, to prevent
+   *     duplicate events. Each element will be of the for m`${pid}:${tid}`.
    * @return {Promise<void>}
    */
-  static async _coalesceChildFrameTasks(traceOfTab, outputArray) {
+  static async _coalesceChildFrameTasks(traceOfTab, outputArray, seenThreads) {
     for (const t of traceOfTab.childTraces || []) {
+      const {pid, tid} = t.mainFrameIds;
+      const key = `${pid}:${tid}`;
       // Only append child trace tasks if the child frame ran on a separate thread.
-      if (t.parentFrameIds &&
-          (t.parentFrameIds.pid != traceOfTab.mainFrameIds.pid ||
-           t.parentFrameIds.tid != traceOfTab.mainFrameIds.tid)) {
+      if (!seenThreads.has(key)) {
         const threadTasks =
           await MainThreadTasks_.getMainThreadTasks(t.mainThreadEvents, t.timestamps.traceEnd);
         outputArray.push(...threadTasks);
+        seenThreads.add(key);
       }
       // Recurse here in case there are yet x-process descendent frames.
-      this._coalesceChildFrameTasks(t, outputArray);
+      await this._coalesceChildFrameTasks(t, outputArray, seenThreads);
     }
   }
 
@@ -40,7 +43,7 @@ class MainThreadTasks {
     const tasks = await MainThreadTasks_.getMainThreadTasks(
       traceOfTab.mainThreadEvents, traceOfTab.timestamps.traceEnd);
     if (context.settings.pierceIframes) {
-      await this._coalesceChildFrameTasks(traceOfTab, tasks);
+      await this._coalesceChildFrameTasks(traceOfTab, tasks, new Set());
     }
     return tasks;
   }
