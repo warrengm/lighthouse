@@ -492,6 +492,8 @@ declare global {
         mainThreadEvents: Array<TraceEvent>;
         /** IDs for the trace's main frame, process, and thread. */
         mainFrameIds: {pid: number, tid: number, frameId: string};
+        /** IDs for the trace's parent frame (if applicable), process, and thread. */
+        parentFrameIds: ({pid: number, tid: number, frameId: string}|undefined);
         /** The trace event marking navigationStart. */
         navigationStartEvt: TraceEvent;
         /** The trace event marking firstPaint, if it was found. */

@@ -18,8 +18,9 @@ class MainThreadTasks {
   static async _coalesceChildFrameTasks(traceOfTab, outputArray) {
     for (const t of traceOfTab.childTraces || []) {
       // Only append child trace tasks if the child frame ran on a separate thread.
-      if (t.parentFrameIds.pid != traceOfTab.mainFrameIds.pid ||
-          t.parentFrameIds.tid != traceOfTab.mainFrameIds.tid) {
+      if (t.parentFrameIds &&
+          (t.parentFrameIds.pid != traceOfTab.mainFrameIds.pid ||
+           t.parentFrameIds.tid != traceOfTab.mainFrameIds.tid)) {
         const threadTasks =
           await MainThreadTasks_.getMainThreadTasks(t.mainThreadEvents, t.timestamps.traceEnd);
         outputArray.push(...threadTasks);
