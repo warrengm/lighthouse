@@ -159,6 +159,9 @@ class Interactive extends ComputedMetric {
   static computeObservedMetric(data) {
     const {traceOfTab, networkRecords} = data;
 
+    if (traceOfTab.timestamps.firstContentfulPaint == null) {
+      throw new LHError(LHError.errors.NO_FCP);
+    }
     if (!traceOfTab.timestamps.domContentLoaded) {
       throw new LHError(LHError.errors.NO_DCL);
     }
@@ -175,7 +178,7 @@ class Interactive extends ComputedMetric {
 
     const timestamp = Math.max(
       cpuQuietPeriod.start,
-      (traceOfTab.timestamps.firstContentfulPaint || 0) / 1000,
+      traceOfTab.timestamps.firstContentfulPaint / 1000,
       traceOfTab.timestamps.domContentLoaded / 1000
     ) * 1000;
     const timing = (timestamp - traceOfTab.timestamps.navigationStart) / 1000;
