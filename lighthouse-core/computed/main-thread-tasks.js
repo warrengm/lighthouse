@@ -25,6 +25,7 @@ class MainThreadTasks {
           await MainThreadTasks_.getMainThreadTasks(t.mainThreadEvents, t.timestamps.traceEnd);
         outputArray.push(...threadTasks);
       }
+      // Recurse here in case there are yet x-process descendent frames.
       this._coalesceChildFrameTasks(t, outputArray);
     }
   }
