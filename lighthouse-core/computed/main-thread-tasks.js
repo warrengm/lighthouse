@@ -16,10 +16,14 @@ class MainThreadTasks {
    * @return {Promise<void>}
    */
   static async _coalesceChildFrameTasks(traceOfTab, outputArray) {
-    for (const t of traceOfTab.childTraces) {
-      const threadTasks =
-        await MainThreadTasks_.getMainThreadTasks(t.mainThreadEvents, t.timestamps.traceEnd);
-      outputArray.push(...threadTasks);
+    for (const t of traceOfTab.childTraces || []) {
+      // Only append child trace tasks if the child frame ran on a separate thread.
+      if (t.parentFrameIds.pid != traceOfTab.mainFrameIds.pid ||
+          t.parentFrameIds.tid != traceOfTab.mainFrameIds.tid) {
+        const threadTasks =
+          await MainThreadTasks_.getMainThreadTasks(t.mainThreadEvents, t.timestamps.traceEnd);
+        outputArray.push(...threadTasks);
+      }
       this._coalesceChildFrameTasks(t, outputArray);
     }
   }
@@ -34,7 +38,7 @@ class MainThreadTasks {
     const tasks = await MainThreadTasks_.getMainThreadTasks(
       traceOfTab.mainThreadEvents, traceOfTab.timestamps.traceEnd);
     if (context.settings.pierceIframes) {
-      this._coalesceChildFrameTasks(traceOfTab, tasks);
+      await this._coalesceChildFrameTasks(traceOfTab, tasks);
     }
     return tasks;
   }

@@ -493,9 +493,10 @@ class TraceProcessor {
    * @param {LH.Trace} trace
    * @param {{pid: number, tid: number, frameId: string}} [frameIds] The IDs of frame to trace. If
    *   omitted, the top-level frame will be traced.
+   * @param {{pid: number, tid: number, frameId: string}} [parentFrameIds]
    * @return {TraceOfTabWithoutFCP}
   */
-  static computeTraceOfTab(trace, frameIds) {
+  static computeTraceOfTab(trace, frameIds = undefined, parentFrameIds = undefined) {
     // Parse the trace for our key events and sort them by timestamp. Note: sort
     // *must* be stable to keep events correctly nested.
     const keyEvents = this.filteredTraceSort(trace.traceEvents, e => {
@@ -584,7 +585,7 @@ class TraceProcessor {
       // NOTE: we fall back to the navigationStart tid above.
       // @ts-ignore e.args.data is not undefined.
       .map(e => ({pid: e.args.data.processId, tid: 0, frameId: e.args.data.frame}));
-    const childTraces = childFrameIds.map(ids => this.computeTraceOfTab(trace, ids));
+    const childTraces = childFrameIds.map(ids => this.computeTraceOfTab(trace, ids, tabFrameIds));
 
     /** @param {number} ts */
     const getTiming = (ts) => (ts - navigationStart.ts) / 1000;
@@ -607,6 +608,7 @@ class TraceProcessor {
       processEvents,
       mainThreadEvents,
       mainFrameIds: tabFrameIds,
+      parentFrameIds,
       navigationStartEvt: navigationStart,
       firstPaintEvt: firstPaint,
       firstContentfulPaintEvt: firstContentfulPaint,
