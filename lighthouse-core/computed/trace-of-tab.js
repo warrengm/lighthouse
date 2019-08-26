@@ -40,8 +40,11 @@ class TraceOfTab {
     // Trace of tab doesn't require FCP to exist, but all of LH requires it.
     // We'll check that we got an FCP here and re-type accordingly so all of our consumers don't
     // have to repeat this check.
-    try {
     const traceOfTab = await LHTraceProcessor.computeTraceOfTab(trace);
+    if (context.settings.pierceIframes) {
+      TraceProcessor.coalescePaintTimings(traceOfTab);
+    }
+
     const {timings, timestamps, firstContentfulPaintEvt} = traceOfTab;
     const {firstContentfulPaint: firstContentfulPaintTiming} = timings;
     const {firstContentfulPaint: firstContentfulPaintTs} = timestamps;
@@ -50,7 +53,7 @@ class TraceOfTab {
       firstContentfulPaintTiming === undefined ||
       firstContentfulPaintTs === undefined
     ) {
-      //throw new LHError(LHError.errors.NO_FCP);
+      throw new LHError(LHError.errors.NO_FCP);
     }
 
     // We already know that `traceOfTab` is good to go at this point, but tsc doesn't yet.
@@ -61,7 +64,6 @@ class TraceOfTab {
       timings: {...timings, firstContentfulPaint: firstContentfulPaintTiming},
       timestamps: {...timestamps, firstContentfulPaint: firstContentfulPaintTs},
     };
-    } catch(e) {console.log(e); throw e }
   }
 }
 

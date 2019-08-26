@@ -477,12 +477,19 @@ class TraceProcessor {
     for (const child of traceOfTab.childTraces) {
       this.coalescePaintTimings(child);
       const pairs = [[traceOfTab.timings, child.timings], [traceOfTab.timestamps, child.timestamps]];
-      for (const [coalesced, child] of pairs) {
-        coalesced.firstPaint = Math.min(child.firstPaint || Infinity, coalesced.firstPaint || Infinity);
-        coalesced.firstContentfulPaint =
-          Math.min(child.firstContentfulPaint || Infinity, coalesced.firstContentfulPaint || Infinity);
-        coalesced.firstMeaningfulPaint =
-          Math.min(child.firstMeaningfulPaint || Infinity, coalesced.firstMeaningfulPaint || Infinity);
+      for (const [timing, childTiming] of pairs) {
+        // Take the minimum of timing events.
+        timing.firstPaint = Math.min(childTiming.firstPaint || Infinity, timing.firstPaint || Infinity);
+        timing.firstContentfulPaint =
+          Math.min(childTiming.firstContentfulPaint || Infinity, timing.firstContentfulPaint || Infinity);
+        timing.firstMeaningfulPaint =
+          Math.min(childTiming.firstMeaningfulPaint || Infinity, timing.firstMeaningfulPaint || Infinity);
+
+        // Update timing event if needed.
+        const updateFcpEvent = (timing.firstContentfulPaint === childTiming.firstContentfulPaint);
+        if (updateFcpEvent && child.firstContentfulPaintEvt) {
+          traceOfTab.firstContentfulPaintEvt = child.firstContentfulPaintEvt;
+        }
       }
     }
   }
