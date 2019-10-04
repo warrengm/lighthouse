@@ -95,7 +95,7 @@ class RenderBlockingResources extends Audit {
     // @ts-ignore - TODO(bckenny): allow optional `throttling` settings
     const fcpSimulation = await FirstContentfulPaint.request(metricComputationData, context);
 
-    if (traceOfTab.timestamps.firstContentfulPaint == null) {
+    if (traceOfTab.timestamps.firstContentfulPaint === undefined) {
       throw new LHError(LHError.errors.NO_FCP);
     }
 

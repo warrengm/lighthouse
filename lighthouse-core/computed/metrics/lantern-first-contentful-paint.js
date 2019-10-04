@@ -173,7 +173,7 @@ class LanternFirstContentfulPaint extends LanternMetric {
    * @return {Node}
    */
   static getOptimisticGraph(dependencyGraph, traceOfTab) {
-    if (traceOfTab.timestamps.firstContentfulPaint == null) {
+    if (traceOfTab.timestamps.firstContentfulPaint === undefined) {
       throw new LHError(LHError.errors.NO_FCP);
     }
     return this.getFirstPaintBasedGraph(
@@ -192,7 +192,7 @@ class LanternFirstContentfulPaint extends LanternMetric {
    * @return {Node}
    */
   static getPessimisticGraph(dependencyGraph, traceOfTab) {
-    if (traceOfTab.timestamps.firstContentfulPaint == null) {
+    if (traceOfTab.timestamps.firstContentfulPaint === undefined) {
       throw new LHError(LHError.errors.NO_FCP);
     }
     return this.getFirstPaintBasedGraph(

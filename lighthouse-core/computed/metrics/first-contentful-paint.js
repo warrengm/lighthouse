@@ -26,8 +26,8 @@ class FirstContentfulPaint extends ComputedMetric {
    */
   static async computeObservedMetric(data) {
     const {traceOfTab} = data;
-    if (traceOfTab.timings.firstContentfulPaint == null ||
-        traceOfTab.timestamps.firstContentfulPaint == null) {
+    if (traceOfTab.timings.firstContentfulPaint === undefined ||
+        traceOfTab.timestamps.firstContentfulPaint === undefined) {
       throw new LHError(LHError.errors.NO_FCP);
     }
     return {

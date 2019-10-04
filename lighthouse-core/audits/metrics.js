@@ -64,8 +64,8 @@ class Metrics extends Audit {
     const estimatedInputLatency = await EstimatedInputLatency.request(metricComputationData, context); // eslint-disable-line max-len
     const totalBlockingTime = await TotalBlockingTime.request(metricComputationData, context); // eslint-disable-line max-len
 
-    if (traceOfTab.timings.firstContentfulPaint == null ||
-        traceOfTab.timestamps.firstContentfulPaint == null) {
+    if (traceOfTab.timings.firstContentfulPaint === undefined ||
+        traceOfTab.timestamps.firstContentfulPaint === undefined) {
       throw new LHError(LHError.errors.NO_FCP);
     }
 
