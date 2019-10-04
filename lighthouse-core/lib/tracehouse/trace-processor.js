@@ -35,6 +35,17 @@ const SCHEDULABLE_TASK_TITLE_ALT2 = 'ThreadControllerImpl::DoWork';
 // m65 and earlier
 const SCHEDULABLE_TASK_TITLE_ALT3 = 'TaskQueueManager::ProcessTaskFromWorkQueue';
 
+/**
+ * Returns the minimum of a and b, unless either value is undefined. In that
+ * case this function will return the defined value or NaN.
+ * @param {number|undefined} a
+ * @param {number|undefined} b
+ * @return {number}
+ */
+function safeMin(a, b) {
+  return a === undefined ? Number(b) : b === undefined ? Number(a) : Math.min(a, b);
+}
+
 class TraceProcessor {
   /**
    * @return {Error}
@@ -476,14 +487,15 @@ class TraceProcessor {
   static coalescePaintTimings(traceOfTab) {
     for (const child of traceOfTab.childTraces) {
       this.coalescePaintTimings(child);
-      const pairs = [[traceOfTab.timings, child.timings], [traceOfTab.timestamps, child.timestamps]];
+      const pairs =
+          [[traceOfTab.timings, child.timings], [traceOfTab.timestamps, child.timestamps]];
       for (const [timing, childTiming] of pairs) {
         // Take the minimum of timing events.
-        timing.firstPaint = Math.min(childTiming.firstPaint || Infinity, timing.firstPaint || Infinity);
+        timing.firstPaint = safeMin(childTiming.firstPaint, timing.firstPaint);
         timing.firstContentfulPaint =
-          Math.min(childTiming.firstContentfulPaint || Infinity, timing.firstContentfulPaint || Infinity);
+            safeMin(childTiming.firstContentfulPaint, timing.firstContentfulPaint);
         timing.firstMeaningfulPaint =
-          Math.min(childTiming.firstMeaningfulPaint || Infinity, timing.firstMeaningfulPaint || Infinity);
+            safeMin(childTiming.firstMeaningfulPaint, timing.firstMeaningfulPaint);
 
         // Update timing event if needed.
         const updateFcpEvent = (timing.firstContentfulPaint === childTiming.firstContentfulPaint);
@@ -611,7 +623,7 @@ class TraceProcessor {
     // Create child traces.
     const childFrameIds = keyEvents
       .filter(e => e.name === 'FrameCommittedInBrowser' &&
-          e.args.data && e.args.data.parent == tabFrameIds.frameId)
+          e.args.data && e.args.data.parent === tabFrameIds.frameId)
       // NOTE: we fall back to the navigationStart tid above.
       // @ts-ignore e.args.data is not undefined.
       .map(e => ({pid: e.args.data.processId, tid: 0, frameId: e.args.data.frame}));
