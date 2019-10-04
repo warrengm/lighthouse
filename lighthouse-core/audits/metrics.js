@@ -10,6 +10,7 @@ const TraceOfTab = require('../computed/trace-of-tab.js');
 const Speedline = require('../computed/speedline.js');
 const FirstContentfulPaint = require('../computed/metrics/first-contentful-paint.js');
 const FirstMeaningfulPaint = require('../computed/metrics/first-meaningful-paint.js');
+const LargestContentfulPaint = require('../computed/metrics/largest-contentful-paint.js');
 const FirstCPUIdle = require('../computed/metrics/first-cpu-idle.js');
 const Interactive = require('../computed/metrics/interactive.js');
 const SpeedIndex = require('../computed/metrics/speed-index.js');
@@ -41,7 +42,6 @@ class Metrics extends Audit {
     const devtoolsLog = artifacts.devtoolsLogs[Audit.DEFAULT_PASS];
     const metricComputationData = {trace, devtoolsLog, settings: context.settings};
 
-
     /**
      * @template TArtifacts
      * @template TReturn
@@ -57,6 +57,7 @@ class Metrics extends Audit {
     const speedline = await Speedline.request(trace, context);
     const firstContentfulPaint = await FirstContentfulPaint.request(metricComputationData, context);
     const firstMeaningfulPaint = await FirstMeaningfulPaint.request(metricComputationData, context);
+    const largestContentfulPaint = await requestOrUndefined(LargestContentfulPaint, metricComputationData); // eslint-disable-line max-len
     const firstCPUIdle = await requestOrUndefined(FirstCPUIdle, metricComputationData);
     const interactive = await requestOrUndefined(Interactive, metricComputationData);
     const speedIndex = await requestOrUndefined(SpeedIndex, metricComputationData);
@@ -75,6 +76,8 @@ class Metrics extends Audit {
       firstContentfulPaintTs: firstContentfulPaint.timestamp,
       firstMeaningfulPaint: firstMeaningfulPaint.timing,
       firstMeaningfulPaintTs: firstMeaningfulPaint.timestamp,
+      largestContentfulPaint: largestContentfulPaint && largestContentfulPaint.timing,
+      largestContentfulPaintTs: largestContentfulPaint && largestContentfulPaint.timestamp,
       firstCPUIdle: firstCPUIdle && firstCPUIdle.timing,
       firstCPUIdleTs: firstCPUIdle && firstCPUIdle.timestamp,
       interactive: interactive && interactive.timing,
@@ -94,6 +97,8 @@ class Metrics extends Audit {
       observedFirstContentfulPaintTs: traceOfTab.timestamps.firstContentfulPaint,
       observedFirstMeaningfulPaint: traceOfTab.timings.firstMeaningfulPaint,
       observedFirstMeaningfulPaintTs: traceOfTab.timestamps.firstMeaningfulPaint,
+      observedLargestContentfulPaint: traceOfTab.timings.largestContentfulPaint,
+      observedLargestContentfulPaintTs: traceOfTab.timestamps.largestContentfulPaint,
       observedTraceEnd: traceOfTab.timings.traceEnd,
       observedTraceEndTs: traceOfTab.timestamps.traceEnd,
       observedLoad: traceOfTab.timings.load,
@@ -121,7 +126,7 @@ class Metrics extends Audit {
     const details = {
       type: 'debugdata',
       // TODO: Consider not nesting metrics under `items`.
-      items: [metrics],
+      items: [metrics, {lcpInvalidated: traceOfTab.lcpInvalidated}],
     };
 
     return {
@@ -138,6 +143,8 @@ class Metrics extends Audit {
  * @property {number=} firstContentfulPaintTs
  * @property {number} firstMeaningfulPaint
  * @property {number=} firstMeaningfulPaintTs
+ * @property {number=} largestContentfulPaint
+ * @property {number=} largestContentfulPaintTs
  * @property {number=} firstCPUIdle
  * @property {number=} firstCPUIdleTs
  * @property {number=} interactive
@@ -155,6 +162,8 @@ class Metrics extends Audit {
  * @property {number} observedFirstContentfulPaintTs
  * @property {number=} observedFirstMeaningfulPaint
  * @property {number=} observedFirstMeaningfulPaintTs
+ * @property {number=} observedLargestContentfulPaint
+ * @property {number=} observedLargestContentfulPaintTs
  * @property {number=} observedTraceEnd
  * @property {number=} observedTraceEndTs
  * @property {number=} observedLoad
