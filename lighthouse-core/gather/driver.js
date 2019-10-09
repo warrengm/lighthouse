@@ -1331,7 +1331,7 @@ class Driver {
       throw new Error('CSS domain enabled when starting trace');
     }
     if (this.isDomainEnabled('DOM')) {
-      throw new Error('DOM domain enabled when starting trace');
+      // throw new Error('DOM domain enabled when starting trace');
     }
 
     // Enable Page domain to wait for Page.loadEventFired
@@ -1402,19 +1402,6 @@ class Driver {
     await this.sendCommand('Debugger.enable');
     await this.sendCommand('Debugger.setSkipAllPauses', {skip: true});
     await this.sendCommand('Debugger.setAsyncCallStackDepth', {maxDepth: 8});
-  }
-
-  /**
-   * Enables stack traces for DOM Nodes.
-   * @return {Promise<void>}
-   */
-  async enableDomStacks() {
-    try {
-      await this.sendCommand('DOM.setNodeStackTracesEnabled', {enable: true});
-    } catch (e) {
-      // Ignore. Consider removing the try/catch after this method is no longer
-      // experimental.
-    }
   }
 
   /**

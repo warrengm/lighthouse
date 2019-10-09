@@ -38,10 +38,31 @@ function collectAllScriptElements() {
   });
 }
 
+let _nodeStackTracesSupported;
+async function areNodeStackTracesSupported(driver) {
+  if (_nodeStackTracesSupported === undefined) {
+    // We do version sniffing here to prevent any errors from be logged to CLI users.
+    const {product} = await driver.sendCommand('Browser.getVersion');
+    _nodeStackTracesSupported = (product >= 'Chrome/79');
+  }
+  return _nodeStackTracesSupported;
+}
+
+
 /**
  * @fileoverview Gets JavaScript file contents.
  */
 class ScriptElements extends Gatherer {
+   /**
+    * @param {LH.Gatherer.PassContext} passContext
+    */
+  async beforePass(passContext) {
+    if (areNodeStackTracesSupported(passContext.driver)) {
+      await passContext.driver.sendCommand('DOM.enable');
+      await passContext.driver.sendCommand('DOM.setNodeStackTracesEnabled', {enable: true});
+    }
+  }
+
   /**
    * @param {LH.Gatherer.PassContext} passContext
    * @param {LH.Gatherer.LoadData} loadData
@@ -62,14 +83,16 @@ class ScriptElements extends Gatherer {
       if (script.content) {
         script.requestId = mainResource.requestId;
       }
-      try {
-        const {element} = await driver.querySelector(`script[src$="${script.src}"]`);
-        script.nodeId = element.nodeId;
-        console.log(script);
+      if (areNodeStackTracesSupported(passContext.driver)) {
+        const element = await driver.querySelector(`script[src$="${script.src}"]`);
+        if (!element) {
+          continue;
+        }
+        script.nodeId = element.element.nodeId;
         const stackTraces =
-          await driver.sendCommand('DOM.getNodeStackTraces', {nodeId: element.nodeId});
+          await driver.sendCommand('DOM.getNodeStackTraces', {nodeId: script.nodeId});
         script.nodeStackTraces = stackTraces;
-      } catch (e) {}
+      }
     }
 
     const scriptRecords = loadData.networkRecords

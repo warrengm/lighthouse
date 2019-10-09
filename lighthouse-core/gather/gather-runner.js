@@ -97,7 +97,6 @@ class GatherRunner {
     await driver.beginEmulation(options.settings);
     await driver.enableRuntimeEvents();
     await driver.enableAsyncStacks();
-    await driver.enableDomStacks();
     await driver.cacheNatives();
     await driver.registerPerformanceObserver();
     await driver.dismissJavaScriptDialogs();
