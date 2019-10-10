@@ -39,11 +39,12 @@ function collectAllScriptElements() {
 }
 
 let _nodeStackTracesSupported;
-async function areNodeStackTracesSupported(driver) {
+async function nodeStackTracesAreSupported(driver) {
   if (_nodeStackTracesSupported === undefined) {
-    // We do version sniffing here to prevent any errors from be logged to CLI users.
+    // We do version sniffing here to prevent any protocol errors from be logged to CLI users.
     const {product} = await driver.sendCommand('Browser.getVersion');
-    _nodeStackTracesSupported = (product >= 'Chrome/79');
+    const [_, version] = product.split('/');
+    _nodeStackTracesSupported = (version >= '79');
   }
   return _nodeStackTracesSupported;
 }
@@ -57,7 +58,7 @@ class ScriptElements extends Gatherer {
     * @param {LH.Gatherer.PassContext} passContext
     */
   async beforePass(passContext) {
-    if (areNodeStackTracesSupported(passContext.driver)) {
+    if (nodeStackTracesAreSupported(passContext.driver)) {
       await passContext.driver.sendCommand('DOM.enable');
       await passContext.driver.sendCommand('DOM.setNodeStackTracesEnabled', {enable: true});
     }
@@ -83,7 +84,7 @@ class ScriptElements extends Gatherer {
       if (script.content) {
         script.requestId = mainResource.requestId;
       }
-      if (areNodeStackTracesSupported(passContext.driver)) {
+      if (nodeStackTracesAreSupported(passContext.driver)) {
         const element = await driver.querySelector(`script[src$="${script.src}"]`);
         if (!element) {
           continue;
