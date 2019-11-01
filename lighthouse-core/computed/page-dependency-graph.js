@@ -16,8 +16,6 @@ const NetworkRecords = require('./network-records.js');
 
 /** @typedef {import('../lib/dependency-graph/base-node.js').Node} Node */
 
-// Tasks smaller than 10 ms have minimal impact on simulation
-const MINIMUM_TASK_DURATION_OF_INTEREST = 10;
 // TODO: video files tend to be enormous and throw off all graph traversals, move this ignore
 //    into estimation logic when we use the dependency graph for other purposes.
 const IGNORED_MIME_TYPES_REGEX = /^video/;
@@ -111,24 +109,18 @@ class PageDependencyGraph {
 
     TracingProcessor.assertHasToplevelEvents(traceOfTab.mainThreadEvents);
 
-    const minimumEvtDur = MINIMUM_TASK_DURATION_OF_INTEREST * 1000;
     while (i < traceOfTab.mainThreadEvents.length) {
       const evt = traceOfTab.mainThreadEvents[i];
+      i++;
 
       // Skip all trace events that aren't schedulable tasks with sizable duration
-      if (
-        !TracingProcessor.isScheduleableTask(evt) ||
-        !evt.dur ||
-        evt.dur < minimumEvtDur
-      ) {
-        i++;
+      if (!TracingProcessor.isScheduleableTask(evt) || !evt.dur) {
         continue;
       }
 
       // Capture all events that occurred within the task
       /** @type {Array<LH.TraceEvent>} */
       const children = [];
-      i++; // Start examining events after this one
       for (
         const endTime = evt.ts + evt.dur;
         i < traceOfTab.mainThreadEvents.length && traceOfTab.mainThreadEvents[i].ts < endTime;
