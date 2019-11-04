@@ -192,7 +192,6 @@ class UsesRelPreloadAudit extends Audit {
    * @return {Promise<LH.Audit.Product>}
    */
   static async audit(artifacts, context) {
-    try {
     const trace = artifacts.traces[UsesRelPreloadAudit.DEFAULT_PASS];
     const devtoolsLog = artifacts.devtoolsLogs[UsesRelPreloadAudit.DEFAULT_PASS];
     const URL = artifacts.URL;
@@ -236,7 +235,6 @@ class UsesRelPreloadAudit extends Audit {
       details,
       warnings,
     };
-    } catch(e) { console.log(e) }
   }
 }
 
