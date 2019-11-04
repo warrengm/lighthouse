@@ -20,6 +20,21 @@ const NetworkRecords = require('./network-records.js');
 //    into estimation logic when we use the dependency graph for other purposes.
 const IGNORED_MIME_TYPES_REGEX = /^video/;
 
+/** @type {Set<string} */
+const RELEVANT_EVENTS = new Set([
+  'EvaluateScript',
+  'FunctionCall',
+  'InvalidateLayout',
+  'Layout',
+  'ParseAuthorStyleSheet',
+  'ResourceSendRequest',
+  'ScheduleStyleRecalculation',
+  'TimerFire',
+  'TimerInstall',
+  'XHRReadyStateChange',
+  'v8.compile',
+]);
+
 class PageDependencyGraph {
   /**
    * @param {LH.Artifacts.NetworkRequest} record
@@ -118,7 +133,7 @@ class PageDependencyGraph {
         continue;
       }
 
-      // Capture all events that occurred within the task
+      // Capture relevant events that occurred within the task
       /** @type {Array<LH.TraceEvent>} */
       const children = [];
       for (
@@ -126,7 +141,10 @@ class PageDependencyGraph {
         i < traceOfTab.mainThreadEvents.length && traceOfTab.mainThreadEvents[i].ts < endTime;
         i++
       ) {
-        children.push(traceOfTab.mainThreadEvents[i]);
+        const childEvt = traceOfTab.mainThreadEvents[i];
+        if (childEvt.args.data && RELEVANT_EVENTS.has(childEvt.name)) {
+          children.push(childEvt);
+        }
       }
 
       nodes.push(new CPUNode(evt, children));
@@ -237,6 +255,8 @@ class PageDependencyGraph {
         const argsUrl = evt.args.data.url;
         const stackTraceUrls = (evt.args.data.stackTrace || []).map(l => l.url).filter(Boolean);
 
+        // Note that only relevant events are included in children. Update getCPUNodes if you need
+        // to process additional event types.
         switch (evt.name) {
           case 'TimerInstall':
             // @ts-ignore - 'TimerInstall' event means timerId exists.
