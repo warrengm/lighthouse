@@ -35,6 +35,8 @@ const RELEVANT_EVENTS = new Set([
   'v8.compile',
 ]);
 
+const SIGNIFICANT_DUR_THRESHOLD_MS = 10;
+
 class PageDependencyGraph {
   /**
    * @param {LH.Artifacts.NetworkRequest} record
@@ -147,7 +149,9 @@ class PageDependencyGraph {
         }
       }
 
-      if (children.length) {
+      // Include tasks with significant child events or that are long enough to impact
+      // simulation results.
+      if (children.length || evt.dur > SIGNIFICANT_DUR_THRESHOLD_MS * 1000) {
         nodes.push(new CPUNode(evt, children));
       }
     }
