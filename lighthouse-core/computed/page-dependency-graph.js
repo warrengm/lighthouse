@@ -142,7 +142,7 @@ class PageDependencyGraph {
         i++
       ) {
         const childEvt = traceOfTab.mainThreadEvents[i];
-        if (childEvt.args.data && RELEVANT_EVENTS.has(childEvt.name)) {
+        if (RELEVANT_EVENTS.has(childEvt.name)) {
           children.push(childEvt);
         }
       }
