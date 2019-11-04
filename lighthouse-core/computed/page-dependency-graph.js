@@ -35,6 +35,7 @@ const RELEVANT_EVENTS = new Set([
   'v8.compile',
 ]);
 
+// Shorter tasks have negligible impact on simulation results.
 const SIGNIFICANT_DUR_THRESHOLD_MS = 10;
 
 class PageDependencyGraph {
@@ -135,7 +136,8 @@ class PageDependencyGraph {
         continue;
       }
 
-      // Capture relevant events that occurred within the task
+      // Capture relevant events that occurred within the task to be able to compute all
+      // necessary edges in the graph.
       /** @type {Array<LH.TraceEvent>} */
       const children = [];
       for (
