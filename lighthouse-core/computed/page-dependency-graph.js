@@ -147,7 +147,9 @@ class PageDependencyGraph {
         }
       }
 
-      nodes.push(new CPUNode(evt, children));
+      if (children.length) {
+        nodes.push(new CPUNode(evt, children));
+      }
     }
 
     return nodes;
