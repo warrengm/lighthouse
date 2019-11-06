@@ -332,7 +332,7 @@ class PageDependencyGraph {
 
     // Second pass to prune the graph
     for (const node of cpuNodes) {
-      if (node.event.dur > SIGNIFICANT_DUR_THRESHOLD_MS * 1000) {
+      if (node.event.dur >= SIGNIFICANT_DUR_THRESHOLD_MS * 1000) {
         // Don't prune this node. The task is long so it will impact simulation.
         continue;
       }
@@ -340,7 +340,7 @@ class PageDependencyGraph {
         // Don't prune this node because several other nodes depend on this for simulation.
         continue;
       }
-      // Omit the node, but keep the path between dependents.
+      // Prune the node, but keep the path between dependents.
       const [dependent] = node.getDependents();
       const [dependency] = node.getDependencies();
       if (dependent) node.removeDependent(dependent);

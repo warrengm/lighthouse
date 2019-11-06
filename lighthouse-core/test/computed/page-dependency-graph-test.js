@@ -134,6 +134,8 @@ describe('PageDependencyGraph computed artifact:', () => {
       addTaskEvents(0, 100, [
         {name: 'MyCustomEvent'},
         {name: 'OtherEvent'},
+        {name: 'FunctionCall'},
+        {name: 'InvalidateLayout'},
         {name: 'OutsideTheWindow', ts: 200},
         {name: 'OrphanedEvent'}, // should be ignored since we stopped at OutsideTheWindow
       ]);
@@ -151,14 +153,14 @@ describe('PageDependencyGraph computed artifact:', () => {
       assert.equal(node1.type, 'cpu');
       assert.equal(node1.event, traceOfTab.mainThreadEvents[0]);
       assert.equal(node1.childEvents.length, 2);
-      assert.equal(node1.childEvents[1].name, 'OtherEvent');
+      assert.equal(node1.childEvents[1].name, 'FunctionCall');
 
       const node2 = nodes[1];
       assert.equal(node2.id, '1.250000');
       assert.equal(node2.type, 'cpu');
       assert.equal(node2.event, traceOfTab.mainThreadEvents[5]);
       assert.equal(node2.childEvents.length, 1);
-      assert.equal(node2.childEvents[0].name, 'LaterEvent');
+      assert.equal(node2.childEvents[0].name, 'InvalidateLayout');
     });
   });
 
