@@ -325,27 +325,28 @@ class PageDependencyGraph {
             break;
         }
       }
-
-      // We skip some short tasks if they aren't multiple edges connected.
-      const isShort = node.event.dur < SIGNIFICANT_DUR_THRESHOLD_MS * 1000;
-
-      if (isShort && node.getNumberOfDependents() === 0) {
-        // Omit the node from the graph since it won't impact simulation.
-        continue;
-      }
-
       if (node.getNumberOfDependencies() === 0) {
         node.addDependency(rootNode);
       }
+    }
 
-      if (isShort && node.getNumberOfDependents() === 1 && node.getNumberOfDependencies() === 1) {
-        // Omit the node, but keep the path between dependents.
-        const [dependent] = node.getDependents();
-        const [dependency] = node.getDependencies();
-        node.removeDependent(dependent);
-        node.removeDependency(dependency);
-        dependency.addDependent(dependent);
+    // Second pass to prune the graph
+    for (const node of cpuNodes) {
+      if (node.event.dur < SIGNIFICANT_DUR_THRESHOLD_MS * 1000) {
+        // Don't prune this node. The task is long so it will impact simulation.
+        continue;
       }
+      if (node.getNumberOfDependents() > 1 || node.getNumberOfDependencies() > 1) {
+        // Don't prune this node because several other nodes depend on this for simulation.
+        continue;
+      }
+      // Omit the node, but keep the path between dependents.
+      const [dependent] = node.getDependents();
+      const [dependency] = node.getDependencies();
+      if (dependent) node.removeDependent(dependent);
+      if (dependency) node.removeDependency(dependency);
+      if (dependent && dependency) dependency.addDependent(dependent);
+
     }
   }
 
