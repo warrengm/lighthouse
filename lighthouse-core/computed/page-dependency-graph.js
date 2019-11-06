@@ -20,20 +20,21 @@ const NetworkRecords = require('./network-records.js');
 //    into estimation logic when we use the dependency graph for other purposes.
 const IGNORED_MIME_TYPES_REGEX = /^video/;
 
-/** @type {Set<string} */
-const RELEVANT_EVENTS = new Set([
-  'EvaluateScript',
-  'FunctionCall',
-  'InvalidateLayout',
-  'Layout',
-  'ParseAuthorStyleSheet',
-  'ResourceSendRequest',
-  'ScheduleStyleRecalculation',
-  'TimerFire',
-  'TimerInstall',
-  'XHRReadyStateChange',
-  'v8.compile',
-]);
+/** @type {Object<string, boolean>} Events that are relevant for building simulation graphs. */
+const RELEVANT_EVENT_SET = {
+  'EvaluateScript': true,
+  'FunctionCall': true,
+  'InvalidateLayout': true,
+  'Layout': true,
+  'ParseAuthorStyleSheet': true,
+  'ResourceSendRequest': true,
+  'ScheduleStyleRecalculation': true,
+  'TimerFire': true,
+  'TimerInstall': true,
+  'XHRReadyStateChange': true,
+  'v8.compile': true,
+};
+
 
 // Shorter tasks have negligible impact on simulation results.
 const SIGNIFICANT_DUR_THRESHOLD_MS = 10;
@@ -146,16 +147,12 @@ class PageDependencyGraph {
         i++
       ) {
         const childEvt = traceOfTab.mainThreadEvents[i];
-        if (RELEVANT_EVENTS.has(childEvt.name)) {
+        if (RELEVANT_EVENT_SET[childEvt.name]) {
           children.push(childEvt);
         }
       }
 
-      // Include tasks with significant child events or that are long enough to impact
-      // simulation results.
-      if (children.length || evt.dur > SIGNIFICANT_DUR_THRESHOLD_MS * 1000) {
-        nodes.push(new CPUNode(evt, children));
-      }
+      nodes.push(new CPUNode(evt, children));
     }
 
     return nodes;
@@ -265,7 +262,10 @@ class PageDependencyGraph {
 
         // Note that only relevant events are included in children. Update getCPUNodes if you need
         // to process additional event types.
-        switch (evt.name) {
+        // @ts-ignore RELEVANT_EVENT_SET is a value being used as a type. That's ok here as we only
+        // need to catch new case statements that aren't a member of this set.
+        const name = /** @type {keyof RELEVANT_EVENT_SET} */ (evt.name);
+        switch (name) {
           case 'TimerInstall':
             // @ts-ignore - 'TimerInstall' event means timerId exists.
             timers.set(evt.args.data.timerId, node);
@@ -324,7 +324,10 @@ class PageDependencyGraph {
         }
       }
 
-      if (node.getNumberOfDependencies() === 0) {
+      // If the node had no dependencies, we still include it in the graph if
+      // it's long enough to have an impact on simulation results.
+      if (node.getNumberOfDependencies() === 0 &&
+          node.event.dur > SIGNIFICANT_DUR_THRESHOLD_MS * 1000) {
         node.addDependency(rootNode);
       }
     }
