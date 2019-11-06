@@ -20,6 +20,8 @@ const NetworkRecords = require('./network-records.js');
 //    into estimation logic when we use the dependency graph for other purposes.
 const IGNORED_MIME_TYPES_REGEX = /^video/;
 
+// Note that we use an Object here instead of a Set since Objects are indexable in typescript--which
+// allows us to build a union type of the relevant events statically.
 /** @type {Object<string, boolean>} Events that are relevant for building simulation graphs. */
 const RELEVANT_EVENT_SET = {
   'EvaluateScript': true,
