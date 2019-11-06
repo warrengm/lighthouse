@@ -326,11 +326,25 @@ class PageDependencyGraph {
         }
       }
 
-      // If the node had no dependencies, we still include it in the graph if
-      // it's long enough to have an impact on simulation results.
-      if (node.getNumberOfDependencies() === 0 &&
-          node.event.dur > SIGNIFICANT_DUR_THRESHOLD_MS * 1000) {
+      // We skip some short tasks if they aren't multiple edges connected.
+      const isShort = node.event.dur < SIGNIFICANT_DUR_THRESHOLD_MS * 1000;
+
+      if (isShort && node.getNumberOfDependents() === 0) {
+        // Omit the node from the graph since it won't impact simulation.
+        continue;
+      }
+
+      if (node.getNumberOfDependencies() === 0) {
         node.addDependency(rootNode);
+      }
+
+      if (isShort && node.getNumberOfDependents() === 1 && node.getNumberOfDependencies() === 1) {
+        // Omit the node, but keep the path between dependents.
+        const [dependent] = node.getDependents();
+        const [dependency] = node.getDependencies();
+        node.removeDependent(dependent);
+        node.removeDependency(dependency);
+        dependency.addDependent(dependent);
       }
     }
   }
