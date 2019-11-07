@@ -130,8 +130,7 @@ class PageDependencyGraph {
         i < traceOfTab.mainThreadEvents.length && traceOfTab.mainThreadEvents[i].ts < endTime;
         i++
       ) {
-        const childEvt = traceOfTab.mainThreadEvents[i];
-        children.push(childEvt);
+        children.push(traceOfTab.mainThreadEvents[i]);
       }
 
       nodes.push(new CPUNode(evt, children));
