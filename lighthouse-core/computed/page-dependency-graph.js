@@ -20,24 +20,6 @@ const NetworkRecords = require('./network-records.js');
 //    into estimation logic when we use the dependency graph for other purposes.
 const IGNORED_MIME_TYPES_REGEX = /^video/;
 
-// Note that we use an Object here instead of a Set since Objects are indexable in typescript--which
-// allows us to build a union type of the relevant events statically.
-/** @type {Object<string, boolean>} Events that are relevant for building simulation graphs. */
-const RELEVANT_EVENT_SET = {
-  'EvaluateScript': true,
-  'FunctionCall': true,
-  'InvalidateLayout': true,
-  'Layout': true,
-  'ParseAuthorStyleSheet': true,
-  'ResourceSendRequest': true,
-  'ScheduleStyleRecalculation': true,
-  'TimerFire': true,
-  'TimerInstall': true,
-  'XHRReadyStateChange': true,
-  'v8.compile': true,
-};
-
-
 // Shorter tasks have negligible impact on simulation results.
 const SIGNIFICANT_DUR_THRESHOLD_MS = 10;
 
@@ -149,9 +131,7 @@ class PageDependencyGraph {
         i++
       ) {
         const childEvt = traceOfTab.mainThreadEvents[i];
-        if (RELEVANT_EVENT_SET[childEvt.name]) {
-          children.push(childEvt);
-        }
+        children.push(childEvt);
       }
 
       nodes.push(new CPUNode(evt, children));
@@ -262,12 +242,7 @@ class PageDependencyGraph {
         const argsUrl = evt.args.data.url;
         const stackTraceUrls = (evt.args.data.stackTrace || []).map(l => l.url).filter(Boolean);
 
-        // Note that only relevant events are included in children. Update getCPUNodes if you need
-        // to process additional event types.
-        // @ts-ignore RELEVANT_EVENT_SET is a value being used as a type. That's ok here as we only
-        // need to catch new case statements that aren't a member of this set.
-        const name = /** @type {keyof RELEVANT_EVENT_SET} */ (evt.name);
-        switch (name) {
+        switch (evt.name) {
           case 'TimerInstall':
             // @ts-ignore - 'TimerInstall' event means timerId exists.
             timers.set(evt.args.data.timerId, node);
