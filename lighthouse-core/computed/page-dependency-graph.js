@@ -330,23 +330,28 @@ class PageDependencyGraph {
       }
     }
 
-    // Second pass to prune the graph
+    // Second pass to prune the graph of short nodes.
     for (const node of cpuNodes) {
-      if (node.event.dur >= SIGNIFICANT_DUR_THRESHOLD_MS * 1000) {
+      if (node.event.dur > SIGNIFICANT_DUR_THRESHOLD_MS * 1000) {
         // Don't prune this node. The task is long so it will impact simulation.
         continue;
       }
-      if (node.getNumberOfDependents() > 1 || node.getNumberOfDependencies() > 1) {
-        // Don't prune this node because several other nodes depend on this for simulation.
-        continue;
+      // Prune the node if it isn't highly connected to minimize graph size. Rewiring the graph
+      // here replaces O(M + N) edges with (M * N) edges, which is fine if either  M or N is at
+      // most 1.
+      // Note that there is at least one dependency (a path must exist to the root node). We prune
+      // the node from the graph if we can replace the edges without increasing the number of edges.
+      if (node.getNumberOfDependencies() === 1 || node.getNumberOfDependents() <= 1) {
+        const dependencies = node.getDependencies();
+        const dependents = node.getDependents();
+        for (const dependency of dependencies) {
+          node.removeDependency(dependency);
+          for (const dependent of dependents) {
+            node.removeDependent(dependent);
+            dependency.addDependent(dependent);
+          }
+        }
       }
-      // Prune the node, but keep the path between dependents.
-      const [dependent] = node.getDependents();
-      const [dependency] = node.getDependencies();
-      if (dependent) node.removeDependent(dependent);
-      if (dependency) node.removeDependency(dependency);
-      if (dependent && dependency) dependency.addDependent(dependent);
-
     }
   }
 
