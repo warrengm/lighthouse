@@ -16,12 +16,12 @@ const NetworkRecords = require('./network-records.js');
 
 /** @typedef {import('../lib/dependency-graph/base-node.js').Node} Node */
 
+// Shorter tasks have negligible impact on simulation results.
+const SIGNIFICANT_DUR_THRESHOLD_MS = 10;
+
 // TODO: video files tend to be enormous and throw off all graph traversals, move this ignore
 //    into estimation logic when we use the dependency graph for other purposes.
 const IGNORED_MIME_TYPES_REGEX = /^video/;
-
-// Shorter tasks have negligible impact on simulation results.
-const SIGNIFICANT_DUR_THRESHOLD_MS = 10;
 
 class PageDependencyGraph {
   /**
@@ -121,8 +121,7 @@ class PageDependencyGraph {
         continue;
       }
 
-      // Capture relevant events that occurred within the task to be able to compute all
-      // necessary edges in the graph.
+      // Capture all events that occurred within the task
       /** @type {Array<LH.TraceEvent>} */
       const children = [];
       for (
@@ -299,12 +298,13 @@ class PageDependencyGraph {
             break;
         }
       }
+
       if (node.getNumberOfDependencies() === 0) {
         node.addDependency(rootNode);
       }
     }
 
-    // Second pass to prune the graph of short nodes.
+    // Second pass to prune the graph of short tasks.
     for (const node of cpuNodes) {
       if (node.event.dur > SIGNIFICANT_DUR_THRESHOLD_MS * 1000) {
         // Don't prune this node. The task is long so it will impact simulation.
@@ -313,19 +313,28 @@ class PageDependencyGraph {
       // Prune the node if it isn't highly connected to minimize graph size. Rewiring the graph
       // here replaces O(M + N) edges with (M * N) edges, which is fine if either  M or N is at
       // most 1.
-      // Note that there is at least one dependency (a path must exist to the root node). We prune
-      // the node from the graph if we can replace the edges without increasing the number of edges.
       if (node.getNumberOfDependencies() === 1 || node.getNumberOfDependents() <= 1) {
-        const dependencies = node.getDependencies();
-        const dependents = node.getDependents();
-        for (const dependency of dependencies) {
-          node.removeDependency(dependency);
-          for (const dependent of dependents) {
-            node.removeDependent(dependent);
-            dependency.addDependent(dependent);
-          }
-        }
+        PageDependencyGraph._pruneNode(node);
       }
+    }
+  }
+
+  /**
+   * Removes the given node from the graph, but retains all paths between its dependencies and
+   * dependents.
+   * @param {Node} node
+   */
+  static _pruneNode(node) {
+    const dependencies = node.getDependencies();
+    const dependents = node.getDependents();
+    for (const dependency of dependencies) {
+      node.removeDependency(dependency);
+      for (const dependent of dependents) {
+        dependency.addDependent(dependent);
+      }
+    }
+    for (const dependent of dependents) {
+      node.removeDependent(dependent);
     }
   }
 
