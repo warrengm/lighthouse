@@ -30,10 +30,10 @@ class BaseNode {
   constructor(id) {
     this._id = id;
     this._isMainDocument = false;
-    /** @type {Set<Node>} */
-    this._dependents = new Set();
-    /** @type {Set<Node>} */
-    this._dependencies = new Set();
+    /** @type {Node[]} */
+    this._dependents = [];
+    /** @type {Node[]} */
+    this._dependencies = [];
   }
 
   /**
@@ -82,28 +82,27 @@ class BaseNode {
    * @return {Node[]}
    */
   getDependents() {
-    return Array.from(this._dependents);
+    return this._dependents.slice();
   }
 
   /**
    * @return {number}
    */
   getNumberOfDependents() {
-    return this._dependents.size;
+    return this._dependents.length;
   }
-
   /**
    * @return {Node[]}
    */
   getDependencies() {
-    return Array.from(this._dependencies);
+    return this._dependencies.slice();
   }
 
   /**
    * @return {number}
    */
   getNumberOfDependencies() {
-    return this._dependencies.size;
+    return this._dependencies.length;
   }
 
   /**
@@ -111,12 +110,10 @@ class BaseNode {
    */
   getRootNode() {
     let rootNode = /** @type {Node} */ (/** @type {BaseNode} */ (this));
-    while (rootNode._dependencies.size) {
-      for (const d of rootNode._dependencies) {
-        rootNode = d;  // First dependency
-        break;
-      }
+    while (rootNode._dependencies.length) {
+      rootNode = rootNode._dependencies[0];
     }
+
     return rootNode;
   }
 
@@ -131,12 +128,12 @@ class BaseNode {
    * @param {Node} node
    */
   addDependency(node) {
-    if (this._dependencies.has(node)) {
+    if (this._dependencies.includes(node)) {
       return;
     }
 
-    node._dependents.add(/** @type {Node} */ (/** @type {BaseNode} */ (this)));
-    this._dependencies.add(node);
+    node._dependents.push(/** @type {Node} */ (/** @type {BaseNode} */ (this)));
+    this._dependencies.push(node);
   }
 
   /**
@@ -150,16 +147,17 @@ class BaseNode {
    * @param {Node} node
    */
   removeDependency(node) {
-    if (!this._dependencies.has(node)) {
+    if (!this._dependencies.includes(node)) {
       return;
     }
 
-    node._dependents.delete(/** @type {Node} */ (/** @type {BaseNode} */(this)));
-    this._dependencies.delete(node);
+    const thisIndex = node._dependents.indexOf(/** @type {Node} */ (/** @type {BaseNode} */(this)));
+    node._dependents.splice(thisIndex, 1);
+    this._dependencies.splice(this._dependencies.indexOf(node), 1);
   }
 
   removeAllDependencies() {
-    for (const node of this.getDependencies()) {
+    for (const node of this._dependencies.slice()) {
       this.removeDependency(node);
     }
   }
@@ -202,7 +200,7 @@ class BaseNode {
         node.traverse(
           node => idsToIncludedClones.set(node.id, node.cloneWithoutRelationships()),
           // Dependencies already cloned have already cloned ancestors, so no need to visit again.
-          node => node.getDependencies().filter(parent => !idsToIncludedClones.has(parent.id))
+          node => node._dependencies.filter(parent => !idsToIncludedClones.has(parent.id))
         );
       }
     });
