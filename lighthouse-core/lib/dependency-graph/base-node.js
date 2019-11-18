@@ -91,6 +91,7 @@ class BaseNode {
   getNumberOfDependents() {
     return this._dependents.length;
   }
+
   /**
    * @return {Node[]}
    */
