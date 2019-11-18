@@ -297,7 +297,7 @@ describe('PageDependencyGraph computed artifact:', () => {
         {name: 'XHRReadyStateChange', data: {readyState: 4, url: '2'}},
       ]);
 
-      // Short task, should be pruned, but the 4->5 relationship should be retained
+      // Short task, should be pruned, but the 3->4 relationship should be retained
       addTaskEvents(350, 5, [
         {name: 'EvaluateScript', data: {url: '3'}},
         {name: 'ResourceSendRequest', data: {requestId: 4}},
@@ -330,7 +330,7 @@ describe('PageDependencyGraph computed artifact:', () => {
         frameId: 'frame1',
       };
       const request2 = {
-        ...createRequest(1, '2', 200, null, NetworkRequest.TYPES.Script),
+        ...createRequest(2, '2', 200, null, NetworkRequest.TYPES.Script),
         documentURL: '1',
         frameId: 'frame1',
       };
@@ -364,7 +364,7 @@ describe('PageDependencyGraph computed artifact:', () => {
       assert.deepEqual(getDependencyIds(nodes[4]), [0, '1.220000']);
 
       assert.equal('1.220000', nodes[5].id);
-      assert.deepEqual(getDependencyIds(nodes[5]), [1, '1:duplicate']);
+      assert.deepEqual(getDependencyIds(nodes[5]), [1, 2]);
     });
 
     it('should set isMainDocument on first document request', () => {
