@@ -29,6 +29,8 @@ declare global {
       LighthouseRunWarnings: string[];
       /** Whether the page was loaded on either a real or emulated mobile device. */
       TestedAsMobileDevice: boolean;
+      /** Device which Chrome is running on. */
+      HostFormFactor: 'desktop'|'mobile';
       /** The user agent string of the version of Chrome used. */
       HostUserAgent: string;
       /** The user agent string that Lighthouse used to load the page. */
@@ -70,7 +72,7 @@ declare global {
       /** All the link elements on the page or equivalently declared in `Link` headers. @see https://html.spec.whatwg.org/multipage/links.html */
       LinkElements: Artifacts.LinkElement[];
       /** The values of the <meta> elements in the head. */
-      MetaElements: Array<{name: string, content?: string}>;
+      MetaElements: Array<{name: string, content?: string, property?: string}>;
       /** Set of exceptions thrown during page load. */
       RuntimeExceptions: Crdp.Runtime.ExceptionThrownEvent[];
       /** Information on all script elements in the page. Also contains the content of all requested scripts and the networkRecord requestId that contained their content. Note, HTML documents will have one entry per script tag, all with the same requestId. */
@@ -555,9 +557,9 @@ declare global {
       }
 
       export interface TimingSummary {
-        firstContentfulPaint: number | undefined;
+        firstContentfulPaint: number;
         firstContentfulPaintTs: number | undefined;
-        firstMeaningfulPaint: number | undefined;
+        firstMeaningfulPaint: number;
         firstMeaningfulPaintTs: number | undefined;
         largestContentfulPaint: number | undefined;
         largestContentfulPaintTs: number | undefined;
@@ -567,15 +569,16 @@ declare global {
         interactiveTs: number | undefined;
         speedIndex: number | undefined;
         speedIndexTs: number | undefined;
-        estimatedInputLatency: number | undefined;
+        estimatedInputLatency: number;
         estimatedInputLatencyTs: number | undefined;
-        totalBlockingTime: number | undefined;
-        observedNavigationStart: number | undefined;
-        observedNavigationStartTs: number | undefined;
+        maxPotentialFID: number | undefined;
+        totalBlockingTime: number;
+        observedNavigationStart: number;
+        observedNavigationStartTs: number;
         observedFirstPaint: number | undefined;
         observedFirstPaintTs: number | undefined;
-        observedFirstContentfulPaint: number | undefined;
-        observedFirstContentfulPaintTs: number | undefined;
+        observedFirstContentfulPaint: number;
+        observedFirstContentfulPaintTs: number;
         observedFirstMeaningfulPaint: number | undefined;
         observedFirstMeaningfulPaintTs: number | undefined;
         observedLargestContentfulPaint: number | undefined;
@@ -586,12 +589,12 @@ declare global {
         observedLoadTs: number | undefined;
         observedDomContentLoaded: number | undefined;
         observedDomContentLoadedTs: number | undefined;
-        observedFirstVisualChange: number | undefined;
-        observedFirstVisualChangeTs: number | undefined;
-        observedLastVisualChange: number | undefined;
-        observedLastVisualChangeTs: number | undefined;
-        observedSpeedIndex: number | undefined;
-        observedSpeedIndexTs: number | undefined;
+        observedFirstVisualChange: number;
+        observedFirstVisualChangeTs: number;
+        observedLastVisualChange: number;
+        observedLastVisualChangeTs: number;
+        observedSpeedIndex: number;
+        observedSpeedIndexTs: number;
       }
     }
   }

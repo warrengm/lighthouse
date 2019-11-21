@@ -20,7 +20,7 @@
     "build-viewer": "node ./build/build-viewer.js",
     "clean": "rimraf dist proto/scripts/*.json proto/scripts/*_pb2.* proto/scripts/*_pb.* proto/scripts/__pycache__ proto/scripts/*.pyc *.report.html *.report.dom.html *.report.json *.devtoolslog.json *.trace.json lighthouse-core/lib/i18n/locales/*.ctc.json || true",
     "lint": "[ \"$CI\" = true ] && eslint --quiet -f codeframe . || eslint .",
-    "smoke": "node lighthouse-cli/test/smokehouse/run-smoke.js",
+    "smoke": "node lighthouse-cli/test/smokehouse/frontends/smokehouse-bin.js",
     "debug": "node --inspect-brk ./lighthouse-cli/index.js",
     "start": "node ./lighthouse-cli/index.js",
     "test": "yarn diff:sample-json && yarn lint --quiet && yarn unit && yarn type-check",
@@ -28,6 +28,7 @@
     "test-clients": "jest \"clients/\"",
     "test-viewer": "yarn unit-viewer && jest lighthouse-viewer/test/viewer-test-pptr.js",
     "test-lantern": "bash lighthouse-core/scripts/test-lantern.sh",
+    "test-docs": "yarn --cwd docs/recipes/auth && jest docs/recipes/integration-test",
     "unit-core": "jest \"lighthouse-core/\"",
     "unit-cli": "jest \"lighthouse-cli/\"",
     "unit-viewer": "jest \"lighthouse-viewer/.*-test.js\"",
@@ -39,7 +40,7 @@
     "watch": "yarn unit-core --watch",
     "unit:cicoverage": "nyc --all --hook-run-in-context npm run unit:ci && nyc report --reporter text-lcov > unit-coverage.lcov",
     "coverage": "yarn unit:cicoverage && nyc report --reporter html",
-    "smoke:cicoverage": "nyc npm run smoke && nyc report --reporter text-lcov > smoke-coverage.lcov",
+    "smoke:cicoverage": "nyc npm run smoke -- -j=1 --retries=2 && nyc report --reporter text-lcov > smoke-coverage.lcov",
     "coverage:smoke": "yarn smoke:cicoverage && nyc report --reporter html",
     "coveralls": "cat unit-coverage.lcov | coveralls",
     "codecov": "codecov -f unit-coverage.lcov -F unit && codecov -f smoke-coverage.lcov -F smoke",
@@ -117,7 +118,7 @@
     "idb-keyval": "2.2.0",
     "intl-messageformat-parser": "^1.8.1",
     "isomorphic-fetch": "^2.2.1",
-    "jest": "^24.3.0",
+    "jest": "^24.9.0",
     "jsdom": "^12.2.0",
     "npm-run-posix-or-windows": "^2.0.2",
     "nyc": "^13.3.0",
@@ -130,7 +131,7 @@
   },
   "dependencies": {
     "axe-core": "3.3.0",
-    "chrome-launcher": "^0.11.2",
+    "chrome-launcher": "^0.12.0",
     "configstore": "^3.1.1",
     "cssstyle": "1.2.1",
     "details-element-polyfill": "^2.4.0",
@@ -179,7 +180,7 @@
     },
     {
       "path": "./dist/lightrider/lighthouse-lr-bundle.js",
-      "maxSize": "1.33 MB"
+      "maxSize": "1.40 MB"
     },
     {
       "path": "./dist/viewer/src/viewer.js",
