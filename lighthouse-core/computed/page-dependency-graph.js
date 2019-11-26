@@ -187,6 +187,9 @@ class PageDependencyGraph {
       cpuNode.addDependent(networkNode);
     }
 
+    /** @type {!Map<string, CPUNode>} */
+    const frameDependencies = new Map();
+
     /**
      * If the node has an associated frameId, then create a dependency on the root document request
      * for the frame. The task obviously couldn't have started before the frame was even downloaded.
@@ -202,6 +205,27 @@ class PageDependencyGraph {
       // A network request that started after could not possibly be required this task
       if (networkNode.startTime >= cpuNode.startTime) return;
       cpuNode.addDependency(networkNode);
+
+      /** @type {CPUNode[]} */
+      const deps = frameDependencies.get(frameId) || [];
+      for (const dep of deps) {
+        cpuNode.addDependency(dep);
+      }
+    }
+
+    /**
+     * Notes that the frame is dependent on a particular CPU node.
+     *
+     * This is necessary to handle cases where the iframe document is prefetched.
+     *
+     * @param {CPUNode} cpuNode
+     * @param {string|undefined} frameId
+     */
+    function addDependentFrame(cpuNode, frameId) {
+      /** @type {CPUNode[]} */
+      const deps = frameDependencies.get(frameId) || [];
+      deps.push(cpuNode);
+      frameDependencies.set(frameId, deps);
     }
 
     /** @param {CPUNode} cpuNode @param {string} url */
@@ -231,9 +255,11 @@ class PageDependencyGraph {
       cpuNode.addDependency(minCandidate);
     }
 
+
     /** @type {Map<string, CPUNode>} */
     const timers = new Map();
     for (const node of cpuNodes) {
+      let prevUrls = [];
       for (const evt of node.childEvents) {
         if (!evt.args.data) continue;
 
@@ -295,6 +321,10 @@ class PageDependencyGraph {
             // @ts-ignore - 'ResourceSendRequest' event means requestId is defined.
             addDependentNetworkRequest(node, evt.args.data.requestId);
             stackTraceUrls.forEach(url => addDependencyOnUrl(node, url));
+            break;
+
+          case 'navigationStart':
+            addDependentFrame(node, evt.args.data.frame);
             break;
         }
       }
