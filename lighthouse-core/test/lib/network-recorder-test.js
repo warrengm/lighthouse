@@ -9,6 +9,7 @@ const NetworkRecorder = require('../../lib/network-recorder.js');
 const networkRecordsToDevtoolsLog = require('../network-records-to-devtools-log.js');
 const assert = require('assert');
 const devtoolsLogItems = require('../fixtures/artifacts/perflog/defaultPass.devtoolslog.json');
+const prefetchedScriptDevtoolsLog = require('../fixtures/prefetched-script.devtoolslog.json');
 const redirectsDevtoolsLog = require('../fixtures/wikipedia-redirect.devtoolslog.json');
 const redirectsScriptDevtoolsLog = require('../fixtures/redirects-from-script.devtoolslog.json');
 const lrRequestDevtoolsLog = require('../fixtures/lr.devtoolslog.json');
@@ -315,5 +316,20 @@ describe('network recorder', function() {
       const periods = NetworkRecorder.findNetworkQuietPeriods(records, 0);
       assert.deepStrictEqual(periods, []);
     });
+  });
+
+  it('should handle prefetch requests', () => {
+    const records = NetworkRecorder.recordsFromLogs(prefetchedScriptDevtoolsLog);
+    expect(records.length).toBe(5);
+
+    const [mainDocument, loaderPrefetch, favicon, loaderScript, implScript] = records;
+    expect(mainDocument.initiatorRequest).toBe(undefined);
+    expect(loaderPrefetch.startTime < loaderScript.startTime).toBe(true);
+    expect(loaderPrefetch.resourceType).toBe('Other');
+    expect(loaderPrefetch.initiatorRequest).toBe(mainDocument);
+    expect(loaderScript.resourceType).toBe('Script');
+    expect(loaderScript.initiatorRequest).toBe(mainDocument);
+    expect(implScript.resourceType).toBe('Script');
+    expect(implScript.initiatorRequest).toBe(loaderPrefetch);
   });
 });
