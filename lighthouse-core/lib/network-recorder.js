@@ -342,15 +342,14 @@ class NetworkRecorder extends EventEmitter {
 
     // create a map of all the records by URL to link up initiator
     const scriptsByURL = new Map();
-    const recordsByURL = new Map();
+    const otherRecordsByURL = new Map();
     for (const record of records) {
       if (record.type === NetworkRequest.TYPES.Script) {
         if (!scriptsByURL.has(record.url)) {
           scriptsByURL.set(record.url, record);
         }
-      }
-      if (!recordsByURL.has(record.url)) {
-        recordsByURL.set(record.url, record);
+      } else if (!otherRecordsByURL.has(record.url)) {
+        otherRecordsByURL.set(record.url, record);
       }
     }
 
@@ -361,8 +360,9 @@ class NetworkRecorder extends EventEmitter {
       // If we were redirected to this request, our initiator is that redirect, otherwise, it's the
       // initiator provided by the protocol. See https://github.com/GoogleChrome/lighthouse/pull/7352/
       const initiator = record.redirectSource ||
+          // Check scripts first to avoid setting the initiator to the prefetch record for that script.
           record.initiator.type === 'script' && scriptsByURL.has(initiatorURL) ||
-          recordsByURL.get(initiatorURL);
+          otherRecordsByURL.get(initiatorURL);
       if (initiator) {
         record.setInitiatorRequest(initiator);
       }
