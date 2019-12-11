@@ -341,15 +341,15 @@ class NetworkRecorder extends EventEmitter {
     const records = networkRecorder.getRecords().filter(record => record.isValid);
 
     // create a map of all the records by URL to link up initiator
-    const scriptsByURL = new Map();
-    const otherRecordsByURL = new Map();
+    const possiblePrefetchRecords = new Map();
+    const typedRecords = new Map();
     for (const record of records) {
-      if (record.type === NetworkRequest.TYPES.Script) {
-        if (!scriptsByURL.has(record.url)) {
-          scriptsByURL.set(record.url, record);
+      if (record.type === NetworkRequest.TYPES.Other) {
+        if (!possiblePrefetchRecords.has(record.url)) {
+          possiblePrefetchRecords.set(record.url, record);
         }
-      } else if (!otherRecordsByURL.has(record.url)) {
-        otherRecordsByURL.set(record.url, record);
+      } else if (!typedRecords.has(record.url)) {
+        typedRecords.set(record.url, record);
       }
     }
 
@@ -360,9 +360,9 @@ class NetworkRecorder extends EventEmitter {
       // If we were redirected to this request, our initiator is that redirect, otherwise, it's the
       // initiator provided by the protocol. See https://github.com/GoogleChrome/lighthouse/pull/7352/
       const initiator = record.redirectSource ||
-          // Check scripts first to avoid setting the initiator to the prefetch record for that script.
-          record.initiator.type === 'script' && scriptsByURL.has(initiatorURL) ||
-          otherRecordsByURL.get(initiatorURL);
+          // Give precedence to typed records for the initiator to avoid setting prefetch requests
+          // as initiators.
+          typedRecords.get(initiatorURL) || possiblePrefetchRecords.get(initiatorURL);
       if (initiator) {
         record.setInitiatorRequest(initiator);
       }
