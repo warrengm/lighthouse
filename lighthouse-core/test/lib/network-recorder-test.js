@@ -322,7 +322,7 @@ describe('network recorder', function() {
     const records = NetworkRecorder.recordsFromLogs(prefetchedScriptDevtoolsLog);
     expect(records.length).toBe(5);
 
-    const [mainDocument, loaderPrefetch, favicon, loaderScript, implScript] = records;
+    const [mainDocument, loaderPrefetch, _ /* favicon */, loaderScript, implScript] = records;
     expect(mainDocument.initiatorRequest).toBe(undefined);
     expect(loaderPrefetch.startTime < loaderScript.startTime).toBe(true);
     expect(loaderPrefetch.resourceType).toBe('Other');
