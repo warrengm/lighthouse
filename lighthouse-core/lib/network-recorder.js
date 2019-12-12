@@ -328,6 +328,35 @@ class NetworkRecorder extends EventEmitter {
   }
 
   /**
+   * @param {NetworkRequest} record The record to find the initiator of
+   * @param {Map<string, NetworkRequest>} Network requests that are possibly prefetch requests,
+   *     keyed by URL.
+   * @param {Map<string, NetworkRequest>} Network requests that are definitely not prefetch
+   *     requests, keyed by URL.
+   * @param {?NetworkRequest} The request that initiated record, or null if no valid initiator
+   *     was found.
+   *@private
+   */
+  static _chooseInitiatorRequest(record, possiblePrefetchRecords, nonPrefetchRecords) {
+    if (record.redirectSource) {
+      return record.redirectSource;
+    }
+    const stackFrames = (record.initiator.stack && record.initiator.stack.callFrames) || [];
+    const initiatorURL = record.initiator.url || (stackFrames[0] && stackFrames[0].url);
+    // Choose a non-prefetch request if one exists.
+    if (nonPrefetchRecords.has(initiatorURL)) {
+      return nonPrefetchRecords.get(initiatorURL);
+    }
+    // If we couldn't find a non-prefetch request as the initiator, fallback to possible prefetch
+    // record. Maybe we can improve detection of prefetch requests in the future, but this is based
+    // purely on resourceType as of writing this comment.
+    if (possiblePrefetchRecords.has(initiatorURL)) {
+      return possiblePrefetchRecords.get(initiatorURL);
+    }
+    return null;
+  }
+
+  /**
    * Construct network records from a log of devtools protocol messages.
    * @param {LH.DevtoolsLog} devtoolsLog
    * @return {Array<LH.Artifacts.NetworkRequest>}
@@ -340,29 +369,26 @@ class NetworkRecorder extends EventEmitter {
     // get out the list of records & filter out invalid records
     const records = networkRecorder.getRecords().filter(record => record.isValid);
 
-    // create a map of all the records by URL to link up initiator
+    // The initiator is unlikely to be a prefetch record which have type 'Other'
+    // Create two maps of initiators, one for prefetch, one for regular, that contain the earliest
+    // request for the URL. The prefetch map may have false positives so we may fall back to it
+    // for setting the initiator.
     const possiblePrefetchRecords = new Map();
-    const typedRecords = new Map();
+    const nonPrefetchRecords = new Map();
     for (const record of records) {
       if (record.type === NetworkRequest.TYPES.Other) {
         if (!possiblePrefetchRecords.has(record.url)) {
           possiblePrefetchRecords.set(record.url, record);
         }
-      } else if (!typedRecords.has(record.url)) {
-        typedRecords.set(record.url, record);
+      } else if (!nonPrefetchRecords.has(record.url)) {
+        nonPrefetchRecords.set(record.url, record);
       }
     }
 
     // set the initiator and redirects array
     for (const record of records) {
-      const stackFrames = (record.initiator.stack && record.initiator.stack.callFrames) || [];
-      const initiatorURL = record.initiator.url || (stackFrames[0] && stackFrames[0].url);
-      // If we were redirected to this request, our initiator is that redirect, otherwise, it's the
-      // initiator provided by the protocol. See https://github.com/GoogleChrome/lighthouse/pull/7352/
-      const initiator = record.redirectSource ||
-          // Give precedence to typed records for the initiator to avoid setting prefetch requests
-          // as initiators.
-          typedRecords.get(initiatorURL) || possiblePrefetchRecords.get(initiatorURL);
+      const initiator = NetworkRecorder._chooseInitiatorRequest(
+          record, possiblePrefetchRecords, nonPrefetchRecords);
       if (initiator) {
         record.setInitiatorRequest(initiator);
       }
