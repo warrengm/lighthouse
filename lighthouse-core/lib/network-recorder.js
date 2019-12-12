@@ -338,19 +338,21 @@ class NetworkRecorder extends EventEmitter {
    *@private
    */
   static _chooseInitiatorRequest(record, possiblePrefetchRecords, nonPrefetchRecords) {
-    if (record.redirectSource) {
+    if (record.redirectSource && record.redirectSource.responseReceivedTime <= record.startTime) {
       return record.redirectSource;
     }
     const stackFrames = (record.initiator.stack && record.initiator.stack.callFrames) || [];
     const initiatorURL = record.initiator.url || (stackFrames[0] && stackFrames[0].url);
     // Choose a non-prefetch request if one exists.
-    if (nonPrefetchRecords.has(initiatorURL)) {
+    if (nonPrefetchRecords.has(initiatorURL) &&
+        nonPrefetchRecords.get(initiatorURL).responseReceivedTime <= record.startTime) {
       return nonPrefetchRecords.get(initiatorURL);
     }
     // If we couldn't find a non-prefetch request as the initiator, fallback to possible prefetch
     // record. Maybe we can improve detection of prefetch requests in the future, but this is based
     // purely on resourceType as of writing this comment.
-    if (possiblePrefetchRecords.has(initiatorURL)) {
+    if (possiblePrefetchRecords.has(initiatorURL) &&
+        possiblePrefetchRecords.get(initiatorURL).responseReceivedTime <= record.startTime) {
       return possiblePrefetchRecords.get(initiatorURL);
     }
     return null;
