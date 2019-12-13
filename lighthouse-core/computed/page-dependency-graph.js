@@ -147,9 +147,6 @@ class PageDependencyGraph {
       const directInitiatorRequest = node.record.initiatorRequest || rootNode.record;
       const directInitiatorNode =
         networkNodeOutput.idToNodeMap.get(directInitiatorRequest.requestId) || rootNode;
-      if (node !== directInitiatorNode) {
-        directInitiatorNode.addDependent(node);
-      }
       const initiators = PageDependencyGraph.getNetworkInitiators(node.record);
       if (initiators.length) {
         initiators.forEach(initiator => {
@@ -157,9 +154,14 @@ class PageDependencyGraph {
           // Only add the edge if the parent is unambiguous with valid timing.
           if (parentCandidates.length === 1 && parentCandidates[0].startTime <= node.startTime) {
             node.addDependency(parentCandidates[0]);
+          } else {
+            node.addDependency(directInitiatorNode);
           }
         });
+      } else if (node !== directInitiatorNode) {
+        directInitiatorNode.addDependent(node);
       }
+
       if (!node.record.redirects) return;
 
       const redirects = [...node.record.redirects, node.record];
