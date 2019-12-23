@@ -330,10 +330,11 @@ class NetworkRecorder extends EventEmitter {
   /**
    * @param {NetworkRequest} record The record to find the initiator of
    * @param {Map<string, NetworkRequest[]>} recordsByURL
-   *@private
+   * @return {NetworkRequest|null}
+   * @private
    */
   static _chooseInitiator(record, recordsByURL) {
-    if (record.redirectSource && record.redirectSource.responseReceivedTime <= record.startTime) {
+    if (record.redirectSource) {
       return record.redirectSource;
     }
     const stackFrames = (record.initiator.stack && record.initiator.stack.callFrames) || [];
