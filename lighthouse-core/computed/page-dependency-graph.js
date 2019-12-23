@@ -147,16 +147,19 @@ class PageDependencyGraph {
       const directInitiatorRequest = node.record.initiatorRequest || rootNode.record;
       const directInitiatorNode =
         networkNodeOutput.idToNodeMap.get(directInitiatorRequest.requestId) || rootNode;
-      if (node !== directInitiatorNode) {
-        directInitiatorNode.addDependent(node);
-      }
       const initiators = PageDependencyGraph.getNetworkInitiators(node.record);
-      for (const initiator of initiators) {
-        const parentCandidates = networkNodeOutput.urlToNodeMap.get(initiator) || [];
-        // Only add the edge if the parent is unambiguous with valid timing.
-        if (parentCandidates.length === 1 && parentCandidates[0].startTime <= node.startTime) {
-          node.addDependency(parentCandidates[0]);
-        }
+      if (initiators.length) {
+        initiators.forEach(initiator => {
+          const parentCandidates = networkNodeOutput.urlToNodeMap.get(initiator) || [];
+          // Only add the edge if the parent is unambiguous with valid timing.
+          if (parentCandidates.length === 1 && parentCandidates[0].startTime <= node.startTime) {
+            node.addDependency(parentCandidates[0]);
+          } else {
+            directInitiatorNode.addDependent(node);
+          }
+        });
+      } else if (node !== directInitiatorNode) {
+        directInitiatorNode.addDependent(node);
       }
 
       if (!node.record.redirects) return;
