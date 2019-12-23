@@ -345,14 +345,15 @@ class NetworkRecorder extends EventEmitter {
     if (candidates.length > 1) {
       // Disambiguate based on resource type. Prefetch requests have type 'Other' and cannot
       // initiate requests, so we drop them here.
-      const nonPrefetchCandidates = candidates.filter(cand => cand.resourceType !== NetworkRequest.TYPES.Other);
+      const nonPrefetchCandidates = candidates.filter(
+          cand => cand.resourceType !== NetworkRequest.TYPES.Other);
       if (nonPrefetchCandidates.length) {
         candidates = nonPrefetchCandidates;
       }
     }
     if (candidates.length > 1) {
       // Disambiguate based on frame. It's likely that the initiator comes from the same frame.
-      const sameFrameCandidates = candidates.filter((c) => c.frameId == record.frameId);
+      const sameFrameCandidates = candidates.filter(cand => cand.frameId == record.frameId);
       if (sameFrameCandidates.length) {
         candidates = sameFrameCandidates;
       }
@@ -375,17 +376,16 @@ class NetworkRecorder extends EventEmitter {
     const records = networkRecorder.getRecords().filter(record => record.isValid);
 
     /** @type {Map<string, NetworkRequest> */
-    const recordsByUrl = new Map();
+    const recordsByURL = new Map();
     for (const record of records) {
-      const records = recordsByUrl.get(record.url) || [];
+      const records = recordsByURL.get(record.url) || [];
       records.push(record);
-      recordsByUrl.set(record.url, records);
+      recordsByURL.set(record.url, records);
     }
 
     // set the initiator and redirects array
     for (const record of records) {
-      const initiator = NetworkRecorder._chooseInitiator(
-          record, recordsByUrl);
+      const initiator = NetworkRecorder._chooseInitiator(record, recordsByURL);
       if (initiator) {
         record.setInitiatorRequest(initiator);
       }
