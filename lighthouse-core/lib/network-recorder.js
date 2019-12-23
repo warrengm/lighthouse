@@ -329,33 +329,36 @@ class NetworkRecorder extends EventEmitter {
 
   /**
    * @param {NetworkRequest} record The record to find the initiator of
-   * @param {Map<string, NetworkRequest>} Network requests that are possibly prefetch requests,
-   *     keyed by URL.
-   * @param {Map<string, NetworkRequest>} Network requests that are definitely not prefetch
-   *     requests, keyed by URL.
-   * @param {?NetworkRequest} The request that initiated record, or null if no valid initiator
-   *     was found.
+   * @param {Map<string, NetworkRequest[]>} recordsByURL
    *@private
    */
-  static _chooseInitiatorRequest(record, possiblePrefetchRecords, nonPrefetchRecords) {
+  static _chooseInitiator(record, recordsByURL) {
     if (record.redirectSource && record.redirectSource.responseReceivedTime <= record.startTime) {
       return record.redirectSource;
     }
     const stackFrames = (record.initiator.stack && record.initiator.stack.callFrames) || [];
     const initiatorURL = record.initiator.url || (stackFrames[0] && stackFrames[0].url);
-    // Choose a non-prefetch request if one exists.
-    if (nonPrefetchRecords.has(initiatorURL) &&
-        nonPrefetchRecords.get(initiatorURL).responseReceivedTime <= record.startTime) {
-      return nonPrefetchRecords.get(initiatorURL);
+
+    let candidates = recordsByURL.get(initiatorURL) || [];
+    // The initiator must come before the initiated request.
+    candidates = candidates.filter(cand => cand.responseReceivedTime <= record.startTime);
+    if (candidates.length > 1) {
+      // Disambiguate based on resource type. Prefetch requests have type 'Other' and cannot
+      // initiate requests, so we drop them here.
+      const nonPrefetchCandidates = candidates.filter(cand => cand.resourceType !== NetworkRequest.TYPES.Other);
+      if (nonPrefetchCandidates.length) {
+        candidates = nonPrefetchCandidates;
+      }
     }
-    // If we couldn't find a non-prefetch request as the initiator, fallback to possible prefetch
-    // record. Maybe we can improve detection of prefetch requests in the future, but this is based
-    // purely on resourceType as of writing this comment.
-    if (possiblePrefetchRecords.has(initiatorURL) &&
-        possiblePrefetchRecords.get(initiatorURL).responseReceivedTime <= record.startTime) {
-      return possiblePrefetchRecords.get(initiatorURL);
+    if (candidates.length > 1) {
+      // Disambiguate based on frame. It's likely that the initiator comes from the same frame.
+      const sameFrameCandidates = candidates.filter((c) => c.frameId == record.frameId);
+      if (sameFrameCandidates.length) {
+        candidates = sameFrameCandidates;
+      }
     }
-    return null;
+
+    return candidates.length ? candidates[0] : null;
   }
 
   /**
@@ -371,26 +374,18 @@ class NetworkRecorder extends EventEmitter {
     // get out the list of records & filter out invalid records
     const records = networkRecorder.getRecords().filter(record => record.isValid);
 
-    // The initiator is unlikely to be a prefetch record which have type 'Other'
-    // Create two maps of initiators, one for prefetch, one for regular, that contain the earliest
-    // request for the URL. The prefetch map may have false positives so we may fall back to it
-    // for setting the initiator.
-    const possiblePrefetchRecords = new Map();
-    const nonPrefetchRecords = new Map();
+    /** @type {Map<string, NetworkRequest> */
+    const recordsByUrl = new Map();
     for (const record of records) {
-      if (record.resourceType === NetworkRequest.TYPES.Other) {
-        if (!possiblePrefetchRecords.has(record.url)) {
-          possiblePrefetchRecords.set(record.url, record);
-        }
-      } else if (!nonPrefetchRecords.has(record.url)) {
-        nonPrefetchRecords.set(record.url, record);
-      }
+      const records = recordsByUrl.get(record.url) || [];
+      records.push(record);
+      recordsByUrl.set(record.url, records);
     }
 
     // set the initiator and redirects array
     for (const record of records) {
-      const initiator = NetworkRecorder._chooseInitiatorRequest(
-          record, possiblePrefetchRecords, nonPrefetchRecords);
+      const initiator = NetworkRecorder._chooseInitiator(
+          record, recordsByUrl);
       if (initiator) {
         record.setInitiatorRequest(initiator);
       }
