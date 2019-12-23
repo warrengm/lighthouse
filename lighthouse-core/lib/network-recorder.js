@@ -378,7 +378,7 @@ class NetworkRecorder extends EventEmitter {
     const possiblePrefetchRecords = new Map();
     const nonPrefetchRecords = new Map();
     for (const record of records) {
-      if (record.type === NetworkRequest.TYPES.Other) {
+      if (record.resourceType === NetworkRequest.TYPES.Other) {
         if (!possiblePrefetchRecords.has(record.url)) {
           possiblePrefetchRecords.set(record.url, record);
         }
