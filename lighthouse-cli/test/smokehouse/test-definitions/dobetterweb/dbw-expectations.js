@@ -128,6 +128,7 @@ const expectations = [
         {
           name: '',
           content: '',
+          charset: 'utf-8',
         },
         {
           name: 'viewport',
@@ -376,9 +377,6 @@ const expectations = [
           details: {
             items: [{
               name: 'jQuery',
-            },
-            {
-              name: 'jQuery (Fast path)',
             },
             {
               name: 'WordPress',
