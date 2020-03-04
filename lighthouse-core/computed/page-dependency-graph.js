@@ -139,7 +139,7 @@ class PageDependencyGraph {
   }
 
   /**
-   * @param {Node} rootNode
+   * @param {NetworkNode} rootNode
    * @param {NetworkNodeOutput} networkNodeOutput
    */
   static linkNetworkNodes(rootNode, networkNodeOutput) {

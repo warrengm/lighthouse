@@ -376,7 +376,7 @@ class NetworkRecorder extends EventEmitter {
     // get out the list of records & filter out invalid records
     const records = networkRecorder.getRecords().filter(record => record.isValid);
 
-    /** @type {Map<string, NetworkRequest> */
+    /** @type {Map<string, NetworkRequest[]>} */
     const recordsByURL = new Map();
     for (const record of records) {
       const records = recordsByURL.get(record.url) || [];
