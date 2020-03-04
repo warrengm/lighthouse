@@ -354,7 +354,7 @@ class NetworkRecorder extends EventEmitter {
     }
     if (candidates.length > 1) {
       // Disambiguate based on frame. It's likely that the initiator comes from the same frame.
-      const sameFrameCandidates = candidates.filter(cand => cand.frameId == record.frameId);
+      const sameFrameCandidates = candidates.filter(cand => cand.frameId === record.frameId);
       if (sameFrameCandidates.length) {
         candidates = sameFrameCandidates;
       }
