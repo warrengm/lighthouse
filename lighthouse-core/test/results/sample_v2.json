@@ -5,7 +5,7 @@
     "hostUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3358.0 Safari/537.36",
     "benchmarkIndex": 1000
   },
-  "lighthouseVersion": "5.6.0",
+  "lighthouseVersion": "6.0.0-beta.0",
   "fetchTime": "2018-03-13T00:55:45.840Z",
   "requestedUrl": "http://localhost:10200/dobetterweb/dbw_tester.html",
   "finalUrl": "http://localhost:10200/dobetterweb/dbw_tester.html",
@@ -81,16 +81,6 @@
       "numericUnit": "millisecond",
       "displayValue": "4.0 s"
     },
-    "first-meaningful-paint": {
-      "id": "first-meaningful-paint",
-      "title": "First Meaningful Paint",
-      "description": "First Meaningful Paint measures when the primary content of a page is visible. [Learn more](https://web.dev/first-meaningful-paint).",
-      "score": 0.51,
-      "scoreDisplayMode": "numeric",
-      "numericValue": 3969.136,
-      "numericUnit": "millisecond",
-      "displayValue": "4.0 s"
-    },
     "largest-contentful-paint": {
       "id": "largest-contentful-paint",
       "title": "Largest Contentful Paint",
@@ -100,6 +90,16 @@
       "numericValue": 4927.278,
       "numericUnit": "millisecond",
       "displayValue": "4.9 s"
+    },
+    "first-meaningful-paint": {
+      "id": "first-meaningful-paint",
+      "title": "First Meaningful Paint",
+      "description": "First Meaningful Paint measures when the primary content of a page is visible. [Learn more](https://web.dev/first-meaningful-paint).",
+      "score": 0.51,
+      "scoreDisplayMode": "numeric",
+      "numericValue": 3969.136,
+      "numericUnit": "millisecond",
+      "displayValue": "4.0 s"
     },
     "load-fast-enough-for-pwa": {
       "id": "load-fast-enough-for-pwa",
@@ -229,8 +229,8 @@
     "cumulative-layout-shift": {
       "id": "cumulative-layout-shift",
       "title": "Cumulative Layout Shift",
-      "description": "Cumulative Layout Shift is the sum of all layout shifts that occurred during a page's load. A layout shift is any movement an element makes once it is visible to the user. All layout shift is recorded, scored, and then aggregated into a cumulative score between 0 and 1; 0 being a perfectly stable page, and >=0.5 being a highly shifting page.",
-      "score": 0.48,
+      "description": "Cumulative Layout Shift is the sum of all layout shifts that occurred during a page's load. A layout shift is any movement an element makes once it is visible to the user. All layout shift is recorded, scored, and then aggregated into a cumulative score between 0 and 1; 0 being a perfectly stable page, and >=0.5 being a highly shifting page. [Learn more](https://web.dev/cls).",
+      "score": 0.21,
       "scoreDisplayMode": "numeric",
       "numericValue": 0.42,
       "numericUnit": "unitless",
@@ -630,6 +630,54 @@
         ]
       }
     },
+    "image-size-responsive": {
+      "id": "image-size-responsive",
+      "title": "Displays images with inappropriate size",
+      "description": "Image natural dimensions should be proportional to the display size and the pixel ratio to maximize image clarity. [Learn more](https://web.dev/image-size-responsive).",
+      "score": 0,
+      "scoreDisplayMode": "binary",
+      "details": {
+        "type": "table",
+        "headings": [
+          {
+            "key": "url",
+            "itemType": "thumbnail",
+            "text": ""
+          },
+          {
+            "key": "elidedUrl",
+            "itemType": "url",
+            "text": "URL"
+          },
+          {
+            "key": "displayedSize",
+            "itemType": "text",
+            "text": "Displayed size"
+          },
+          {
+            "key": "actualSize",
+            "itemType": "text",
+            "text": "Actual size"
+          },
+          {
+            "key": "expectedSize",
+            "itemType": "text",
+            "text": "Expected size"
+          }
+        ],
+        "items": [
+          {
+            "url": "http://localhost:10200/dobetterweb/lighthouse-480x318.jpg",
+            "elidedUrl": "http://localhost:10200/dobetterweb/lighthouse-480x318.jpg",
+            "displayedSize": "480 x 318",
+            "actualSize": "480 x 318",
+            "actualPixels": 152640,
+            "expectedSize": "1260 x 835",
+            "expectedPixels": 1052100
+          }
+        ]
+      }
+    },
     "deprecations": {
       "id": "deprecations",
       "title": "Uses deprecated APIs",
@@ -946,6 +994,7 @@
             "url": "http://localhost:10200/dobetterweb/dbw_tester.html",
             "startTime": 0,
             "endTime": 640.1550000009593,
+            "finished": true,
             "transferSize": 12640,
             "resourceSize": 12519,
             "statusCode": 200,
@@ -956,6 +1005,7 @@
             "url": "http://localhost:10200/dobetterweb/dbw_tester.css?delay=2000&async=true",
             "startTime": 630.2950000099372,
             "endTime": 2635.035000013886,
+            "finished": true,
             "transferSize": 821,
             "resourceSize": 677,
             "statusCode": 200,
@@ -966,6 +1016,7 @@
             "url": "http://localhost:10200/dobetterweb/dbw_tester.css?delay=100",
             "startTime": 635.496000002604,
             "endTime": 1204.6590000099968,
+            "finished": true,
             "transferSize": 821,
             "resourceSize": 677,
             "statusCode": 200,
@@ -976,6 +1027,7 @@
             "url": "http://localhost:10200/dobetterweb/unknown404.css?delay=200",
             "startTime": 636.6400000115391,
             "endTime": 1213.2910000218544,
+            "finished": true,
             "transferSize": 139,
             "resourceSize": 0,
             "statusCode": 404,
@@ -986,6 +1038,7 @@
             "url": "http://localhost:10200/dobetterweb/dbw_tester.css?delay=2200",
             "startTime": 638.0040000076406,
             "endTime": 2849.3670000170823,
+            "finished": true,
             "transferSize": 821,
             "resourceSize": 677,
             "statusCode": 200,
@@ -996,6 +1049,7 @@
             "url": "http://localhost:10200/dobetterweb/dbw_disabled.css?delay=200&isdisabled",
             "startTime": 638.7899999972433,
             "endTime": 1220.04100002232,
+            "finished": true,
             "transferSize": 1108,
             "resourceSize": 964,
             "statusCode": 200,
@@ -1006,6 +1060,7 @@
             "url": "http://localhost:10200/dobetterweb/dbw_partial_a.html?delay=200",
             "startTime": 640.5979999981355,
             "endTime": 1228.5180000180844,
+            "finished": true,
             "transferSize": 736,
             "resourceSize": 616,
             "statusCode": 200,
@@ -1016,6 +1071,7 @@
             "url": "http://localhost:10200/dobetterweb/dbw_partial_b.html?delay=200&isasync",
             "startTime": 641.3450000109151,
             "endTime": 1776.4320000133011,
+            "finished": true,
             "transferSize": 733,
             "resourceSize": 613,
             "statusCode": 200,
@@ -1026,6 +1082,7 @@
             "url": "http://localhost:10200/dobetterweb/dbw_tester.css?delay=3000&async=true",
             "startTime": 642.8679999953602,
             "endTime": 4216.161000018474,
+            "finished": true,
             "transferSize": 821,
             "resourceSize": 677,
             "statusCode": 200,
@@ -1036,6 +1093,7 @@
             "url": "http://localhost:10200/dobetterweb/dbw_tester.js",
             "startTime": 644.0820000134408,
             "endTime": 1792.0860000012908,
+            "finished": true,
             "transferSize": 1703,
             "resourceSize": 1552,
             "statusCode": 200,
@@ -1046,6 +1104,7 @@
             "url": "http://localhost:10200/dobetterweb/empty_module.js?delay=500",
             "startTime": 645.529000001261,
             "endTime": 1236.1859999946319,
+            "finished": true,
             "transferSize": 144,
             "resourceSize": 0,
             "statusCode": 200,
@@ -1056,6 +1115,7 @@
             "url": "http://localhost:10200/dobetterweb/lighthouse-480x318.jpg",
             "startTime": 3951.6250000160653,
             "endTime": 4779.641000000993,
+            "finished": true,
             "transferSize": 24741,
             "resourceSize": 24620,
             "statusCode": 200,
@@ -1066,6 +1126,7 @@
             "url": "http://localhost:10200/zone.js",
             "startTime": 2849.7340000176337,
             "endTime": 3961.049000005005,
+            "finished": true,
             "transferSize": 71654,
             "resourceSize": 71501,
             "statusCode": 200,
@@ -1076,6 +1137,7 @@
             "url": "http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js",
             "startTime": 3874.7540000185836,
             "endTime": 4796.288000012282,
+            "finished": true,
             "transferSize": 30174,
             "resourceSize": 84245,
             "statusCode": 200,
@@ -1086,6 +1148,7 @@
             "url": "http://localhost:10200/dobetterweb/dbw_tester.css?scriptActivated&delay=200",
             "startTime": 2924.34100000537,
             "endTime": 3964.233000006061,
+            "finished": true,
             "transferSize": 821,
             "resourceSize": 677,
             "statusCode": 200,
@@ -1096,6 +1159,7 @@
             "url": "http://localhost:10200/dobetterweb/dbw_tester.html",
             "startTime": 3066.252999997232,
             "endTime": 3772.7560000203084,
+            "finished": true,
             "transferSize": 12640,
             "resourceSize": 12519,
             "statusCode": 200,
@@ -1106,6 +1170,7 @@
             "url": "blob:http://localhost:10200/ae0eac03-ab9b-4a6a-b299-f5212153e277",
             "startTime": 3829.6360000094865,
             "endTime": 3968.59800000675,
+            "finished": true,
             "transferSize": 0,
             "resourceSize": 4,
             "statusCode": 200,
@@ -1116,6 +1181,7 @@
             "url": "http://localhost:10200/favicon.ico",
             "startTime": 4967.373000021325,
             "endTime": 5536.498000001302,
+            "finished": true,
             "transferSize": 221,
             "resourceSize": 95,
             "statusCode": 404,
@@ -1766,13 +1832,6 @@
       "id": "aria-valid-attr",
       "title": "`[aria-*]` attributes are valid and not misspelled",
       "description": "Assistive technologies, like screen readers, can't interpret ARIA attributes with invalid names. [Learn more](https://web.dev/aria-valid-attr/).",
-      "score": null,
-      "scoreDisplayMode": "notApplicable"
-    },
-    "audio-caption": {
-      "id": "audio-caption",
-      "title": "`<audio>` elements contain a `<track>` element with `[kind=\"captions\"]`",
-      "description": "Captions make audio elements usable for deaf or hearing-impaired users, providing critical information such as who is talking, what they're saying, and other non-speech information. [Learn more](https://web.dev/audio-caption/).",
       "score": null,
       "scoreDisplayMode": "notApplicable"
     },
@@ -2689,7 +2748,7 @@
     "unused-javascript": {
       "id": "unused-javascript",
       "title": "Remove unused JavaScript",
-      "description": "Remove unused JavaScript to reduce bytes consumed by network activity. [Learn more](https://developers.google.com/web/fundamentals/performance/optimizing-javascript/code-splitting).",
+      "description": "Remove unused JavaScript to reduce bytes consumed by network activity. [Learn more](https://web.dev/remove-unused-code/).",
       "score": 1,
       "scoreDisplayMode": "numeric",
       "numericValue": 0,
@@ -3639,49 +3698,48 @@
       "auditRefs": [
         {
           "id": "first-contentful-paint",
-          "weight": 3,
-          "group": "metrics"
-        },
-        {
-          "id": "first-meaningful-paint",
-          "weight": 1,
-          "group": "metrics"
-        },
-        {
-          "id": "largest-contentful-paint",
-          "weight": 0,
+          "weight": 15,
           "group": "metrics"
         },
         {
           "id": "speed-index",
-          "weight": 4,
+          "weight": 15,
+          "group": "metrics"
+        },
+        {
+          "id": "largest-contentful-paint",
+          "weight": 25,
           "group": "metrics"
         },
         {
           "id": "interactive",
+          "weight": 15,
+          "group": "metrics"
+        },
+        {
+          "id": "total-blocking-time",
+          "weight": 25,
+          "group": "metrics"
+        },
+        {
+          "id": "cumulative-layout-shift",
           "weight": 5,
           "group": "metrics"
         },
         {
           "id": "first-cpu-idle",
-          "weight": 2,
-          "group": "metrics"
+          "weight": 0
         },
         {
           "id": "max-potential-fid",
-          "weight": 0,
-          "group": "metrics"
+          "weight": 0
         },
         {
-          "id": "cumulative-layout-shift",
+          "id": "first-meaningful-paint",
           "weight": 0
         },
         {
           "id": "estimated-input-latency",
-          "weight": 0
-        },
-        {
-          "id": "total-blocking-time",
           "weight": 0
         },
         {
@@ -3853,7 +3911,7 @@
         }
       ],
       "id": "performance",
-      "score": 0.69
+      "score": 0.64
     },
     "accessibility": {
       "title": "Accessibility",
@@ -3919,11 +3977,6 @@
           "id": "aria-valid-attr",
           "weight": 0,
           "group": "a11y-aria"
-        },
-        {
-          "id": "audio-caption",
-          "weight": 0,
-          "group": "a11y-audio-video"
         },
         {
           "id": "button-name",
@@ -4180,10 +4233,14 @@
         {
           "id": "image-aspect-ratio",
           "weight": 1
+        },
+        {
+          "id": "image-size-responsive",
+          "weight": 1
         }
       ],
       "id": "best-practices",
-      "score": 0.07
+      "score": 0.06
     },
     "seo": {
       "title": "SEO",
@@ -4525,18 +4582,6 @@
       },
       {
         "startTime": 0,
-        "name": "lh:audit:first-meaningful-paint",
-        "duration": 100,
-        "entryType": "measure"
-      },
-      {
-        "startTime": 0,
-        "name": "lh:computed:FirstMeaningfulPaint",
-        "duration": 100,
-        "entryType": "measure"
-      },
-      {
-        "startTime": 0,
         "name": "lh:audit:largest-contentful-paint",
         "duration": 100,
         "entryType": "measure"
@@ -4544,6 +4589,18 @@
       {
         "startTime": 0,
         "name": "lh:computed:LargestContentfulPaint",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:audit:first-meaningful-paint",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:computed:FirstMeaningfulPaint",
         "duration": 100,
         "entryType": "measure"
       },
@@ -4813,6 +4870,12 @@
       },
       {
         "startTime": 0,
+        "name": "lh:audit:image-size-responsive",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
         "name": "lh:audit:deprecations",
         "duration": 100,
         "entryType": "measure"
@@ -5024,12 +5087,6 @@
       {
         "startTime": 0,
         "name": "lh:audit:aria-valid-attr",
-        "duration": 100,
-        "entryType": "measure"
-      },
-      {
-        "startTime": 0,
-        "name": "lh:audit:audio-caption",
         "duration": 100,
         "entryType": "measure"
       },
@@ -5632,15 +5689,15 @@
         },
         {
           "values": {
-            "timeInMs": 3969.136
-          },
-          "path": "audits[first-meaningful-paint].displayValue"
-        },
-        {
-          "values": {
             "timeInMs": 4927.278
           },
           "path": "audits[largest-contentful-paint].displayValue"
+        },
+        {
+          "values": {
+            "timeInMs": 3969.136
+          },
+          "path": "audits[first-meaningful-paint].displayValue"
         },
         {
           "values": {
@@ -5673,18 +5730,18 @@
           "path": "audits[bootup-time].displayValue"
         }
       ],
+      "lighthouse-core/audits/metrics/largest-contentful-paint.js | title": [
+        "audits[largest-contentful-paint].title"
+      ],
+      "lighthouse-core/audits/metrics/largest-contentful-paint.js | description": [
+        "audits[largest-contentful-paint].description"
+      ],
       "lighthouse-core/lib/i18n/i18n.js | firstMeaningfulPaintMetric": [
         "audits[first-meaningful-paint].title",
         "audits[timing-budget].details.items[2].label"
       ],
       "lighthouse-core/audits/metrics/first-meaningful-paint.js | description": [
         "audits[first-meaningful-paint].description"
-      ],
-      "lighthouse-core/audits/metrics/largest-contentful-paint.js | title": [
-        "audits[largest-contentful-paint].title"
-      ],
-      "lighthouse-core/audits/metrics/largest-contentful-paint.js | description": [
-        "audits[largest-contentful-paint].description"
       ],
       "lighthouse-core/audits/load-fast-enough-for-pwa.js | title": [
         "audits[load-fast-enough-for-pwa].title"
@@ -5764,6 +5821,7 @@
       "lighthouse-core/lib/i18n/i18n.js | columnURL": [
         "audits[errors-in-console].details.headings[0].text",
         "audits[image-aspect-ratio].details.headings[1].text",
+        "audits[image-size-responsive].details.headings[1].text",
         "audits.deprecations.details.headings[1].text",
         "audits[bootup-time].details.headings[0].text",
         "audits[network-rtt].details.headings[0].text",
@@ -5884,6 +5942,21 @@
       ],
       "lighthouse-core/audits/image-aspect-ratio.js | columnActual": [
         "audits[image-aspect-ratio].details.headings[3].text"
+      ],
+      "lighthouse-core/audits/image-size-responsive.js | failureTitle": [
+        "audits[image-size-responsive].title"
+      ],
+      "lighthouse-core/audits/image-size-responsive.js | description": [
+        "audits[image-size-responsive].description"
+      ],
+      "lighthouse-core/audits/image-size-responsive.js | columnDisplayed": [
+        "audits[image-size-responsive].details.headings[2].text"
+      ],
+      "lighthouse-core/audits/image-size-responsive.js | columnActual": [
+        "audits[image-size-responsive].details.headings[3].text"
+      ],
+      "lighthouse-core/audits/image-size-responsive.js | columnExpected": [
+        "audits[image-size-responsive].details.headings[4].text"
       ],
       "lighthouse-core/audits/deprecations.js | failureTitle": [
         "audits.deprecations.title"
@@ -6197,12 +6270,6 @@
       ],
       "lighthouse-core/audits/accessibility/aria-valid-attr.js | description": [
         "audits[aria-valid-attr].description"
-      ],
-      "lighthouse-core/audits/accessibility/audio-caption.js | title": [
-        "audits[audio-caption].title"
-      ],
-      "lighthouse-core/audits/accessibility/audio-caption.js | description": [
-        "audits[audio-caption].description"
       ],
       "lighthouse-core/audits/accessibility/button-name.js | title": [
         "audits[button-name].title"

@@ -1,5 +1,5 @@
 /**
- * @license Copyright 2019 Google Inc. All Rights Reserved.
+ * @license Copyright 2019 The Lighthouse Authors. All Rights Reserved.
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
@@ -16,7 +16,8 @@ const UIStrings = {
   description: 'Cumulative Layout Shift is the sum of all layout shifts that occurred during a ' +
       'page\'s load. A layout shift is any movement an element makes once it is visible to the ' +
       'user. All layout shift is recorded, scored, and then aggregated into a cumulative score ' +
-      'between 0 and 1; 0 being a perfectly stable page, and >=0.5 being a highly shifting page.',
+      'between 0 and 1; 0 being a perfectly stable page, and >=0.5 being a highly shifting page. ' +
+      '[Learn more](https://web.dev/cls).',
 };
 
 const str_ = i18n.createMessageInstanceIdFn(__filename, UIStrings);
@@ -43,9 +44,11 @@ class CumulativeLayoutShift extends Audit {
    */
   static get defaultOptions() {
     return {
-      // TODO(paulirish): Calibrate these
-      scorePODR: 0.05,
-      scoreMedian: 0.4,
+      // Calibrated to assure 0.1 gets a score of 0.9. https://web.dev/cls/#what-is-a-good-cls-score
+      // This 0.1 target score was determined through both manual evaluation and large-scale analysis.
+      // see https://www.desmos.com/calculator/wmcxn7zfhc
+      scorePODR: 0.02,
+      scoreMedian: 0.2,
     };
   }
 
