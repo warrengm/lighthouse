@@ -1232,6 +1232,9 @@
   "lighthouse-core/audits/third-party-summary.js | columnThirdParty": {
     "message": "Third-Party"
   },
+  "lighthouse-core/audits/third-party-summary.js | columnURL": {
+    "message": "URL"
+  },
   "lighthouse-core/audits/third-party-summary.js | description": {
     "message": "Third-party code can significantly impact load performance. Limit the number of redundant third-party providers and try to load third-party code after your page has primarily finished loading. [Learn more](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/loading-third-party-javascript/)."
   },
@@ -1240,6 +1243,9 @@
   },
   "lighthouse-core/audits/third-party-summary.js | failureTitle": {
     "message": "Reduce the impact of third-party code"
+  },
+  "lighthouse-core/audits/third-party-summary.js | otherValue": {
+    "message": "Other resources"
   },
   "lighthouse-core/audits/third-party-summary.js | title": {
     "message": "Minimize third-party usage"
