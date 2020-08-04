@@ -93,8 +93,6 @@ class ThirdPartySummary extends Audit {
 
     for (const task of mainThreadTasks) {
       const attributableURL = BootupTime.getAttributableURLForTask(task, jsURLs);
-      const isThirdParty = !!thirdPartyWeb.getEntity(attributableURL);
-      if (!isThirdParty) continue;
 
       const urlStat = byURL.get(attributableURL) || {...defaultStat};
       const taskDuration = task.selfTime * cpuMultiplier;
