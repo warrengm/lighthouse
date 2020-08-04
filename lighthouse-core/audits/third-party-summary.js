@@ -31,6 +31,8 @@ const UIStrings = {
   /** Summary text for the result of a Lighthouse audit that identifies the code on a web page that the user doesn't control (referred to as "third-party code"). This text summarizes the number of distinct entities that were found on the page. */
   displayValue: 'Third-party code blocked the main thread for ' +
     `{timeInMs, number, milliseconds}\xa0ms`,
+  /** Other represents several resources. */
+  otherValue: 'Other resources',
 };
 
 const str_ = i18n.createMessageInstanceIdFn(__filename, UIStrings);
@@ -120,6 +122,41 @@ class ThirdPartySummary extends Audit {
   }
 
   /**
+   * @param {ThirdPartyEntity} entity
+   * @param {{byEntity: Map<ThirdPartyEntity, Summary>, byURL: Map<string, Summary>, urls: Map<ThirdPartyEntity, string[]>}} summaries
+   * @param {Summary} stat
+   * @return {Array<{url: string, transferSize: number, blockingTime: number}>}
+   */
+  static getSubItems(entity, summaries, stats) {
+    const entityURLs = summaries.urls.get(entity) || [];
+    let items = entityURLs
+      .map(url => ({url, ...summaries.byURL.get(url)}))
+      .filter(entry => entry.mainThreadTime !== undefined)
+      // Sort by blocking time first, then transfer size to break ties.
+      .sort((a, b) => (b.blockingTime - a.blockingTime) || (b.transferSize - a.transferSize));
+
+    const runningSummary = {transferSize: 0, blockingTime: 0};
+    const minTransfer = Math.max(2000, stats.transferSize / 20);
+    let i = 0;
+    do {
+      runningSummary.transferSize += items[i].transferSize;
+      runningSummary.blockingTime += items[i].blockingTime;
+      i++;
+    } while (i < items.length && (items[i].blockingTime || items[i].transferSize > minTransfer));
+    // Only show the top N entries for brevity. If there is more than one remaining entry
+    // we'll replace the tail entries with single remainder entry.
+    if (i < items.length - 1) {
+      items = items.slice(0, i);
+      items.push({
+        url: str_(UIStrings.otherValue),
+        transferSize: stats.transferSize - runningSummary.transferSize,
+        blockingTime: stats.blockingTime - runningSummary.blockingTime,
+      });
+    }
+    return items;
+  }
+
+  /**
    * @param {LH.Artifacts} artifacts
    * @param {LH.Audit.Context} context
    * @return {Promise<LH.Audit.Product>}
@@ -146,14 +183,6 @@ class ThirdPartySummary extends Audit {
         overallSummary.wastedBytes += stats.transferSize;
         overallSummary.wastedMs += stats.blockingTime;
 
-        const entityURLs = summaries.urls.get(entity) || [];
-        const items = entityURLs
-          .map(url => ({url, ...summaries.byURL.get(url)}))
-          .filter(entry => entry.mainThreadTime !== undefined)
-          // Sort by blocking time first, then transfer size to break ties.
-          .sort((a, b) => (b.blockingTime - a.blockingTime) || (b.transferSize - a.transferSize))
-          // Only show at most the top 3 scripts for brevity.
-          .slice(0, 3);
         return {
           ...stats,
           entity: /** @type {LH.Audit.Details.LinkValue} */ ({
@@ -161,7 +190,10 @@ class ThirdPartySummary extends Audit {
             text: entity.name,
             url: entity.homepage || '',
           }),
-          subItems: {type: 'subitems', items},
+          subItems: {
+            type: 'subitems',
+            items: ThirdPartySummary.getSubItems(entity, summaries, stats),
+          },
         };
       })
       // Sort by blocking time first, then transfer size to break ties.
