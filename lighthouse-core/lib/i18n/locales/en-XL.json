@@ -1232,9 +1232,6 @@
   "lighthouse-core/audits/third-party-summary.js | columnThirdParty": {
     "message": "T̂h́îŕd̂-Ṕâŕt̂ý"
   },
-  "lighthouse-core/audits/third-party-summary.js | columnURL": {
-    "message": "ÛŔL̂"
-  },
   "lighthouse-core/audits/third-party-summary.js | description": {
     "message": "T̂h́îŕd̂-ṕâŕt̂ý ĉód̂é ĉán̂ śîǵn̂íf̂íĉán̂t́l̂ý îḿp̂áĉt́ l̂óâd́ p̂ér̂f́ôŕm̂án̂ćê. Ĺîḿît́ t̂h́ê ńûḿb̂ér̂ óf̂ ŕêd́ûńd̂án̂t́ t̂h́îŕd̂-ṕâŕt̂ý p̂ŕôv́îd́êŕŝ án̂d́ t̂ŕŷ t́ô ĺôád̂ t́ĥír̂d́-p̂ár̂t́ŷ ćôd́ê áf̂t́êŕ ŷóûŕ p̂áĝé ĥáŝ ṕr̂ím̂ár̂íl̂ý f̂ín̂íŝh́êd́ l̂óâd́îńĝ. [Ĺêár̂ń m̂ór̂é](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/loading-third-party-javascript/)."
   },
@@ -1243,9 +1240,6 @@
   },
   "lighthouse-core/audits/third-party-summary.js | failureTitle": {
     "message": "R̂éd̂úĉé t̂h́ê ím̂ṕâćt̂ óf̂ t́ĥír̂d́-p̂ár̂t́ŷ ćôd́ê"
-  },
-  "lighthouse-core/audits/third-party-summary.js | otherValue": {
-    "message": "Ôt́ĥér̂ ŕêśôúr̂ćêś"
   },
   "lighthouse-core/audits/third-party-summary.js | title": {
     "message": "M̂ín̂ím̂íẑé t̂h́îŕd̂-ṕâŕt̂ý ûśâǵê"
