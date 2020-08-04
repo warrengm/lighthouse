@@ -79,8 +79,8 @@ class ThirdPartySummary extends Audit {
    * @return {{byEntity: Map<ThirdPartyEntity, Summary>, byURL: Map<string, Summary>, urls: Map<ThirdPartyEntity, string[]>}}
    */
   static getSummaries(networkRecords, mainThreadTasks, cpuMultiplier) {
-    const /** @type {Map<string, Summary>} */ byURL = new Map();
-    const /** @type {Map<ThirdPartyEntity, Summary>} */ byEntity = new Map();
+    /** @type {Map<string, Summary>} */ const byURL = new Map();
+    /** @type {Map<ThirdPartyEntity, Summary>} */ const byEntity = new Map();
     const defaultStat = {mainThreadTime: 0, blockingTime: 0, transferSize: 0};
 
     for (const request of networkRecords) {
@@ -106,7 +106,7 @@ class ThirdPartySummary extends Audit {
     }
 
     // Map each URL's stat to a particular third party entity.
-    const /* Map<ThirdPartyEntity, string[]> */ urls = new Map();
+    /** @type {Map<ThirdPartyEntity, string[]>} */ const urls = new Map();
     for (const [url, urlStat] of byURL.entries()) {
       const entity = thirdPartyWeb.getEntity(url);
       if (!entity) {
@@ -131,7 +131,7 @@ class ThirdPartySummary extends Audit {
    * @param {ThirdPartyEntity} entity
    * @param {{byEntity: Map<ThirdPartyEntity, Summary>, byURL: Map<string, Summary>, urls: Map<ThirdPartyEntity, string[]>}} summaries
    * @param {Summary} stats
-   * @return {Array<!URLSummary>}
+   * @return {Array<URLSummary>}
    */
   static getSubItems(entity, summaries, stats) {
     const entityURLs = summaries.urls.get(entity) || [];
