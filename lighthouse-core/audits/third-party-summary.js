@@ -24,8 +24,6 @@ const UIStrings = {
     'your page has primarily finished loading. [Learn more](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/loading-third-party-javascript/).',
   /** Label for a table column that displays the name of a third-party provider that potentially links to their website. */
   columnThirdParty: 'Third-Party',
-  /** Label for the third party URL subheading under Third-Party. */
-  columnURL: 'URL',
   /** Label for a table column that displays how much time each row spent blocking other work on the main thread, entries will be the number of milliseconds spent. */
   columnBlockingTime: 'Main-Thread Blocking Time',
   /** Summary text for the result of a Lighthouse audit that identifies the code on a web page that the user doesn't control (referred to as "third-party code"). This text summarizes the number of distinct entities that were found on the page. */
