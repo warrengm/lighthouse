@@ -40,7 +40,7 @@ const PASS_THRESHOLD_IN_MS = 250;
 
 /** @typedef {import("third-party-web").IEntity} ThirdPartyEntity */
 
-/** 
+/**
  * @typedef {{
  *   mainThreadTime: number,
  *   transferSize: number;
@@ -48,7 +48,7 @@ const PASS_THRESHOLD_IN_MS = 250;
  * }} Summary
  */
 
-/** 
+/**
  * @typedef {{
  *   transferSize: number;
  *   blockingTime: number;
