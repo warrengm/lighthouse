@@ -155,7 +155,6 @@
     "js-library-detector": "^5.7.0",
     "jsonld": "^1.5.0",
     "jsonlint-mod": "^1.7.5",
-    "lighthouse": "^6.1.1",
     "lighthouse-logger": "^1.2.0",
     "lodash.isequal": "^4.5.0",
     "lodash.set": "^4.3.2",
