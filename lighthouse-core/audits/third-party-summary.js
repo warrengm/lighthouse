@@ -137,12 +137,13 @@ class ThirdPartySummary extends Audit {
 
     const runningSummary = {transferSize: 0, blockingTime: 0};
     const minTransfer = Math.max(2000, stats.transferSize / 20);
+    const maxSubItems = Math.min(5, items.length);
     let i = 0;
     do {
       runningSummary.transferSize += items[i].transferSize;
       runningSummary.blockingTime += items[i].blockingTime;
       i++;
-    } while (i < items.length && (items[i].blockingTime || items[i].transferSize > minTransfer));
+    } while (i < maxSubItems && (items[i].blockingTime || items[i].transferSize > minTransfer));
     // Only show the top N entries for brevity. If there is more than one remaining entry
     // we'll replace the tail entries with single remainder entry.
     if (i < items.length - 1) {
