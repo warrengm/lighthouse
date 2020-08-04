@@ -1675,8 +1675,7 @@
             "text": "Third-Party",
             "subItemsHeading": {
               "key": "url",
-              "itemType": "url",
-              "text": "URL"
+              "itemType": "url"
             }
           },
           {
@@ -6739,9 +6738,6 @@
       ],
       "lighthouse-core/audits/third-party-summary.js | columnThirdParty": [
         "audits[third-party-summary].details.headings[0].text"
-      ],
-      "lighthouse-core/audits/third-party-summary.js | columnURL": [
-        "audits[third-party-summary].details.headings[0].subItemsHeading.text"
       ],
       "lighthouse-core/audits/third-party-summary.js | columnBlockingTime": [
         "audits[third-party-summary].details.headings[2].text"
