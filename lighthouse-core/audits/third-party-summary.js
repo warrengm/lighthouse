@@ -12,6 +12,7 @@ const thirdPartyWeb = require('../lib/third-party-web.js');
 const NetworkRecords = require('../computed/network-records.js');
 const MainResource = require('../computed/main-resource.js');
 const MainThreadTasks = require('../computed/main-thread-tasks.js');
+const assert = require('assert').strict;
 
 const UIStrings = {
   /** Title of a diagnostic audit that provides details about the code on a web page that the user doesn't control (referred to as "third-party code"). This descriptive title is shown to users when the amount is acceptable and no user action is required. */
@@ -42,12 +43,22 @@ const PASS_THRESHOLD_IN_MS = 250;
 
 /** @typedef {import("third-party-web").IEntity} ThirdPartyEntity */
 
-/**
- * @typedef {Object} Summary
- * @property {number} mainThreadTime
- * @property {number} transferSize
- * @property {number} blockingTime
+/** 
+ * @typedef {{
+ *   mainThreadTime: number,
+ *   transferSize: number;
+ *   blockingTime: number;
+ * }} Summary
  */
+
+/** 
+ * @typedef {{
+ *   transferSize: number;
+ *   blockingTime: number;
+ *   url: string;
+ * }} URLSummary
+ */
+
 
 class ThirdPartySummary extends Audit {
   /**
@@ -124,14 +135,13 @@ class ThirdPartySummary extends Audit {
   /**
    * @param {ThirdPartyEntity} entity
    * @param {{byEntity: Map<ThirdPartyEntity, Summary>, byURL: Map<string, Summary>, urls: Map<ThirdPartyEntity, string[]>}} summaries
-   * @param {Summary} stat
-   * @return {Array<{url: string, transferSize: number, blockingTime: number}>}
+   * @param {Summary} stats
+   * @return {Array<!URLSummary>}
    */
   static getSubItems(entity, summaries, stats) {
     const entityURLs = summaries.urls.get(entity) || [];
     let items = entityURLs
-      .map(url => ({url, ...summaries.byURL.get(url)}))
-      .filter(entry => entry.mainThreadTime !== undefined)
+      .map(url => /** @type {URLSummary} */ ({url, ...summaries.byURL.get(url)}))
       // Sort by blocking time first, then transfer size to break ties.
       .sort((a, b) => (b.blockingTime - a.blockingTime) || (b.transferSize - a.transferSize));
 
@@ -191,10 +201,10 @@ class ThirdPartySummary extends Audit {
             text: entity.name,
             url: entity.homepage || '',
           }),
-          subItems: {
+          subItems: /** @type {LH.Audit.Details.TableSubItems} */ ({
             type: 'subitems',
             items: ThirdPartySummary.getSubItems(entity, summaries, stats),
-          },
+          }),
         };
       })
       // Sort by blocking time first, then transfer size to break ties.
@@ -203,7 +213,7 @@ class ThirdPartySummary extends Audit {
     /** @type {LH.Audit.Details.Table['headings']} */
     const headings = [
       {key: 'entity', itemType: 'link', text: str_(UIStrings.columnThirdParty),
-        subItemsHeading: {key: 'url', itemType: 'url', text: str_(UIStrings.columnURL)}},
+        subItemsHeading: {key: 'url', itemType: 'url'}},
       {key: 'transferSize', granularity: 1, itemType: 'bytes',
         text: str_(i18n.UIStrings.columnTransferSize),
         subItemsHeading: {key: 'transferSize'}},
