@@ -57,6 +57,15 @@ const PASS_THRESHOLD_IN_MS = 250;
  */
 
 
+/**
+ * Don't bother showing resources smaller than 4KiB since they're likely to be pixels, which isn't
+ * too actionable.
+ */
+const MIN_TRANSFER_SIZE_FOR_SUBITEMS = 4096;
+
+/** Show at most 5 sub items in the resource breakdown. */
+const MAX_SUBITEMS = 5;
+
 class ThirdPartySummary extends Audit {
   /**
    * @return {LH.Audit.Meta}
@@ -137,27 +146,35 @@ class ThirdPartySummary extends Audit {
     const entityURLs = summaries.urls.get(entity) || [];
     let items = entityURLs
       .map(url => /** @type {URLSummary} */ ({url, ...summaries.byURL.get(url)}))
+      // Filter out any cases where byURL was missing entries.
+      .filter((stat) => stat.transferSize > 0)
       // Sort by blocking time first, then transfer size to break ties.
       .sort((a, b) => (b.blockingTime - a.blockingTime) || (b.transferSize - a.transferSize));
 
     const runningSummary = {transferSize: 0, blockingTime: 0};
-    const minTransfer = Math.max(2000, stats.transferSize / 20);
-    const maxSubItems = Math.min(5, items.length);
+    const minTransferSize = Math.max(MIN_TRANSFER_SIZE_FOR_SUBITEMS, stats.transferSize / 20);
+    const maxSubItems = Math.min(MAX_SUBITEMS, items.length);
     let i = 0;
-    do {
+    while (i < maxSubItems &&
+        (items[i].blockingTime || items[i].transferSize > minTransferSize)) {
       runningSummary.transferSize += items[i].transferSize;
       runningSummary.blockingTime += items[i].blockingTime;
       i++;
-    } while (i < maxSubItems && (items[i].blockingTime || items[i].transferSize > minTransfer));
+    }
+    if (i === 0) {
+      // Don't bother breaking down if there are no large resources.
+      return [];
+    }
     // Only show the top N entries for brevity. If there is more than one remaining entry
     // we'll replace the tail entries with single remainder entry.
-    if (i < items.length - 1) {
-      items = items.slice(0, i);
-      items.push({
-        url: str_(UIStrings.otherValue),
-        transferSize: stats.transferSize - runningSummary.transferSize,
-        blockingTime: stats.blockingTime - runningSummary.blockingTime,
-      });
+    items = items.slice(0, i);
+    const remainder = {
+      url: str_(UIStrings.otherValue),
+      transferSize: stats.transferSize - runningSummary.transferSize,
+      blockingTime: stats.blockingTime - runningSummary.blockingTime,
+    };
+    if (remainder.transferSize > minTransferSize) {
+      items.push(remainder);
     }
     return items;
   }
