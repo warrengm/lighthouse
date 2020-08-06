@@ -68,26 +68,15 @@ describe('Third party summary', () => {
             },
             {
               blockingTime: 0,
-              mainThreadTime: 5.094,
-              transferSize: 3161,
-              url: 'https://www.google-analytics.com/cx/api.js?experiment=qvpc5qIfRC2EMnbn6bbN5A',
-            },
-            {
-              blockingTime: 0,
-              mainThreadTime: 7.01,
-              transferSize: 2949,
-              url: 'https://www.google-analytics.com/cx/api.js?experiment=jdCfRmudTmy-0USnJ8xPbw',
-            },
-            {
-              blockingTime: 0,
-              transferSize: 1897,
-              url: 'lighthouse-core/audits/third-party-summary.js | otherValue # 0',
+              transferSize: 8007,
+              url: expect.any(String),
             },
           ],
           type: 'subitems',
         },
       },
     ]);
+    expect(results.details.items[1].subItems.items[1].url).toBeDisplayString('Other resources');
   });
 
   it('account for simulated throttling', async () => {
