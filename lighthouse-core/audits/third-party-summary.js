@@ -29,7 +29,7 @@ const UIStrings = {
   /** Summary text for the result of a Lighthouse audit that identifies the code on a web page that the user doesn't control (referred to as "third-party code"). This text summarizes the number of distinct entities that were found on the page. */
   displayValue: 'Third-party code blocked the main thread for ' +
     `{timeInMs, number, milliseconds}\xa0ms`,
-  /** Other represents several resources. */
+  /** Label used to identify a value in a table where many individual values are aggregated to a single value, for brevity. "Other resources" could also be read as "the rest of the resources". Resource refers to network resources requested by the browser. */
   otherValue: 'Other resources',
 };
 
