@@ -43,16 +43,16 @@ const PASS_THRESHOLD_IN_MS = 250;
 /**
  * @typedef {{
  *   mainThreadTime: number,
- *   transferSize: number;
- *   blockingTime: number;
+ *   transferSize: number,
+ *   blockingTime: number,
  * }} Summary
  */
 
 /**
  * @typedef {{
- *   transferSize: number;
- *   blockingTime: number;
- *   url: string;
+ *   transferSize: number,
+ *   blockingTime: number,
+ *   url: string,
  * }} URLSummary
  */
 
