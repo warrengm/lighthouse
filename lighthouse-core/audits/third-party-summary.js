@@ -154,20 +154,25 @@ class ThirdPartySummary extends Audit {
     const subitemSummary = {transferSize: 0, blockingTime: 0};
     const minTransferSize = Math.max(MIN_TRANSFER_SIZE_FOR_SUBITEMS, stats.transferSize / 20);
     const maxSubItems = Math.min(MAX_SUBITEMS, items.length);
-    const i = 0;
-    for (let i = 0;
-      i < maxSubItems && (items[i].blockingTime || items[i].transferSize > minTransferSize);
-      i++) {
-      subitemSummary.transferSize += items[i].transferSize;
-      subitemSummary.blockingTime += items[i].blockingTime;
+    let numSubItems = 0;
+    while (numSubItems < maxSubItems) {
+      const nextSubItem = items[numSubItems];
+      if (nextSubItem.blockingTime === 0 || nextSubItem.transferSize < minTransferSize) {
+        // Don't include the resource in the sub-item breakdown because it didn't have a big
+        // enough impact on its own.
+        break;
+      }
+      numSubItems++;
+      subitemSummary.transferSize += nextSubItem.transferSize;
+      subitemSummary.blockingTime += nextSubItem.blockingTime;
     }
-    if (!subitemSummary.blockingTime || !runningSummary.transferSize) {
+    if (!subitemSummary.blockingTime || !subitemSummary.transferSize) {
       // Don't bother breaking down if there are no large resources.
       return [];
     }
     // Only show the top N entries for brevity. If there is more than one remaining entry
     // we'll replace the tail entries with single remainder entry.
-    items = items.slice(0, i);
+    items = items.slice(0, numSubItems);
     const remainder = {
       url: str_(UIStrings.otherValue),
       transferSize: stats.transferSize - subitemSummary.transferSize,
