@@ -151,17 +151,17 @@ class ThirdPartySummary extends Audit {
       // Sort by blocking time first, then transfer size to break ties.
       .sort((a, b) => (b.blockingTime - a.blockingTime) || (b.transferSize - a.transferSize));
 
-    const runningSummary = {transferSize: 0, blockingTime: 0};
+    const subitemSummary = {transferSize: 0, blockingTime: 0};
     const minTransferSize = Math.max(MIN_TRANSFER_SIZE_FOR_SUBITEMS, stats.transferSize / 20);
     const maxSubItems = Math.min(MAX_SUBITEMS, items.length);
     const i = 0;
     for (let i = 0;
       i < maxSubItems && (items[i].blockingTime || items[i].transferSize > minTransferSize);
       i++) {
-      runningSummary.transferSize += items[i].transferSize;
-      runningSummary.blockingTime += items[i].blockingTime;
+      subitemSummary.transferSize += items[i].transferSize;
+      subitemSummary.blockingTime += items[i].blockingTime;
     }
-    if (!runningSummary.blockingTime || !runningSummary.transferSize) {
+    if (!subitemSummary.blockingTime || !runningSummary.transferSize) {
       // Don't bother breaking down if there are no large resources.
       return [];
     }
@@ -170,8 +170,8 @@ class ThirdPartySummary extends Audit {
     items = items.slice(0, i);
     const remainder = {
       url: str_(UIStrings.otherValue),
-      transferSize: stats.transferSize - runningSummary.transferSize,
-      blockingTime: stats.blockingTime - runningSummary.blockingTime,
+      transferSize: stats.transferSize - subitemSummary.transferSize,
+      blockingTime: stats.blockingTime - subitemSummary.blockingTime,
     };
     if (remainder.transferSize > minTransferSize) {
       items.push(remainder);
