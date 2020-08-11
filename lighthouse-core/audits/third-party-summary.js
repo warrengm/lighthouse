@@ -154,14 +154,14 @@ class ThirdPartySummary extends Audit {
     const runningSummary = {transferSize: 0, blockingTime: 0};
     const minTransferSize = Math.max(MIN_TRANSFER_SIZE_FOR_SUBITEMS, stats.transferSize / 20);
     const maxSubItems = Math.min(MAX_SUBITEMS, items.length);
-    let i = 0;
-    while (i < maxSubItems &&
-        (items[i].blockingTime || items[i].transferSize > minTransferSize)) {
+    const i = 0;
+    for (let i = 0;
+      i < maxSubItems && (items[i].blockingTime || items[i].transferSize > minTransferSize);
+      i++) {
       runningSummary.transferSize += items[i].transferSize;
       runningSummary.blockingTime += items[i].blockingTime;
-      i++;
     }
-    if (i === 0) {
+    if (!runningSummary.blockingTime || !runningSummary.transferSize) {
       // Don't bother breaking down if there are no large resources.
       return [];
     }
