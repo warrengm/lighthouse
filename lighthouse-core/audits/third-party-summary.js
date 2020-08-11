@@ -166,7 +166,7 @@ class ThirdPartySummary extends Audit {
       subitemSummary.transferSize += nextSubItem.transferSize;
       subitemSummary.blockingTime += nextSubItem.blockingTime;
     }
-    if (!subitemSummary.blockingTime || !subitemSummary.transferSize) {
+    if (!subitemSummary.blockingTime && !subitemSummary.transferSize) {
       // Don't bother breaking down if there are no large resources.
       return [];
     }
