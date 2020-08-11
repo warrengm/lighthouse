@@ -157,7 +157,7 @@ class ThirdPartySummary extends Audit {
     let numSubItems = 0;
     while (numSubItems < maxSubItems) {
       const nextSubItem = items[numSubItems];
-      if (nextSubItem.blockingTime === 0 || nextSubItem.transferSize < minTransferSize) {
+      if (nextSubItem.blockingTime === 0 && nextSubItem.transferSize < minTransferSize) {
         // Don't include the resource in the sub-item breakdown because it didn't have a big
         // enough impact on its own.
         break;
