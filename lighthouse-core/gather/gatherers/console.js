@@ -38,6 +38,10 @@ class Console extends Gatherer {
     if (!text) {
       return;
     }
+    let url;
+    if (event.stackTrace) {
+      url = event.stackTrace.callFrames[0].url;
+    }
     /** @type {LH.Artifacts.ConsoleMessage} */
     const consoleMessage = {
       source: 'consoleAPI',
@@ -46,6 +50,7 @@ class Console extends Gatherer {
       text,
       stackTrace: event.stackTrace,
       timestamp: event.timestamp,
+      url,
     };
     this._logEntries.push(consoleMessage);
   }
@@ -122,6 +127,7 @@ class Console extends Gatherer {
     await passContext.driver.sendCommand('Log.stopViolationsReport');
     await passContext.driver.off('Log.entryAdded', this._onLogEntryEntryAdded);
     await passContext.driver.sendCommand('Log.disable');
+    console.log(...this._logEntries);
     return this._logEntries;
   }
 }
