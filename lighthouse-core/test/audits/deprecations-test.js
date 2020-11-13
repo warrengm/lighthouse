@@ -23,8 +23,8 @@ describe('Console deprecations audit', () => {
     const auditResult = DeprecationsAudit.audit({
       Console: [
         {
-            source: 'deprecation',
-            text: 'Deprecation message',
+          source: 'deprecation',
+          text: 'Deprecation message',
         },
       ],
     });
@@ -40,20 +40,20 @@ describe('Console deprecations audit', () => {
     const auditResult = DeprecationsAudit.audit({
       Console: [
         {
-            source: 'deprecation',
-            lineNumber: 123,
-            url: URL,
-            text: 'Deprecation message 123',
+          source: 'deprecation',
+          lineNumber: 123,
+          url: URL,
+          text: 'Deprecation message 123',
         }, {
-            source: 'deprecation',
-            lineNumber: 456,
-            url: 'http://example2.com',
-            text: 'Deprecation message 456',
+          source: 'deprecation',
+          lineNumber: 456,
+          url: 'http://example2.com',
+          text: 'Deprecation message 456',
         }, {
-            source: 'somethingelse',
-            lineNumber: 789,
-            url: 'http://example3.com',
-            text: 'Not a deprecation message 789',
+          source: 'somethingelse',
+          lineNumber: 789,
+          url: 'http://example3.com',
+          text: 'Not a deprecation message 789',
         },
       ],
     });

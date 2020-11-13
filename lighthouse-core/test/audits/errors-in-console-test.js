@@ -24,9 +24,9 @@ describe('Console error logs audit', () => {
     const auditResult = ErrorLogsAudit.audit({
       Console: [
         {
-            level: 'info',
-            source: 'network',
-            text: 'This is a simple info msg',
+          level: 'info',
+          source: 'network',
+          text: 'This is a simple info msg',
         },
       ],
     }, {options: {}});
@@ -85,7 +85,7 @@ describe('Console error logs audit', () => {
     const auditResult = ErrorLogsAudit.audit({
       Console: [
         {
-            level: 'error',
+          level: 'error',
         },
       ],
     }, {options: {}});

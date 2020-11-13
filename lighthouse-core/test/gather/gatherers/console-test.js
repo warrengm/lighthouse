@@ -84,20 +84,20 @@ describe('Console', () => {
           {
             type: 'string',
             value: 'This is a warning!',
-          }
+          },
         ],
         executionContextId: 4,
         timestamp: 1605300392523.653,
         stackTrace: {
           callFrames: [
-              {
-                url: 'http://www.example.com/fancybox.js',
-                lineNumber: 28,
-                columnNumber: 20,
-              },
-          ]
-        }
-    };
+            {
+              url: 'http://www.example.com/fancybox.js',
+              lineNumber: 28,
+              columnNumber: 20,
+            },
+          ],
+        },
+      };
 
     const driver = new MockDriver();
     const options = {driver};
@@ -122,7 +122,7 @@ describe('Console', () => {
       {
         type: 'warning',
         args: [
-          { type: 'string', value: 'Testing' },
+          {type: 'string', value: 'Testing'},
           // Not JSON (the window)
           {
             type: 'object',
@@ -130,24 +130,24 @@ describe('Console', () => {
             description: 'Window',
             objectId: '{"injectedScriptId":4,"id":1}',
             preview: [
-            {
+              {
                 type: 'object',
                 description: 'Window',
                 overflow: true,
                 properties: [
-                  { name: 'window', type: 'object', value: 'Window' },
-                  { name: 'self', type: 'object', value: 'Window' },
+                  {name: 'window', type: 'object', value: 'Window'},
+                  {name: 'self', type: 'object', value: 'Window'},
                   {
                     name: 'document',
                     type: 'object',
                     value: '#document',
-                    subtype: 'node'
+                    subtype: 'node',
                   },
-                  { name: 'name', type: 'string', value: '' },
-                  { name: 'location', type: 'object', value: 'Location' }
-                ]
-              }
-            ]
+                  {name: 'name', type: 'string', value: ''},
+                  {name: 'location', type: 'object', value: 'Location'},
+                ],
+              },
+            ],
           },
           // JSON: {isJson: true}
           {
@@ -159,22 +159,22 @@ describe('Console', () => {
               type: 'object',
               description: 'Object',
               overflow: false,
-              properties: [ { name: 'json', type: 'boolean', value: 'true' } ]
-            }
+              properties: [{name: 'json', type: 'boolean', value: 'true'}],
+            },
           },
           // A native function: console.log
           {
             type: 'function',
             className: 'Function',
             description: 'function log() { [native code] }',
-            objectId: '{"injectedScriptId":4,"id":3}'
+            objectId: '{"injectedScriptId":4,"id":3}',
           },
           // A defined function
           {
             type: 'function',
             className: 'Function',
             description: '() => {}',
-            objectId: '{"injectedScriptId":4,"id":4}'
+            objectId: '{"injectedScriptId":4,"id":4}',
           },
         ],
         executionContextId: 4,
@@ -186,10 +186,10 @@ describe('Console', () => {
               scriptId: '14',
               url: 'http://localhost:8000/test.html',
               lineNumber: 3,
-              columnNumber: 8
-            }
-          ]
-        }
+              columnNumber: 8,
+            },
+          ],
+        },
       };
     const driver = new MockDriver();
     const options = {driver};
@@ -217,21 +217,21 @@ describe('Console', () => {
         args: [
           {
             type: 'string',
-            value: 'Error! Error!'
-          }
+            value: 'Error! Error!',
+          },
         ],
         executionContextId: 4,
         timestamp: 1605300392523.653,
         stackTrace: {
           callFrames: [
-              {
-                url: 'http://www.example.com/fancybox.js',
-                lineNumber: 28,
-                columnNumber: 20,
-              },
-          ]
-        }
-    };
+            {
+              url: 'http://www.example.com/fancybox.js',
+              lineNumber: 28,
+              columnNumber: 20,
+            },
+          ],
+        },
+      };
 
     const driver = new MockDriver();
     const options = {driver};
@@ -255,21 +255,21 @@ describe('Console', () => {
         args: [
           {
             type: 'string',
-            value: 'I am just a log'
-          }
+            value: 'I am just a log',
+          },
         ],
         executionContextId: 4,
         timestamp: 1605300392523.653,
         stackTrace: {
           callFrames: [
-              {
-                url: 'http://www.example.com/fancybox.js',
-                lineNumber: 28,
-                columnNumber: 20,
-              },
-          ]
-        }
-    };
+            {
+              url: 'http://www.example.com/fancybox.js',
+              lineNumber: 28,
+              columnNumber: 20,
+            },
+          ],
+        },
+      };
 
     const driver = new MockDriver();
     const options = {driver};
@@ -300,10 +300,10 @@ describe('Console', () => {
                 scriptId: '14',
                 url: 'http://localhost:8000/test.html',
                 lineNumber: 3,
-                columnNumber: 8
-              }
-            ]
-          }
+                columnNumber: 8,
+              },
+            ],
+          },
         },
       },
       {
@@ -313,10 +313,10 @@ describe('Console', () => {
           text: 'Failed to load resource: the server responded with a status of 404 (File not found)',
           timestamp: 1605302299179.507,
           url: 'http://localhost:8000/favicon.ico',
-          networkRequestId: '82074.2'
-        }
-      }
-      ];
+          networkRequestId: '82074.2',
+        },
+      },
+    ];
 
     const driver = new MockDriver();
     const options = {driver};
