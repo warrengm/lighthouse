@@ -745,10 +745,26 @@ declare global {
         columnNumber: number;
       }
 
+      /** Describes a generic console message. */
       interface BaseConsoleMessage {
+        /**
+         * What emitted the console message (console API, violation log, etc.).
+         * See subtypes for possible values.
+         */
+        source: string,
+        /** The log level: info, warning, etc. See subtypes for possible values. */
+        level: string,
+        /**
+         * The text printed to the console, as shown on the browser. Note objects printed to the
+         * console will be stringified if primitive or JSON-serializable. Otherwise it will be
+         * a String representation of the object.
+         */
         text: string;
+        /** Time of the console log in milliseconds since epoch. */
         timestamp: number;
+        /** The stack trace of the log/exception, if known. */
         stackTrace?: Crdp.Runtime.StackTrace;
+        /** The URL of the log/exception, if known. */
         url?: string;
         /** Line number in the script (0-based), if known. */
         lineNumber?: number;
@@ -756,22 +772,29 @@ declare global {
         columnNumber?: number;
       }
 
+      /** Describes a console message logged by a script using the console API. */
       interface ConsoleAPICall extends BaseConsoleMessage {
+        /** The console API invoked. Only the following console API calls are gathered. */
         source: 'console.warn' | 'console.error';
+        /** Corresponds to the API call. */
         level: 'warning' | 'error';
+        /** The devtools event. */
         event: Crdp.Runtime.ConsoleAPICalledEvent;
       }
 
       interface ConsoleException extends BaseConsoleMessage {
         source: 'exception';
         level: 'exception';
+        /** The devtools event. */
         event: Crdp.Runtime.ExceptionThrownEvent;
       }
 
+      /** Describes a console message logged by the browser for violation reporting. */
       interface ConsoleLogEntry extends BaseConsoleMessage {
         source: 'xml' | 'javascript' | 'network' | 'storage' | 'appcache' | 'rendering' |
           'security' | 'deprecation' | 'worker' | 'violation' | 'intervention' | 'recommendation';
         level: 'warning' | 'error' | 'verbose' | 'info';
+        /** The devtools event. */
         event: Crdp.Log.EntryAddedEvent;
       }
 
