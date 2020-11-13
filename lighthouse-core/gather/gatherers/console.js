@@ -27,7 +27,7 @@ class Console extends Gatherer {
    * @param {LH.Crdp.Runtime.ConsoleAPICalledEvent} event
    */
   onConsoleAPICalled(event) {
-    console.log('CONSOLE',event)
+    console.log('CONSOLE',event) // DO NOT SUBMIT
     const level = event.type;
     if (level !== 'warning' && level !== 'error') {
       // Only gather warnings and errors for brevity.
@@ -54,7 +54,23 @@ class Console extends Gatherer {
    * @param {LH.Crdp.Runtime.ExceptionThrownEvent} event
    */
   onExceptionThrown(event) {
-    console.log('EXCETPTION', event)
+    console.log('EXCETPTION', event); // DO NOT SUBMIT
+    const text = event.exceptionDetails.exception ?
+          event.exceptionDetails.exception.description : event.exceptionDetails.text;
+    if (!text) {
+      return;
+    }
+    /** @type {LH.Artifacts.ConsoleMessage} */
+    const consoleMessage = {
+      source: 'exception',
+      event,
+      level: 'exception',
+      text,
+      stackTrace: event.exceptionDetails.stackTrace,
+      timestamp: event.timestamp,
+      url: event.exceptionDetails.url,
+    };
+    this._logEntries.push(consoleMessage);
   }
 
   /**
