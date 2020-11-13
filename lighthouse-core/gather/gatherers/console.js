@@ -37,8 +37,8 @@ class Console extends Gatherer {
     if (!text) {
       return;
     }
-    const {url, lineNumber, columnNumber} =
-      event.stackTrace && event.stackTrace.callFrames[0] || {};
+    const topFrame = event.stackTrace && event.stackTrace.callFrames[0] || {};
+    const {url, lineNumber, columnNumber} = topFrame;
     /** @type {LH.Artifacts.ConsoleMessage} */
     const consoleMessage = {
       source: level === 'warning' ? 'console.warn' : 'console.error',
@@ -123,14 +123,9 @@ class Console extends Gatherer {
    * @return {Promise<LH.Artifacts['Console']>}
    */
   async afterPass(passContext) {
-    console.log('***************');
-    console.log('***************');
-    console.log('***************');
-    console.log('***************');
     await passContext.driver.sendCommand('Log.stopViolationsReport');
     await passContext.driver.off('Log.entryAdded', this._onLogEntryAdded);
     await passContext.driver.sendCommand('Log.disable');
-    console.log(...this._logEntries);
     return this._logEntries;
   }
 }
