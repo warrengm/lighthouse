@@ -576,55 +576,6 @@
       "property": "og:description"
     }
   ],
-  "RuntimeExceptions": [
-    {
-      "timestamp": 1519974785784.3982,
-      "exceptionDetails": {
-        "exceptionId": 1,
-        "text": "Uncaught",
-        "lineNumber": 41,
-        "columnNumber": 37,
-        "url": "http://localhost:10200/dobetterweb/dbw_tester.html",
-        "stackTrace": {
-          "callFrames": [
-            {
-              "functionName": "",
-              "scriptId": "27",
-              "url": "http://localhost:10200/dobetterweb/dbw_tester.html",
-              "lineNumber": 41,
-              "columnNumber": 37
-            }
-          ]
-        },
-        "exception": {
-          "type": "object",
-          "subtype": "error",
-          "className": "Error",
-          "description": "Error: An error\n    at http://localhost:10200/dobetterweb/dbw_tester.html:42:38",
-          "objectId": "{\"injectedScriptId\":3,\"id\":1}",
-          "preview": {
-            "type": "object",
-            "subtype": "error",
-            "description": "Error: An error\n    at http://localhost:10200/dobetterweb/dbw_tester.html:42:38",
-            "overflow": false,
-            "properties": [
-              {
-                "name": "stack",
-                "type": "string",
-                "value": "Error: An error\n    at http://localhost:10200/dobetterweb/dbw_tester.html:42:38"
-              },
-              {
-                "name": "message",
-                "type": "string",
-                "value": "An error"
-              }
-            ]
-          }
-        },
-        "executionContextId": 3
-      }
-    }
-  ],
   "Console": [
     {
       "source": "other",
@@ -703,6 +654,26 @@
             "url": "http://localhost:10200/dobetterweb/dbw_tester.js",
             "lineNumber": 39,
             "columnNumber": 2
+          }
+        ]
+      }
+    },
+    {
+      "source": "exception",
+      "level": "exception",
+      "timestamp": 1519974785784.3982,
+      "lineNumber": 41,
+      "columnNumber": 37,
+      "url": "http://localhost:10200/dobetterweb/dbw_tester.html",
+      "text": "Error: An error\n    at http://localhost:10200/dobetterweb/dbw_tester.html:42:38",
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "27",
+            "url": "http://localhost:10200/dobetterweb/dbw_tester.html",
+            "lineNumber": 41,
+            "columnNumber": 37
           }
         ]
       }
