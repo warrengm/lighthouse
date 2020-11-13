@@ -765,7 +765,8 @@ declare global {
       }
 
       interface ConsoleLogEntry extends BaseConsoleMessage {
-        source: 'violation'
+        source: 'xml' | 'javascript' | 'network' | 'storage' | 'appcache' | 'rendering' |
+          'security' | 'deprecation' | 'worker' | 'violation' | 'intervention' | 'recommendation';
         level: 'warning' | 'error' | 'verbose' | 'info';
         event: Crdp.Log.EntryAddedEvent;
       }

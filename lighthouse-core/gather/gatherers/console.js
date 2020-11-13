@@ -79,9 +79,14 @@ class Console extends Gatherer {
   onLogEntryEntry(event) {
     console.log('LogENTRY', event) // DO NOT SUBMIT
 
+    const {source} = event.entry;
+    if (source === 'other') {
+      return;
+    }
+
     /** @type {LH.Artifacts.ConsoleMessage} */
     const consoleMessage = {
-      source: 'violation',
+      source,
       event,
       level: event.entry.level,
       text: event.entry.text,
