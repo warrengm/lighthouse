@@ -64,9 +64,8 @@ declare global {
      * on a major version bump.
      */
     export interface PublicGathererArtifacts {
+      /** Console deprecation and intervention warnings, Console API calls, and exceptions logged by Chrome during page load. */
       Console: Artifacts.ConsoleMessage[];
-      /** Console deprecation and intervention warnings logged by Chrome during page load. */
-      ConsoleMessages: Crdp.Log.EntryAddedEvent[];
       /** All the iframe elements in the page.*/
       IFrameElements: Artifacts.IFrameElement[];
       /** The contents of the main HTML document network resource. */
@@ -77,8 +76,6 @@ declare global {
       LinkElements: Artifacts.LinkElement[];
       /** The values of the <meta> elements in the head. */
       MetaElements: Array<{name?: string, content?: string, property?: string, httpEquiv?: string, charset?: string}>;
-      /** Set of exceptions thrown during page load. */
-      RuntimeExceptions: Crdp.Runtime.ExceptionThrownEvent[];
       /** Information on all script elements in the page. Also contains the content of all requested scripts and the networkRecord requestId that contained their content. Note, HTML documents will have one entry per script tag, all with the same requestId. */
       ScriptElements: Array<Artifacts.ScriptElement>;
       /** The dimensions and devicePixelRatio of the loaded viewport. */
