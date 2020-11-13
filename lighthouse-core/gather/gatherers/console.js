@@ -126,6 +126,8 @@ class Console extends Gatherer {
     await passContext.driver.sendCommand('Log.stopViolationsReport');
     await passContext.driver.off('Log.entryAdded', this._onLogEntryAdded);
     await passContext.driver.sendCommand('Log.disable');
+    await passContext.driver.off('Runtime.consoleAPICalled', this._onConsoleAPICalled);
+    await passContext.driver.off('Runtime.exceptionThrown', this._onExceptionThrown);
     return this._logEntries;
   }
 }
