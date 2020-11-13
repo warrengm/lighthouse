@@ -750,6 +750,10 @@ declare global {
         timestamp: number;
         stackTrace?: Crdp.Runtime.StackTrace;
         url?: string;
+        /** Line number in the script (0-based), if known. */
+        lineNumber?: number;
+        /** Column number in the script (0-based), if known. */
+        columnNumber?: number;
       }
 
       interface ConsoleAPICall extends BaseConsoleMessage {

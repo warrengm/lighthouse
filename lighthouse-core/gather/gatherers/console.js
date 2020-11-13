@@ -20,7 +20,7 @@ class Console extends Gatherer {
 
     this._onConsoleAPICalled = this.onConsoleAPICalled.bind(this);
     this._onExceptionThrown = this.onExceptionThrown.bind(this);
-    this._onLogEntryEntryAdded = this.onLogEntryEntry.bind(this);
+    this._onLogEntryAdded = this.onLogEntry.bind(this);
   }
 
   /**
@@ -38,10 +38,7 @@ class Console extends Gatherer {
     if (!text) {
       return;
     }
-    let url;
-    if (event.stackTrace) {
-      url = event.stackTrace.callFrames[0].url;
-    }
+    const {url, lineNumber, columnNumber} = event.stackTrace && event.stackTrace.callFrames[0] || {};
     /** @type {LH.Artifacts.ConsoleMessage} */
     const consoleMessage = {
       source: 'consoleAPI',
@@ -51,6 +48,8 @@ class Console extends Gatherer {
       stackTrace: event.stackTrace,
       timestamp: event.timestamp,
       url,
+      lineNumber,
+      columnNumber,
     };
     this._logEntries.push(consoleMessage);
   }
@@ -74,6 +73,8 @@ class Console extends Gatherer {
       stackTrace: event.exceptionDetails.stackTrace,
       timestamp: event.timestamp,
       url: event.exceptionDetails.url,
+      lineNumber: event.exceptionDetails.lineNumber,
+      columnNumber: event.exceptionDetails.columnNumber,
     };
     this._logEntries.push(consoleMessage);
   }
@@ -81,7 +82,7 @@ class Console extends Gatherer {
   /**
    * @param {LH.Crdp.Log.EntryAddedEvent} event
    */
-  onLogEntryEntry(event) {
+  onLogEntry(event) {
     console.log('LogENTRY', event) // DO NOT SUBMIT
 
     const {source} = event.entry;
@@ -98,6 +99,7 @@ class Console extends Gatherer {
       stackTrace: event.entry.stackTrace,
       timestamp: event.entry.timestamp,
       url: event.entry.url,
+      lineNumber: event.entry.lineNumber,
     };
     this._logEntries.push(consoleMessage);
   }
@@ -108,7 +110,7 @@ class Console extends Gatherer {
   async beforePass(passContext) {
     const driver = passContext.driver;
 
-    driver.on('Log.entryAdded', this._onLogEntryEntryAdded);
+    driver.on('Log.entryAdded', this._onLogEntryAdded);
     await driver.sendCommand('Log.enable');
     await driver.sendCommand('Log.startViolationsReport', {
       config: [{name: 'discouragedAPIUse', threshold: -1}],
@@ -125,7 +127,7 @@ class Console extends Gatherer {
    */
   async afterPass(passContext) {
     await passContext.driver.sendCommand('Log.stopViolationsReport');
-    await passContext.driver.off('Log.entryAdded', this._onLogEntryEntryAdded);
+    await passContext.driver.off('Log.entryAdded', this._onLogEntryAdded);
     await passContext.driver.sendCommand('Log.disable');
     console.log(...this._logEntries);
     return this._logEntries;
