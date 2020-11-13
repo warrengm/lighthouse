@@ -70,9 +70,273 @@ describe('Console', () => {
     assert.equal(artifact[0].level, 'exception');
     assert.equal(artifact[0].text,
       `TypeError: Cannot read property 'msie' of undefined`);
-    assert.equal(artifact[0].url,
-      'http://www.example.com/fancybox.js');
+    assert.equal(artifact[0].url, 'http://www.example.com/fancybox.js');
     assert.equal(artifact[0].lineNumber, 28);
     assert.equal(artifact[0].columnNumber, 20);
+  });
+
+  it('captures console.warn calls', async () => {
+    const consoleGatherer = new ConsoleGatherer();
+    const consoleWarnEvent =
+      {
+        type: 'warning',
+        args: [
+          {
+            type: 'string',
+            value: 'This is a warning!',
+          }
+        ],
+        executionContextId: 4,
+        timestamp: 1605300392523.653,
+        stackTrace: {
+          callFrames: [
+              {
+                url: 'http://www.example.com/fancybox.js',
+                lineNumber: 28,
+                columnNumber: 20,
+              },
+          ]
+        }
+    };
+
+    const driver = new MockDriver();
+    const options = {driver};
+
+    await consoleGatherer.beforePass(options);
+    driver.fireForTest('Runtime.consoleAPICalled', consoleWarnEvent);
+
+    const artifact = await consoleGatherer.afterPass(options);
+
+    assert.equal(artifact.length, 1);
+    assert.equal(artifact[0].source, 'console.warn');
+    assert.equal(artifact[0].level, 'warning');
+    assert.equal(artifact[0].text, 'This is a warning!');
+    assert.equal(artifact[0].url, 'http://www.example.com/fancybox.js');
+    assert.equal(artifact[0].lineNumber, 28);
+    assert.equal(artifact[0].columnNumber, 20);
+  });
+
+  it('captures console.warn calls with non-string args', async () => {
+    const consoleGatherer = new ConsoleGatherer();
+    const consoleWarnEvent =
+      {
+        type: 'warning',
+        args: [
+          { type: 'string', value: 'Testing' },
+          // Not JSON (the window)
+          {
+            type: 'object',
+            className: 'Window',
+            description: 'Window',
+            objectId: '{"injectedScriptId":4,"id":1}',
+            preview: [
+            {
+                type: 'object',
+                description: 'Window',
+                overflow: true,
+                properties: [
+                  { name: 'window', type: 'object', value: 'Window' },
+                  { name: 'self', type: 'object', value: 'Window' },
+                  {
+                    name: 'document',
+                    type: 'object',
+                    value: '#document',
+                    subtype: 'node'
+                  },
+                  { name: 'name', type: 'string', value: '' },
+                  { name: 'location', type: 'object', value: 'Location' }
+                ]
+              }
+            ]
+          },
+          // JSON: {isJson: true}
+          {
+            type: 'object',
+            className: 'Object',
+            description: 'Object',
+            objectId: '{"injectedScriptId":4,"id":2}',
+            preview: {
+              type: 'object',
+              description: 'Object',
+              overflow: false,
+              properties: [ { name: 'json', type: 'boolean', value: 'true' } ]
+            }
+          },
+          // A native function: console.log
+          {
+            type: 'function',
+            className: 'Function',
+            description: 'function log() { [native code] }',
+            objectId: '{"injectedScriptId":4,"id":3}'
+          },
+          // A defined function
+          {
+            type: 'function',
+            className: 'Function',
+            description: '() => {}',
+            objectId: '{"injectedScriptId":4,"id":4}'
+          },
+        ],
+        executionContextId: 4,
+        timestamp: 1605301791372.538,
+        stackTrace: {
+          callFrames: [
+            {
+              functionName: '',
+              scriptId: '14',
+              url: 'http://localhost:8000/test.html',
+              lineNumber: 3,
+              columnNumber: 8
+            }
+          ]
+        }
+      };
+    const driver = new MockDriver();
+    const options = {driver};
+
+    await consoleGatherer.beforePass(options);
+    driver.fireForTest('Runtime.consoleAPICalled', consoleWarnEvent);
+
+    const artifact = await consoleGatherer.afterPass(options);
+
+    assert.equal(artifact.length, 1);
+    assert.equal(artifact[0].source, 'console.warn');
+    assert.equal(artifact[0].level, 'warning');
+    assert.equal(artifact[0].text,
+      'Testing Window Object function log() { [native code] } () => {}');
+    assert.equal(artifact[0].url, 'http://localhost:8000/test.html');
+    assert.equal(artifact[0].lineNumber, 3);
+    assert.equal(artifact[0].columnNumber, 8);
+  });
+
+  it('captures console.error calls', async () => {
+    const consoleGatherer = new ConsoleGatherer();
+    const consoleErrorEvent =
+      {
+        type: 'error',
+        args: [
+          {
+            type: 'string',
+            value: 'Error! Error!'
+          }
+        ],
+        executionContextId: 4,
+        timestamp: 1605300392523.653,
+        stackTrace: {
+          callFrames: [
+              {
+                url: 'http://www.example.com/fancybox.js',
+                lineNumber: 28,
+                columnNumber: 20,
+              },
+          ]
+        }
+    };
+
+    const driver = new MockDriver();
+    const options = {driver};
+
+    await consoleGatherer.beforePass(options);
+    driver.fireForTest('Runtime.consoleAPICalled', consoleErrorEvent);
+
+    const artifact = await consoleGatherer.afterPass(options);
+
+    assert.equal(artifact.length, 1);
+    assert.equal(artifact[0].source, 'console.error');
+    assert.equal(artifact[0].level, 'error');
+    assert.equal(artifact[0].text, 'Error! Error!');
+  });
+
+  it('ignores console.log calls', async () => {
+    const consoleGatherer = new ConsoleGatherer();
+    const consoleLog =
+      {
+        type: 'log',
+        args: [
+          {
+            type: 'string',
+            value: 'I am just a log'
+          }
+        ],
+        executionContextId: 4,
+        timestamp: 1605300392523.653,
+        stackTrace: {
+          callFrames: [
+              {
+                url: 'http://www.example.com/fancybox.js',
+                lineNumber: 28,
+                columnNumber: 20,
+              },
+          ]
+        }
+    };
+
+    const driver = new MockDriver();
+    const options = {driver};
+
+    await consoleGatherer.beforePass(options);
+    driver.fireForTest('Runtime.consoleAPICalled', consoleLog);
+
+    const artifact = await consoleGatherer.afterPass(options);
+
+    assert.equal(artifact.length, 0);
+  });
+
+  it('captures log entries', async () => {
+    const consoleGatherer = new ConsoleGatherer();
+    const logEntries = [
+      {
+        entry: {
+          source: 'violation',
+          level: 'verbose',
+          text: 'Avoid using document.write(). https://developers.google.com/web/updates/2016/08/removing-document-write',
+          timestamp: 1605302299155.652,
+          url: 'http://localhost:8000/test.html',
+          lineNumber: 4,
+          stackTrace: {
+            callFrames: [
+              {
+                functionName: '',
+                scriptId: '14',
+                url: 'http://localhost:8000/test.html',
+                lineNumber: 3,
+                columnNumber: 8
+              }
+            ]
+          }
+        },
+      },
+      {
+        entry: {
+          source: 'network',
+          level: 'error',
+          text: 'Failed to load resource: the server responded with a status of 404 (File not found)',
+          timestamp: 1605302299179.507,
+          url: 'http://localhost:8000/favicon.ico',
+          networkRequestId: '82074.2'
+        }
+      }
+      ];
+
+    const driver = new MockDriver();
+    const options = {driver};
+
+    await consoleGatherer.beforePass(options);
+    driver.fireForTest('Log.entryAdded', logEntries[0]);
+    driver.fireForTest('Log.entryAdded', logEntries[1]);
+
+    const artifact = await consoleGatherer.afterPass(options);
+
+    assert.equal(artifact.length, 2);
+
+    assert.equal(artifact[0].source, 'violation');
+    assert.equal(artifact[0].level, 'verbose');
+    assert.equal(artifact[0].text, 'Avoid using document.write(). https://developers.google.com/web/updates/2016/08/removing-document-write');
+    assert.equal(artifact[0].url, 'http://localhost:8000/test.html');
+
+    assert.equal(artifact[1].source, 'network');
+    assert.equal(artifact[1].level, 'error');
+    assert.equal(artifact[1].text, 'Failed to load resource: the server responded with a status of 404 (File not found)');
+    assert.equal(artifact[1].url, 'http://localhost:8000/favicon.ico');
   });
 });
