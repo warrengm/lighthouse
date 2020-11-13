@@ -77,7 +77,19 @@ class Console extends Gatherer {
    * @param {LH.Crdp.Log.EntryAddedEvent} event
    */
   onLogEntryEntry(event) {
-    console.log('LogENTRY', event)
+    console.log('LogENTRY', event) // DO NOT SUBMIT
+
+    /** @type {LH.Artifacts.ConsoleMessage} */
+    const consoleMessage = {
+      source: 'violation',
+      event,
+      level: event.entry.level,
+      text: event.entry.text,
+      stackTrace: event.entry.stackTrace,
+      timestamp: event.entry.timestamp,
+      url: event.entry.url,
+    };
+    this._logEntries.push(consoleMessage);
   }
 
   /**

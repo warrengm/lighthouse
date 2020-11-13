@@ -749,7 +749,7 @@ declare global {
         // Borrowed from EntryAddedEvent.source with a few console and exception added
         source: 'violation' | 'consoleAPI' | 'exception';
         // Union of EntryAddedEvent.level, RuntimeAPICalledEvent.type, and 'exception'?
-        level: 'warning' | 'error' | 'exception' | 'violation';
+        level: 'warning' | 'error' | 'exception' | 'verbose' | 'info';
         // Text needs to be processed from args on Runtime.consoleAPICalledEvent
         text: string;
         timestamp: number;
