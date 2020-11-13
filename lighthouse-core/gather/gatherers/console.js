@@ -24,24 +24,44 @@ class Console extends Gatherer {
   }
 
   /**
-   * @param {LH.Crdp.Runtime.ConsoleAPICalledEvent} entry
+   * @param {LH.Crdp.Runtime.ConsoleAPICalledEvent} event
    */
-  onConsoleAPICalled(entry) {
-    console.log('CONSOLE',entry)
+  onConsoleAPICalled(event) {
+    console.log('CONSOLE',event)
+    const level = event.type;
+    if (level !== 'warning' && level !== 'error') {
+      // Only gather warnings and errors for brevity.
+      return;
+    }
+    const args = event.args || [];
+    const text = args.map(a => a.value || a.description || '').filter(Boolean).join(' ');
+    if (!text) {
+      return;
+    }
+    /** @type {LH.Artifacts.ConsoleMessage} */
+    const consoleMessage = {
+      source: 'consoleAPI',
+      event,
+      level,
+      text,
+      stackTrace: event.stackTrace,
+      timestamp: event.timestamp,
+    };
+    this._logEntries.push(consoleMessage);
   }
 
   /**
-   * @param {LH.Crdp.Runtime.ExceptionThrownEvent} entry
+   * @param {LH.Crdp.Runtime.ExceptionThrownEvent} event
    */
-  onExceptionThrown(entry) {
-    console.log('EXCETPTION', entry)
+  onExceptionThrown(event) {
+    console.log('EXCETPTION', event)
   }
 
   /**
-   * @param {LH.Crdp.Log.EntryAddedEvent} entry
+   * @param {LH.Crdp.Log.EntryAddedEvent} event
    */
-  onLogEntryEntry(entry) {
-    console.log('LogENTRY', entry)
+  onLogEntryEntry(event) {
+    console.log('LogENTRY', event)
   }
 
   /**

@@ -747,7 +747,7 @@ declare global {
 
       export interface ConsoleMessage {
         // Borrowed from EntryAddedEvent.source with a few console and exception added
-        source: 'violation' | 'console' | 'exception';
+        source: 'violation' | 'consoleAPI' | 'exception';
         // Union of EntryAddedEvent.level, RuntimeAPICalledEvent.type, and 'exception'?
         level: 'warning' | 'error' | 'exception' | 'violation';
         // Text needs to be processed from args on Runtime.consoleAPICalledEvent
