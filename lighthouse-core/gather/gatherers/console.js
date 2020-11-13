@@ -27,7 +27,6 @@ class Console extends Gatherer {
    * @param {LH.Crdp.Runtime.ConsoleAPICalledEvent} event
    */
   onConsoleAPICalled(event) {
-    console.log('CONSOLE',event) // DO NOT SUBMIT
     const level = event.type;
     if (level !== 'warning' && level !== 'error') {
       // Only gather warnings and errors for brevity.
@@ -58,7 +57,6 @@ class Console extends Gatherer {
    * @param {LH.Crdp.Runtime.ExceptionThrownEvent} event
    */
   onExceptionThrown(event) {
-    console.log('EXCETPTION', event); // DO NOT SUBMIT
     const text = event.exceptionDetails.exception ?
           event.exceptionDetails.exception.description : event.exceptionDetails.text;
     if (!text) {
@@ -83,8 +81,6 @@ class Console extends Gatherer {
    * @param {LH.Crdp.Log.EntryAddedEvent} event
    */
   onLogEntry(event) {
-    console.log('LogENTRY', event) // DO NOT SUBMIT
-
     const {source} = event.entry;
     if (source === 'other') {
       return;
@@ -126,6 +122,10 @@ class Console extends Gatherer {
    * @return {Promise<LH.Artifacts['Console']>}
    */
   async afterPass(passContext) {
+    console.log('***************');
+    console.log('***************');
+    console.log('***************');
+    console.log('***************');
     await passContext.driver.sendCommand('Log.stopViolationsReport');
     await passContext.driver.off('Log.entryAdded', this._onLogEntryAdded);
     await passContext.driver.sendCommand('Log.disable');
