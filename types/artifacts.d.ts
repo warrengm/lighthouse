@@ -775,13 +775,11 @@ declare global {
         source: 'console.warn' | 'console.error';
         /** Corresponds to the API call. */
         level: 'warning' | 'error';
-        /** The devtools event. */
       }
 
       interface ConsoleException extends BaseConsoleMessage {
         source: 'exception';
         level: 'exception';
-        /** The devtools event. */
       }
 
       /** Describes a console message logged by the browser for violation reporting. */
@@ -789,7 +787,6 @@ declare global {
         source: 'xml' | 'javascript' | 'network' | 'storage' | 'appcache' | 'rendering' |
           'security' | 'deprecation' | 'worker' | 'violation' | 'intervention' | 'recommendation';
         level: 'warning' | 'error' | 'verbose' | 'info';
-        /** The devtools event. */
       }
 
       export type ConsoleMessage = ConsoleAPICall | ConsoleException | ConsoleLogEntry;
