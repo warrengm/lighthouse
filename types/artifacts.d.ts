@@ -757,14 +757,14 @@ declare global {
       }
 
       interface ConsoleAPICall extends BaseConsoleMessage {
-        source: 'consoleAPI'
-        level: 'warning' | 'error'
+        source: 'console.warn' | 'console.error';
+        level: 'warning' | 'error';
         event: Crdp.Runtime.ConsoleAPICalledEvent;
       }
 
       interface ConsoleException extends BaseConsoleMessage {
-        source: 'exception'
-        level: 'exception'
+        source: 'exception';
+        level: 'exception';
         event: Crdp.Runtime.ExceptionThrownEvent;
       }
 

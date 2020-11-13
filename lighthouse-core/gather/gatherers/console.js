@@ -37,10 +37,11 @@ class Console extends Gatherer {
     if (!text) {
       return;
     }
-    const {url, lineNumber, columnNumber} = event.stackTrace && event.stackTrace.callFrames[0] || {};
+    const {url, lineNumber, columnNumber} =
+      event.stackTrace && event.stackTrace.callFrames[0] || {};
     /** @type {LH.Artifacts.ConsoleMessage} */
     const consoleMessage = {
-      source: 'consoleAPI',
+      source: level === 'warning' ? 'console.warn' : 'console.error',
       event,
       level,
       text,
