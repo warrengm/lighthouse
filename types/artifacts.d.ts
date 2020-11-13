@@ -64,6 +64,7 @@ declare global {
      * on a major version bump.
      */
     export interface PublicGathererArtifacts {
+      Console: Artifacts.ConsoleMessage[];
       /** Console deprecation and intervention warnings logged by Chrome during page load. */
       ConsoleMessages: Crdp.Log.EntryAddedEvent[];
       /** All the iframe elements in the page.*/
@@ -742,6 +743,19 @@ declare global {
         lineNumber: number;
         /** Column number in the script (0-based). */
         columnNumber: number;
+      }
+
+      export interface ConsoleMessage {
+        // Borrowed from EntryAddedEvent.source with a few console and exception added
+        source: 'violation' | 'console' | 'exception';
+        // Union of EntryAddedEvent.level, RuntimeAPICalledEvent.type, and 'exception'?
+        level: 'warning' | 'error' | 'exception' | 'violation';
+        // Text needs to be processed from args on Runtime.consoleAPICalledEvent
+        text: string;
+        timestamp: number;
+        stackTrace?: Crdp.Runtime.StackTrace;
+        url?: string;
+        event: Crdp.Runtime.ConsoleAPICalledEvent | Crdp.Runtime.ExceptionThrownEvent | Crdp.Log.EntryAddedEvent;
       }
     }
   }

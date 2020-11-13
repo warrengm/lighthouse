@@ -15,18 +15,33 @@ const Gatherer = require('./gatherer.js');
 class Console extends Gatherer {
   constructor() {
     super();
-    /** @type {Array<LH.Crdp.Log.EntryAddedEvent>} */
+    /** @type {LH.Artifacts.ConsoleMessage[]} */
     this._logEntries = [];
 
+    this._onConsoleAPICalled = this.onConsoleAPICalled.bind(this);
+    this._onExceptionThrown = this.onExceptionThrown.bind(this);
     this._onLogEntryEntryAdded = this.onLogEntryEntry.bind(this);
+  }
+
+  /**
+   * @param {LH.Crdp.Runtime.ConsoleAPICalledEvent} entry
+   */
+  onConsoleAPICalled(entry) {
+    console.log('CONSOLE',entry)
+  }
+
+  /**
+   * @param {LH.Crdp.Runtime.ExceptionThrownEvent} entry
+   */
+  onExceptionThrown(entry) {
+    console.log('EXCETPTION', entry)
   }
 
   /**
    * @param {LH.Crdp.Log.EntryAddedEvent} entry
    */
   onLogEntryEntry(entry) {
-    console.log(entry)
-    this._logEntries.push(entry);
+    console.log('LogENTRY', entry)
   }
 
   /**
@@ -41,8 +56,8 @@ class Console extends Gatherer {
       config: [{name: 'discouragedAPIUse', threshold: -1}],
     });
 
-    driver.on('Runtime.consoleAPICalled', this._onLogEntryEntryAdded);
-    driver.on('Runtime.exceptionThrown', this._onLogEntryEntryAdded);
+    driver.on('Runtime.consoleAPICalled', this._onConsoleAPICalled);
+    driver.on('Runtime.exceptionThrown', this._onExceptionThrown);
     await driver.sendCommand('Runtime.enable');
   }
 
