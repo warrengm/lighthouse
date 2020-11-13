@@ -13,7 +13,7 @@ const assert = require('assert').strict;
 describe('Console deprecations audit', () => {
   it('passes when no console messages were found', () => {
     const auditResult = DeprecationsAudit.audit({
-      ConsoleMessages: [],
+      Console: [],
     });
     assert.equal(auditResult.score, 1);
     assert.equal(auditResult.details.items.length, 0);
@@ -21,12 +21,10 @@ describe('Console deprecations audit', () => {
 
   it('handles deprecations that do not have url or line numbers', () => {
     const auditResult = DeprecationsAudit.audit({
-      ConsoleMessages: [
+      Console: [
         {
-          entry: {
             source: 'deprecation',
             text: 'Deprecation message',
-          },
         },
       ],
     });
@@ -40,28 +38,22 @@ describe('Console deprecations audit', () => {
     const URL = 'http://example.com';
 
     const auditResult = DeprecationsAudit.audit({
-      ConsoleMessages: [
+      Console: [
         {
-          entry: {
             source: 'deprecation',
             lineNumber: 123,
             url: URL,
             text: 'Deprecation message 123',
-          },
         }, {
-          entry: {
             source: 'deprecation',
             lineNumber: 456,
             url: 'http://example2.com',
             text: 'Deprecation message 456',
-          },
         }, {
-          entry: {
             source: 'somethingelse',
             lineNumber: 789,
             url: 'http://example3.com',
             text: 'Not a deprecation message 789',
-          },
         },
       ],
     });

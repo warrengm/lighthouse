@@ -130,7 +130,7 @@ describe('Config', () => {
           requiredArtifacts: [
             // Require fake artifact amidst base artifact and default artifacts.
             'URL',
-            'ConsoleMessages',
+            'Console',
             'VRMLElements', // not a real gatherer
             'ViewportDimensions',
           ],

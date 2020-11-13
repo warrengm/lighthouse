@@ -13,7 +13,7 @@ const assert = require('assert').strict;
 describe('Console error logs audit', () => {
   it('passes when no console messages were found', () => {
     const auditResult = ErrorLogsAudit.audit({
-      ConsoleMessages: [],
+      Console: [],
       RuntimeExceptions: [],
     }, {options: {}});
     assert.equal(auditResult.score, 1);
@@ -23,13 +23,11 @@ describe('Console error logs audit', () => {
 
   it('filter out the non error logs', () => {
     const auditResult = ErrorLogsAudit.audit({
-      ConsoleMessages: [
+      Console: [
         {
-          entry: {
             level: 'info',
             source: 'network',
             text: 'This is a simple info msg',
-          },
         },
       ],
       RuntimeExceptions: [],
@@ -40,21 +38,17 @@ describe('Console error logs audit', () => {
 
   it('fails when error logs are found ', () => {
     const auditResult = ErrorLogsAudit.audit({
-      ConsoleMessages: [
+      Console: [
         {
-          entry: {
             level: 'error',
             source: 'network',
             text: 'The server responded with a status of 404 (Not Found)',
             url: 'http://www.example.com/favicon.ico',
-          },
         }, {
-          entry: {
             level: 'error',
             source: 'network',
             text: 'WebSocket connection failed: Unexpected response code: 500',
             url: 'http://www.example.com/wsconnect.ws',
-          },
         },
       ],
       RuntimeExceptions: [{
@@ -95,11 +89,9 @@ describe('Console error logs audit', () => {
 
   it('handle the case when some logs fields are undefined', () => {
     const auditResult = ErrorLogsAudit.audit({
-      ConsoleMessages: [
+      Console: [
         {
-          entry: {
             level: 'error',
-          },
         },
       ],
       RuntimeExceptions: [],
@@ -115,7 +107,7 @@ describe('Console error logs audit', () => {
   // Checks bug #4188
   it('handle the case when exception info is not present', () => {
     const auditResult = ErrorLogsAudit.audit({
-      ConsoleMessages: [],
+      Console: [],
       RuntimeExceptions: [{
         'timestamp': 1506535813608.003,
         'exceptionDetails': {
@@ -145,13 +137,11 @@ describe('Console error logs audit', () => {
     it('does nothing with an empty pattern', () => {
       const options = {ignoredPatterns: ''};
       const result = ErrorLogsAudit.audit({
-        ConsoleMessages: [
+        Console: [
           {
-            entry: {
               level: 'error',
               source: 'network',
               text: 'This is a simple error msg',
-            },
           },
         ],
         RuntimeExceptions: [],
@@ -164,11 +154,9 @@ describe('Console error logs audit', () => {
     it('does nothing with an empty description', () => {
       const options = {ignoredPatterns: 'pattern'};
       const result = ErrorLogsAudit.audit({
-        ConsoleMessages: [
+        Console: [
           {
-            entry: {
               level: 'error',
-            },
           },
         ],
         RuntimeExceptions: [],
@@ -181,11 +169,9 @@ describe('Console error logs audit', () => {
     it('does nothing with an empty description', () => {
       const options = {ignoredPatterns: 'pattern'};
       const result = ErrorLogsAudit.audit({
-        ConsoleMessages: [
+        Console: [
           {
-            entry: {
               level: 'error',
-            },
           },
         ],
         RuntimeExceptions: [],
@@ -198,13 +184,11 @@ describe('Console error logs audit', () => {
     it('filters console messages as a string', () => {
       const options = {ignoredPatterns: ['simple']};
       const result = ErrorLogsAudit.audit({
-        ConsoleMessages: [
+        Console: [
           {
-            entry: {
               level: 'error',
               source: 'network',
               text: 'This is a simple error msg',
-            },
           },
         ],
         RuntimeExceptions: [],
@@ -217,13 +201,11 @@ describe('Console error logs audit', () => {
     it('filters console messages as a regex', () => {
       const options = {ignoredPatterns: [/simple.*msg/]};
       const result = ErrorLogsAudit.audit({
-        ConsoleMessages: [
+        Console: [
           {
-            entry: {
               level: 'error',
               source: 'network',
               text: 'This is a simple error msg',
-            },
           },
         ],
         RuntimeExceptions: [],
@@ -236,7 +218,7 @@ describe('Console error logs audit', () => {
     it('filters exceptions with both regex and strings', () => {
       const options = {ignoredPatterns: [/s.mple/i, 'really']};
       const result = ErrorLogsAudit.audit({
-        ConsoleMessages: [],
+        Console: [],
         RuntimeExceptions: [
           {
             exceptionDetails: {
