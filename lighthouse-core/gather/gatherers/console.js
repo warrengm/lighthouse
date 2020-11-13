@@ -42,7 +42,6 @@ class Console extends Gatherer {
     /** @type {LH.Artifacts.ConsoleMessage} */
     const consoleMessage = {
       source: level === 'warning' ? 'console.warn' : 'console.error',
-      event,
       level,
       text,
       stackTrace: event.stackTrace,
@@ -66,7 +65,6 @@ class Console extends Gatherer {
     /** @type {LH.Artifacts.ConsoleMessage} */
     const consoleMessage = {
       source: 'exception',
-      event,
       level: 'exception',
       text,
       stackTrace: event.exceptionDetails.stackTrace,
@@ -90,7 +88,6 @@ class Console extends Gatherer {
     /** @type {LH.Artifacts.ConsoleMessage} */
     const consoleMessage = {
       source,
-      event,
       level: event.entry.level,
       text: event.entry.text,
       stackTrace: event.entry.stackTrace,

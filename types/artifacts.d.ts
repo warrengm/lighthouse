@@ -776,14 +776,12 @@ declare global {
         /** Corresponds to the API call. */
         level: 'warning' | 'error';
         /** The devtools event. */
-        event: Crdp.Runtime.ConsoleAPICalledEvent;
       }
 
       interface ConsoleException extends BaseConsoleMessage {
         source: 'exception';
         level: 'exception';
         /** The devtools event. */
-        event: Crdp.Runtime.ExceptionThrownEvent;
       }
 
       /** Describes a console message logged by the browser for violation reporting. */
@@ -792,7 +790,6 @@ declare global {
           'security' | 'deprecation' | 'worker' | 'violation' | 'intervention' | 'recommendation';
         level: 'warning' | 'error' | 'verbose' | 'info';
         /** The devtools event. */
-        event: Crdp.Log.EntryAddedEvent;
       }
 
       export type ConsoleMessage = ConsoleAPICall | ConsoleException | ConsoleLogEntry;
