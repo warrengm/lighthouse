@@ -745,18 +745,32 @@ declare global {
         columnNumber: number;
       }
 
-      export interface ConsoleMessage {
-        // Borrowed from EntryAddedEvent.source with a few console and exception added
-        source: 'violation' | 'consoleAPI' | 'exception';
-        // Union of EntryAddedEvent.level, RuntimeAPICalledEvent.type, and 'exception'?
-        level: 'warning' | 'error' | 'exception' | 'verbose' | 'info';
-        // Text needs to be processed from args on Runtime.consoleAPICalledEvent
+      interface BaseConsoleMessage {
         text: string;
         timestamp: number;
         stackTrace?: Crdp.Runtime.StackTrace;
         url?: string;
-        event: Crdp.Runtime.ConsoleAPICalledEvent | Crdp.Runtime.ExceptionThrownEvent | Crdp.Log.EntryAddedEvent;
       }
+
+      interface ConsoleAPICall extends BaseConsoleMessage {
+        source: 'consoleAPI'
+        level: 'warning' | 'error'
+        event: Crdp.Runtime.ConsoleAPICalledEvent;
+      }
+
+      interface ConsoleException extends BaseConsoleMessage {
+        source: 'exception'
+        level: 'exception'
+        event: Crdp.Runtime.ExceptionThrownEvent;
+      }
+
+      interface ConsoleLogEntry extends BaseConsoleMessage {
+        source: 'violation'
+        level: 'warning' | 'error' | 'verbose' | 'info';
+        event: Crdp.Log.EntryAddedEvent;
+      }
+
+      export type ConsoleMessage = ConsoleAPICall | ConsoleException | ConsoleLogEntry;
     }
   }
 }
