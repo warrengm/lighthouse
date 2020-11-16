@@ -310,7 +310,8 @@ describe('Console', () => {
         entry: {
           source: 'network',
           level: 'error',
-          text: 'Failed to load resource: the server responded with a status of 404 (File not found)',
+          text:
+              'Failed to load resource: the server responded with a status of 404 (File not found)',
           timestamp: 1605302299179.507,
           url: 'http://localhost:8000/favicon.ico',
           networkRequestId: '82074.2',
@@ -336,7 +337,9 @@ describe('Console', () => {
 
     assert.equal(artifact[1].source, 'network');
     assert.equal(artifact[1].level, 'error');
-    assert.equal(artifact[1].text, 'Failed to load resource: the server responded with a status of 404 (File not found)');
+    assert.equal(
+      artifact[1].text,
+      'Failed to load resource: the server responded with a status of 404 (File not found)');
     assert.equal(artifact[1].url, 'http://localhost:8000/favicon.ico');
   });
 });
