@@ -218,7 +218,7 @@ const expectations = [
                 url: 'http://localhost:10200/dobetterweb/dbw_tester.html',
               },
               {
-                source: 'Runtime.exception',
+                source: 'exception',
                 description: /^Error: A distinctive error\s+at http:\/\/localhost:10200\/dobetterweb\/dbw_tester.html:\d+:\d+$/,
                 url: 'http://localhost:10200/dobetterweb/dbw_tester.html',
               },

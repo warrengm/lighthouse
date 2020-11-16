@@ -779,13 +779,14 @@ declare global {
 
       interface ConsoleException extends BaseConsoleMessage {
         source: 'exception';
-        level: 'exception';
+        level: 'error';
       }
 
       /** Describes a console message logged by the browser for violation reporting. */
       interface ConsoleLogEntry extends BaseConsoleMessage {
         source: 'xml' | 'javascript' | 'network' | 'storage' | 'appcache' | 'rendering' |
-          'security' | 'deprecation' | 'worker' | 'violation' | 'intervention' | 'recommendation';
+          'security' | 'deprecation' | 'worker' | 'violation' | 'intervention' | 'recommendation' |
+          'other';
         level: 'warning' | 'error' | 'verbose' | 'info';
       }
 

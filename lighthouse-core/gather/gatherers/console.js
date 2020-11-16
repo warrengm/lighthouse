@@ -65,7 +65,7 @@ class Console extends Gatherer {
     /** @type {LH.Artifacts.ConsoleMessage} */
     const consoleMessage = {
       source: 'exception',
-      level: 'exception',
+      level: 'error',
       text,
       stackTrace: event.exceptionDetails.stackTrace,
       timestamp: event.timestamp,
@@ -80,22 +80,8 @@ class Console extends Gatherer {
    * @param {LH.Crdp.Log.EntryAddedEvent} event
    */
   onLogEntry(event) {
-    const {source} = event.entry;
-    if (source === 'other') {
-      return;
-    }
-
-    /** @type {LH.Artifacts.ConsoleMessage} */
-    const consoleMessage = {
-      source,
-      level: event.entry.level,
-      text: event.entry.text,
-      stackTrace: event.entry.stackTrace,
-      timestamp: event.entry.timestamp,
-      url: event.entry.url,
-      lineNumber: event.entry.lineNumber,
-    };
-    this._logEntries.push(consoleMessage);
+    const {source, level, text, stackTrace, timestamp, url, lineNumber} = event.entry;
+    this._logEntries.push({source, level, text, stackTrace, timestamp, url, lineNumber});
   }
 
   /**
