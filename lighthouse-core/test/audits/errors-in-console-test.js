@@ -51,7 +51,7 @@ describe('Console error logs audit', () => {
         {
           'timestamp': 1506535813608.003,
           'source': 'exception',
-          'level': 'exception',
+          'level': 'error',
           'text': 'TypeError: Cannot read property \'msie\' of undefined',
           'url': 'http://example.com/fancybox.js',
           'stackTrace': {
@@ -102,7 +102,7 @@ describe('Console error logs audit', () => {
     const auditResult = ErrorLogsAudit.audit({
       Console: [{
         'source': 'exception',
-        'level': 'exception',
+        'level': 'error',
         'timestamp': 1506535813608.003,
         'url': 'http://example.com/fancybox.js',
         'text': 'TypeError: Cannot read property \'msie\' of undefined',
@@ -207,13 +207,13 @@ describe('Console error logs audit', () => {
         Console: [
           {
             source: 'exception',
-            level: 'exception',
+            level: 'error',
             url: 'http://example.com/url.js',
             text: 'Simple Error: You messed up',
           },
           {
             source: 'exception',
-            level: 'exception',
+            level: 'error',
             url: 'http://example.com/url.js',
             text: 'Bad Error: You really messed up',
           },

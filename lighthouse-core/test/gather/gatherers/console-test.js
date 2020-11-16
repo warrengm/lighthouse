@@ -67,7 +67,7 @@ describe('Console', () => {
 
     assert.equal(artifact.length, 1);
     assert.equal(artifact[0].source, 'exception');
-    assert.equal(artifact[0].level, 'exception');
+    assert.equal(artifact[0].level, 'error');
     assert.equal(artifact[0].text,
       `TypeError: Cannot read property 'msie' of undefined`);
     assert.equal(artifact[0].url, 'http://www.example.com/fancybox.js');

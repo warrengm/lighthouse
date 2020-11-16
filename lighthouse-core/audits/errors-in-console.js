@@ -84,7 +84,7 @@ class ErrorLogs extends Audit {
 
     /** @type {Array<{source: string, description: string|undefined, url: string|undefined}>} */
     const consoleRows = artifacts.Console
-      .filter(log => ['error', 'exception'].includes(log.level))
+      .filter(item => item.level === 'error')
       .map(item => {
         return {
           source: item.source,
