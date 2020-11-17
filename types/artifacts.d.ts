@@ -752,9 +752,13 @@ declare global {
         /** The log level: info, warning, etc. See subtypes for possible values. */
         level: string,
         /**
-         * The text printed to the console, as shown on the browser. Note objects printed to the
-         * console will be stringified if primitive or JSON-serializable. Otherwise it will be
-         * a String representation of the object.
+         * The text printed to the console, as shown on the browser console.
+         *
+         * For console API calls, all values are formatted into the text. Primitive values and
+         * function will be printed as-is while objects will be formatted as if the object were
+         * passed to String(). For example, a div will be formatted as "[object HTMLDivElement]".
+         *
+         * For exceptions the text will be the same as err.message at runtime.
          */
         text: string;
         /** Time of the console log in milliseconds since epoch. */
