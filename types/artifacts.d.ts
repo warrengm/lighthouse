@@ -782,15 +782,18 @@ declare global {
         level: 'error';
       }
 
-      /** Describes a console message logged by the browser for violation reporting. */
-      interface ConsoleLogEntry extends BaseConsoleMessage {
+      /**
+       * Describes a report logged to the console by the browser regarding interventions,
+       * deprecations, violations, and more.
+       */
+      interface ConsoleBrowserReport extends BaseConsoleMessage {
         source: 'xml' | 'javascript' | 'network' | 'storage' | 'appcache' | 'rendering' |
           'security' | 'deprecation' | 'worker' | 'violation' | 'intervention' | 'recommendation' |
           'other';
         level: 'warning' | 'error' | 'verbose' | 'info';
       }
 
-      export type ConsoleMessage = ConsoleAPICall | ConsoleException | ConsoleLogEntry;
+      export type ConsoleMessage = ConsoleAPICall | ConsoleException | ConsoleBrowserReport;
     }
   }
 }

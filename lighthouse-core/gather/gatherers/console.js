@@ -5,7 +5,8 @@
  */
 
 /**
- * @fileoverview Gathers console deprecation and intervention warnings logged by Chrome.
+ * @fileoverview Gathers all entries logged to the console, including console API calls,
+ * exceptions, and browser reports (on violations, interventions, deprecations, etc.).
  */
 
 'use strict';
@@ -24,6 +25,7 @@ class Console extends Gatherer {
   }
 
   /**
+   * Handles events for when a script invokes a console API.
    * @param {LH.Crdp.Runtime.ConsoleAPICalledEvent} event
    */
   onConsoleAPICalled(event) {
@@ -54,6 +56,7 @@ class Console extends Gatherer {
   }
 
   /**
+   * Handles exception thrown events.
    * @param {LH.Crdp.Runtime.ExceptionThrownEvent} event
    */
   onExceptionThrown(event) {
@@ -77,6 +80,8 @@ class Console extends Gatherer {
   }
 
   /**
+   * Handles browser reports logged to the console, including interventions,
+   * deprecations, violations, and more.
    * @param {LH.Crdp.Log.EntryAddedEvent} event
    */
   onLogEntry(event) {
