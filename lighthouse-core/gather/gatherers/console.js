@@ -110,12 +110,13 @@ class Console extends Gatherer {
    * @param {LH.Gatherer.PassContext} passContext
    * @return {Promise<LH.Artifacts['Console']>}
    */
-  async afterPass(passContext) {
-    await passContext.driver.sendCommand('Log.stopViolationsReport');
-    await passContext.driver.off('Log.entryAdded', this._onLogEntryAdded);
-    await passContext.driver.sendCommand('Log.disable');
-    await passContext.driver.off('Runtime.consoleAPICalled', this._onConsoleAPICalled);
-    await passContext.driver.off('Runtime.exceptionThrown', this._onExceptionThrown);
+  async afterPass({driver}) {
+    await driver.sendCommand('Log.stopViolationsReport');
+    await driver.off('Log.entryAdded', this._onLogEntryAdded);
+    await driver.sendCommand('Log.disable');
+    await driver.off('Runtime.consoleAPICalled', this._onConsoleAPICalled);
+    await driver.off('Runtime.exceptionThrown', this._onExceptionThrown);
+    await driver.sendCommand('Runtime.disable');
     return this._logEntries;
   }
 }
