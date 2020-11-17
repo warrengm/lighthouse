@@ -23,7 +23,7 @@ function remoteObjectToString(obj) {
     return obj.value;
   }
   if (obj.type == 'function') {
-    return obj.description;
+    return obj.description || '';
   }
   // Simulate calling String() on the object.
   return `[${obj.type} ${obj.description}]`;
@@ -50,7 +50,7 @@ class Console extends Gatherer {
       // Only gather warnings and errors for brevity.
       return;
     }
-    /** @type {LH.Crdp.Runtime.RemoteObject} */
+    /** @type {LH.Crdp.Runtime.RemoteObject[]} */
     const args = event.args || [];
     const text = args.map(remoteObjectToString).filter(Boolean).join(' ');
     if (!text) {
