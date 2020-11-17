@@ -745,13 +745,6 @@ declare global {
       /** Describes a generic console message. */
       interface BaseConsoleMessage {
         /**
-         * What emitted the console message (console API, violation log, etc.).
-         * See subtypes for possible values.
-         */
-        source: string,
-        /** The log level: info, warning, etc. See subtypes for possible values. */
-        level: string,
-        /**
          * The text printed to the console, as shown on the browser console.
          *
          * For console API calls, all values are formatted into the text. Primitive values and
@@ -790,12 +783,8 @@ declare global {
        * Describes a report logged to the console by the browser regarding interventions,
        * deprecations, violations, and more.
        */
-      interface ConsoleBrowserReport extends BaseConsoleMessage {
-        source: 'xml' | 'javascript' | 'network' | 'storage' | 'appcache' | 'rendering' |
-          'security' | 'deprecation' | 'worker' | 'violation' | 'intervention' | 'recommendation' |
-          'other';
-        level: 'warning' | 'error' | 'verbose' | 'info';
-      }
+      interface ConsoleBrowserReport extends
+        BaseConsoleMessage, Pick<Crdp.Log.LogEntry, 'source'|'level'> {}
 
       export type ConsoleMessage = ConsoleAPICall | ConsoleException | ConsoleBrowserReport;
     }
