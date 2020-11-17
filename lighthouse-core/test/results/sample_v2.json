@@ -280,11 +280,6 @@
             "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
           },
           {
-            "source": "exception",
-            "description": "Error: An error\n    at http://localhost:10200/dobetterweb/dbw_tester.html:42:38",
-            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
-          },
-          {
             "source": "network",
             "description": "Failed to load resource: the server responded with a status of 404 (Not Found)",
             "url": "http://localhost:10200/dobetterweb/unknown404.css?delay=200"
