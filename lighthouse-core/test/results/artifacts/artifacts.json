@@ -660,7 +660,7 @@
     },
     {
       "source": "exception",
-      "level": "exception",
+      "level": "error",
       "timestamp": 1519974785784.3982,
       "lineNumber": 41,
       "columnNumber": 37,
