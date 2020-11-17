@@ -203,7 +203,7 @@ describe('Console', () => {
     assert.equal(artifact[0].source, 'console.warn');
     assert.equal(artifact[0].level, 'warning');
     assert.equal(artifact[0].text,
-      'Testing Window Object function log() { [native code] } () => {}');
+      'Testing [object Window] [object Object] function log() { [native code] } () => {}');
     assert.equal(artifact[0].url, 'http://localhost:8000/test.html');
     assert.equal(artifact[0].lineNumber, 3);
     assert.equal(artifact[0].columnNumber, 8);

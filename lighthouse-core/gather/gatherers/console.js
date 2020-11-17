@@ -13,6 +13,22 @@
 
 const Gatherer = require('./gatherer.js');
 
+/**
+ * @param {LH.Crdp.Runtime.RemoteObject} obj
+ * @return {string}
+ */
+function remoteObjectToString(obj) {
+  if (obj.value) {
+    // Primitive values will simply store the object.
+    return obj.value;
+  }
+  if (obj.type == 'function') {
+    return obj.description;
+  }
+  // Simulate calling String() on the object.
+  return `[${obj.type} ${obj.description}]`;
+}
+
 class Console extends Gatherer {
   constructor() {
     super();
@@ -34,8 +50,9 @@ class Console extends Gatherer {
       // Only gather warnings and errors for brevity.
       return;
     }
+    /** @type {LH.Crdp.Runtime.RemoteObject} */
     const args = event.args || [];
-    const text = args.map(a => a.value || a.description || '').filter(Boolean).join(' ');
+    const text = args.map(remoteObjectToString).filter(Boolean).join(' ');
     if (!text) {
       return;
     }
