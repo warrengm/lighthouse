@@ -116,6 +116,34 @@ describe('Console', () => {
     assert.equal(artifact[0].columnNumber, 20);
   });
 
+  it('captures falsey values', async () => {
+    const consoleGatherer = new ConsoleGatherer();
+    const consoleWarnEvent =
+      {
+        type: 'warning',
+        args: [
+          {type: 'number', value: 0, description: '0'},
+          {type: 'string', value: ''},
+          {type: 'undefined'},
+          {type: 'object', subtype: 'null', value: 'null'},
+          {type: 'boolean', value: false},
+        ],
+      };
+
+    const driver = new MockDriver();
+    const options = {driver};
+
+    await consoleGatherer.beforePass(options);
+    driver.fireForTest('Runtime.consoleAPICalled', consoleWarnEvent);
+
+    const artifact = await consoleGatherer.afterPass(options);
+
+    assert.equal(artifact.length, 1);
+    assert.equal(artifact[0].source, 'console.warn');
+    assert.equal(artifact[0].level, 'warning');
+    assert.equal(artifact[0].text, '0  undefined null false');
+  });
+
   it('captures console.warn calls with non-string args', async () => {
     const consoleGatherer = new ConsoleGatherer();
     const consoleWarnEvent =
@@ -162,6 +190,26 @@ describe('Console', () => {
               properties: [{name: 'json', type: 'boolean', value: 'true'}],
             },
           },
+          // An array
+          {
+            type: 'object',
+            subtype: 'array',
+            className: 'Array',
+            description: 'Array(3)',
+            objectId: '{"injectedScriptId":4,"id":5}',
+            preview: {
+              type: 'object',
+              subtype: 'array',
+              description: 'Array(3)',  // Array(3) despite having 4 elements.
+              overflow: false,
+              properties: [
+                {name: '0', type: 'object', value: 'Window'},
+                {name: '1', type: 'string', value: '2'},
+                {name: '2', type: 'string', value: '3'},
+                {name: '3', type: 'function', value: ''},
+              ],
+            },
+          },
           // A native function: console.log
           {
             type: 'function',
@@ -203,7 +251,7 @@ describe('Console', () => {
     assert.equal(artifact[0].source, 'console.warn');
     assert.equal(artifact[0].level, 'warning');
     assert.equal(artifact[0].text,
-      'Testing [object Window] [object Object] function log() { [native code] } () => {}');
+      'Testing [object Window] [object Object] [array Array(3)] function log() { [native code] } () => {}');
     assert.equal(artifact[0].url, 'http://localhost:8000/test.html');
     assert.equal(artifact[0].lineNumber, 3);
     assert.equal(artifact[0].columnNumber, 8);

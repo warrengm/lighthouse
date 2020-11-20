@@ -18,15 +18,18 @@ const Gatherer = require('./gatherer.js');
  * @return {string}
  */
 function remoteObjectToString(obj) {
-  if (obj.value) {
-    // Primitive values will simply store the object.
-    return obj.value;
+  if (typeof obj.value !== 'undefined') {
+    return String(obj.value);
   }
-  if (obj.type == 'function') {
+  if (obj.type === 'undefined') {
+    return 'undefined';
+  }
+  if (obj.type === 'function') {
     return obj.description || '';
   }
+  const type = obj.subtype || obj.type;
   // Simulate calling String() on the object.
-  return `[${obj.type} ${obj.description}]`;
+  return `[${type} ${obj.description}]`;
 }
 
 class Console extends Gatherer {
@@ -52,7 +55,7 @@ class Console extends Gatherer {
     }
     /** @type {LH.Crdp.Runtime.RemoteObject[]} */
     const args = event.args || [];
-    const text = args.map(remoteObjectToString).filter(Boolean).join(' ');
+    const text = args.map(remoteObjectToString).join(' ');
     if (!text) {
       return;
     }
