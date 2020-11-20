@@ -45,8 +45,8 @@ class Console extends Gatherer {
    * @param {LH.Crdp.Runtime.ConsoleAPICalledEvent} event
    */
   onConsoleAPICalled(event) {
-    const level = event.type;
-    if (level !== 'warning' && level !== 'error') {
+    const {type} = event;
+    if (type !== 'warning' && type !== 'error') {
       // Only gather warnings and errors for brevity.
       return;
     }
@@ -60,8 +60,8 @@ class Console extends Gatherer {
       event.stackTrace && event.stackTrace.callFrames[0] || {};
     /** @type {LH.Artifacts.ConsoleMessage} */
     const consoleMessage = {
-      source: level === 'warning' ? 'console.warn' : 'console.error',
-      level,
+      source: type === 'warning' ? 'console.warn' : 'console.error',
+      level: type,
       text,
       stackTrace: event.stackTrace,
       timestamp: event.timestamp,
