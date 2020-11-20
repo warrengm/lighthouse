@@ -56,11 +56,12 @@ class Console extends Gatherer {
     /** @type {LH.Crdp.Runtime.RemoteObject[]} */
     const args = event.args || [];
     const text = args.map(remoteObjectToString).join(' ');
-    if (!text) {
-      return;
-    }
     const {url, lineNumber, columnNumber} =
       event.stackTrace && event.stackTrace.callFrames[0] || {};
+    if (!text && !url && !stackTrace) {
+      // No useful information from Chrome. Skip.
+      return;
+    }
     /** @type {LH.Artifacts.ConsoleMessage} */
     const consoleMessage = {
       source: type === 'warning' ? 'console.warn' : 'console.error',
