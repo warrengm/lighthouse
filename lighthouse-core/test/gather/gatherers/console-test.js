@@ -200,7 +200,7 @@ describe('Console', () => {
             preview: {
               type: 'object',
               subtype: 'array',
-              description: 'Array(3)',  // Array(3) despite having 4 elements.
+              description: 'Array(3)', // Array(3) despite having 4 elements.
               overflow: false,
               properties: [
                 {name: '0', type: 'object', value: 'Window'},
@@ -251,7 +251,8 @@ describe('Console', () => {
     assert.equal(artifact[0].source, 'console.warn');
     assert.equal(artifact[0].level, 'warning');
     assert.equal(artifact[0].text,
-      'Testing [object Window] [object Object] [array Array(3)] function log() { [native code] } () => {}');
+      'Testing [object Window] [object Object] [array Array(3)] ' +
+      'function log() { [native code] } () => {}');
     assert.equal(artifact[0].url, 'http://localhost:8000/test.html');
     assert.equal(artifact[0].lineNumber, 3);
     assert.equal(artifact[0].columnNumber, 8);
