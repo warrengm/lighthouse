@@ -31,8 +31,7 @@ Running beforePass methods
 Gathering setup: CSSUsage
 Gathering setup: JsUsage
 Gathering setup: ViewportDimensions
-Gathering setup: RuntimeExceptions
-Gathering setup: ConsoleMessages
+Gathering setup: Console
 Gathering setup: AnchorElements
 Gathering setup: ImageElements
 Gathering setup: LinkElements
