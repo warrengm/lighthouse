@@ -18,18 +18,16 @@ const Gatherer = require('./gatherer.js');
  * @return {string}
  */
 function remoteObjectToString(obj) {
-  if (typeof obj.value !== 'undefined') {
+  if (typeof obj.value !== 'undefined' || typeof obj.type === 'undefined') {
     return String(obj.value);
   }
-  if (obj.type === 'undefined') {
-    return 'undefined';
-  }
-  if (obj.type === 'function') {
-    return obj.description || '';
+  if (typeof obj.description === 'string' && obj.description !== obj.className) {
+    return obj.description;
   }
   const type = obj.subtype || obj.type;
+  const className = obj.className || 'Object';
   // Simulate calling String() on the object.
-  return `[${type} ${obj.description}]`;
+  return `[${type} ${className}]`;
 }
 
 class Console extends Gatherer {
@@ -64,6 +62,7 @@ class Console extends Gatherer {
       event.stackTrace && event.stackTrace.callFrames[0] || {};
     /** @type {LH.Artifacts.ConsoleMessage} */
     const consoleMessage = {
+      eventType: 'consoleAPI',
       source: type === 'warning' ? 'console.warn' : 'console.error',
       level: type,
       text,
@@ -88,6 +87,7 @@ class Console extends Gatherer {
     }
     /** @type {LH.Artifacts.ConsoleMessage} */
     const consoleMessage = {
+      eventType: 'exception',
       source: 'exception',
       level: 'error',
       text,
@@ -107,7 +107,16 @@ class Console extends Gatherer {
    */
   onLogEntry(event) {
     const {source, level, text, stackTrace, timestamp, url, lineNumber} = event.entry;
-    this._logEntries.push({source, level, text, stackTrace, timestamp, url, lineNumber});
+    this._logEntries.push({
+      eventType: 'protocolLog',
+      source,
+      level,
+      text,
+      stackTrace,
+      timestamp,
+      url,
+      lineNumber,
+    });
   }
 
   /**

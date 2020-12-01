@@ -251,7 +251,7 @@ describe('Console', () => {
     assert.equal(artifact[0].source, 'console.warn');
     assert.equal(artifact[0].level, 'warning');
     assert.equal(artifact[0].text,
-      'Testing [object Window] [object Object] [array Array(3)] ' +
+      'Testing [object Window] [object Object] Array(3) ' +
       'function log() { [native code] } () => {}');
     assert.equal(artifact[0].url, 'http://localhost:8000/test.html');
     assert.equal(artifact[0].lineNumber, 3);
@@ -267,6 +267,20 @@ describe('Console', () => {
           {
             type: 'string',
             value: 'Error! Error!',
+          },
+          {
+            type: 'object',
+            subtype: 'error',
+            description: 'TypeError: test exception\n    at http://localhost:8000/test.html:8:15',
+            overflow: false,
+            properties: [
+              {
+                name: 'stack',
+                type: 'string',
+                value: 'TypeError: test exception\n    at http://localhost:8000/test.html:8:15',
+              },
+              {name: 'message', type: 'string', value: 'test exception'},
+            ],
           },
         ],
         executionContextId: 4,
@@ -293,7 +307,9 @@ describe('Console', () => {
     assert.equal(artifact.length, 1);
     assert.equal(artifact[0].source, 'console.error');
     assert.equal(artifact[0].level, 'error');
-    assert.equal(artifact[0].text, 'Error! Error!');
+    assert.equal(
+      artifact[0].text,
+      'Error! Error! TypeError: test exception\n    at http://localhost:8000/test.html:8:15');
   });
 
   it('ignores console.log calls', async () => {

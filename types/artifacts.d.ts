@@ -768,6 +768,7 @@ declare global {
 
       /** Describes a console message logged by a script using the console API. */
       interface ConsoleAPICall extends BaseConsoleMessage {
+        eventType: 'consoleAPI';
         /** The console API invoked. Only the following console API calls are gathered. */
         source: 'console.warn' | 'console.error';
         /** Corresponds to the API call. */
@@ -775,6 +776,7 @@ declare global {
       }
 
       interface ConsoleException extends BaseConsoleMessage {
+        eventType: 'exception';
         source: 'exception';
         level: 'error';
       }
@@ -783,10 +785,12 @@ declare global {
        * Describes a report logged to the console by the browser regarding interventions,
        * deprecations, violations, and more.
        */
-      interface ConsoleBrowserReport extends
-        BaseConsoleMessage, Pick<Crdp.Log.LogEntry, 'source'|'level'> {}
+      interface ConsoleProtocolLog extends
+        BaseConsoleMessage, Pick<Crdp.Log.LogEntry, 'source'|'level'> {
+        eventType: 'protocolLog';
+      }
 
-      export type ConsoleMessage = ConsoleAPICall | ConsoleException | ConsoleBrowserReport;
+      export type ConsoleMessage = ConsoleAPICall | ConsoleException | ConsoleProtocolLog;
     }
   }
 }
