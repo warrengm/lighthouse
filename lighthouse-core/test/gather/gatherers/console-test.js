@@ -127,6 +127,7 @@ describe('Console', () => {
           {type: 'undefined'},
           {type: 'object', subtype: 'null', value: 'null'},
           {type: 'boolean', value: false},
+          {type: 'number', unserializableValue: 'NaN', description: 'NaN'},
         ],
       };
 
@@ -141,7 +142,7 @@ describe('Console', () => {
     assert.equal(artifact.length, 1);
     assert.equal(artifact[0].source, 'console.warn');
     assert.equal(artifact[0].level, 'warning');
-    assert.equal(artifact[0].text, '0  undefined null false');
+    assert.equal(artifact[0].text, '0  undefined null false NaN');
   });
 
   it('captures console.warn calls with non-string args', async () => {
