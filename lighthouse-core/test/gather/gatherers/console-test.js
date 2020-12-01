@@ -196,12 +196,12 @@ describe('Console', () => {
             type: 'object',
             subtype: 'array',
             className: 'Array',
-            description: 'Array(3)',
+            description: 'Array(4)',
             objectId: '{"injectedScriptId":4,"id":5}',
             preview: {
               type: 'object',
               subtype: 'array',
-              description: 'Array(3)', // Array(3) despite having 4 elements.
+              description: 'Array(4)', // Array(3) despite having 4 elements.
               overflow: false,
               properties: [
                 {name: '0', type: 'object', value: 'Window'},
@@ -224,6 +224,21 @@ describe('Console', () => {
             className: 'Function',
             description: '() => {}',
             objectId: '{"injectedScriptId":4,"id":4}',
+          },
+          // A Date
+          {
+            type: 'object',
+            subtype: 'date',
+            className: 'Date',
+            description: 'Tue Dec 01 2020 16:25:58 GMT-0500',
+            objectId: '{"injectedScriptId":4,"id":9}',
+            preview: {
+              type: 'object',
+              subtype: 'date',
+              description: 'Tue Dec 01 2020 16:25:58 GMT-0500', 
+              overflow: false,
+              properties: [],
+            },
           },
         ],
         executionContextId: 4,
@@ -252,8 +267,9 @@ describe('Console', () => {
     assert.equal(artifact[0].source, 'console.warn');
     assert.equal(artifact[0].level, 'warning');
     assert.equal(artifact[0].text,
-      'Testing [object Window] [object Object] Array(3) ' +
-      'function log() { [native code] } () => {}');
+      'Testing [object Window] [object Object] Array(4) ' +
+      'function log() { [native code] } () => {} ' +
+      'Tue Dec 01 2020 16:25:58 GMT-0500');
     assert.equal(artifact[0].url, 'http://localhost:8000/test.html');
     assert.equal(artifact[0].lineNumber, 3);
     assert.equal(artifact[0].columnNumber, 8);
