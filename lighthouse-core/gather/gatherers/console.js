@@ -18,7 +18,7 @@ const Gatherer = require('./gatherer.js');
  * @return {string}
  */
 function remoteObjectToString(obj) {
-  if (typeof obj.value !== 'undefined' || typeof obj.type === 'undefined') {
+  if (typeof obj.value !== 'undefined' || obj.type === 'undefined') {
     return String(obj.value);
   }
   if (typeof obj.description === 'string' && obj.description !== obj.className) {
