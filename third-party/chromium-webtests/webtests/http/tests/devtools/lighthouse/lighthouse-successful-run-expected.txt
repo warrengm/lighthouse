@@ -62,8 +62,7 @@ Running pass methods
 Gathering in-page: CSSUsage
 Gathering in-page: JsUsage
 Gathering in-page: ViewportDimensions
-Gathering in-page: RuntimeExceptions
-Gathering in-page: ConsoleMessages
+Gathering in-page: Console
 Gathering in-page: AnchorElements
 Gathering in-page: ImageElements
 Gathering in-page: LinkElements
@@ -93,8 +92,7 @@ Running afterPass methods
 Gathering: CSSUsage
 Gathering: JsUsage
 Gathering: ViewportDimensions
-Gathering: RuntimeExceptions
-Gathering: ConsoleMessages
+Gathering: Console
 Gathering: AnchorElements
 Gathering: ImageElements
 Gathering: LinkElements
