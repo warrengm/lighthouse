@@ -7,6 +7,8 @@
 
 /* eslint-env jest */
 
+require('../test-utils.js').makeMocksForGatherRunner();
+
 const Gatherer = require('../../gather/gatherers/gatherer.js');
 const GatherRunner_ = require('../../gather/gather-runner.js');
 const assert = require('assert').strict;
@@ -19,8 +21,6 @@ const Driver = require('../../gather/driver.js');
 const Connection = require('../../gather/connections/connection.js');
 const {createMockSendCommandFn} = require('./mock-commands.js');
 const {makeParamsOptional} = require('../test-utils.js');
-
-jest.mock('../../lib/stack-collector.js', () => () => Promise.resolve([]));
 
 const GatherRunner = {
   afterPass: makeParamsOptional(GatherRunner_.afterPass),
@@ -1462,64 +1462,6 @@ describe('GatherRunner', function() {
           assert.strictEqual(artifacts[gathererName], gathererName);
         });
       });
-    });
-
-    it('passes gatherer options', async () => {
-      /** @type {Record<string, any[]>} */
-      const calls = {beforePass: [], pass: [], afterPass: []};
-      /** @param {string} name */
-      const makeEavesdropGatherer = name => {
-        const C = class extends Gatherer {};
-        Object.defineProperty(C, 'name', {value: name});
-        return Object.assign(new C, {
-          /** @param {LH.Gatherer.PassContext} context */
-          beforePass(context) {
-            calls.beforePass.push(context.options);
-          },
-          /** @param {LH.Gatherer.PassContext} context */
-          pass(context) {
-            calls.pass.push(context.options);
-          },
-          /** @param {LH.Gatherer.PassContext} context */
-          afterPass(context) {
-            calls.afterPass.push(context.options);
-            // @ts-expect-error
-            return context.options.x || 'none';
-          },
-        });
-      };
-
-      const gatherers = [
-        {instance: makeEavesdropGatherer('EavesdropGatherer1'), options: {x: 1}},
-        {instance: makeEavesdropGatherer('EavesdropGatherer2'), options: {x: 2}},
-        {instance: makeEavesdropGatherer('EavesdropGatherer3')},
-      ];
-
-      const config = makeConfig({
-        passes: [{
-          passName: 'defaultPass',
-          gatherers,
-        }],
-      });
-
-      /** @type {any} Using Test-only gatherers. */
-      const artifacts = await GatherRunner.run(config.passes, {
-        driver: fakeDriver,
-        requestedUrl: 'https://example.com',
-        settings: config.settings,
-      });
-
-      assert.equal(artifacts.EavesdropGatherer1, 1);
-      assert.equal(artifacts.EavesdropGatherer2, 2);
-      assert.equal(artifacts.EavesdropGatherer3, 'none');
-
-      // assert that all three phases received the gatherer options expected
-      const expectedOptions = [{x: 1}, {x: 2}, {}];
-      for (let i = 0; i < 3; i++) {
-        assert.deepEqual(calls.beforePass[i], expectedOptions[i]);
-        assert.deepEqual(calls.pass[i], expectedOptions[i]);
-        assert.deepEqual(calls.afterPass[i], expectedOptions[i]);
-      }
     });
 
     it('uses the last not-undefined phase result as artifact', async () => {
