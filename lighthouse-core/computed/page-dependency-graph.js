@@ -190,8 +190,6 @@ class PageDependencyGraph {
     function addDependentNetworkRequest(cpuNode, reqId) {
       const networkNode = networkNodeOutput.idToNodeMap.get(reqId);
       if (!networkNode ||
-          // Ignore all non-XHRs
-          networkNode.record.resourceType !== NetworkRequest.TYPES.XHR ||
           // Ignore all network nodes that started before this CPU task started
           // A network request that started earlier could not possibly have been started by this task
           networkNode.startTime <= cpuNode.startTime) return;
