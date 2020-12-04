@@ -235,7 +235,7 @@ describe('Console', () => {
             preview: {
               type: 'object',
               subtype: 'date',
-              description: 'Tue Dec 01 2020 16:25:58 GMT-0500', 
+              description: 'Tue Dec 01 2020 16:25:58 GMT-0500',
               overflow: false,
               properties: [],
             },
