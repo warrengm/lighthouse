@@ -186,6 +186,9 @@ class PageDependencyGraph {
    * @param {Array<CPUNode>} cpuNodes
    */
   static linkCPUNodes(rootNode, networkNodeOutput, cpuNodes) {
+    const linkableResourceTypes = new Set([
+      NetworkRequest.TYPES.XHR, NetworkRequest.TYPES.Fetch, NetworkRequest.TYPES.Script,
+    ]);
     /** @param {CPUNode} cpuNode @param {string} reqId */
     function addDependentNetworkRequest(cpuNode, reqId) {
       const networkNode = networkNodeOutput.idToNodeMap.get(reqId);
@@ -193,6 +196,13 @@ class PageDependencyGraph {
           // Ignore all network nodes that started before this CPU task started
           // A network request that started earlier could not possibly have been started by this task
           networkNode.startTime <= cpuNode.startTime) return;
+      const resourceType =
+        networkNode.record.resourceType || networkNode.record.redirectedResourceType;
+      if (!linkableResourceTypes.has(resourceType)) {
+        // We only link some resources to CPU nodes because we observe LCP simulation
+        // regressions when including images, etc.
+        return;
+      }
       cpuNode.addDependent(networkNode);
     }
 

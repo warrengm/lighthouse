@@ -115,6 +115,8 @@ class NetworkRequest {
     this.timing = undefined;
     /** @type {LH.Crdp.Network.ResourceType|undefined} */
     this.resourceType = undefined;
+    /** @type {LH.Crdp.Network.ResourceType|undefined} */
+    this.redirectedResourceType = undefined;
     this.mimeType = '';
     /** @type {LH.Crdp.Network.ResourcePriority} */
     this.priority = 'Low';
@@ -260,6 +262,7 @@ class NetworkRequest {
   onRedirectResponse(data) {
     if (!data.redirectResponse) throw new Error('Missing redirectResponse data');
     this._onResponse(data.redirectResponse, data.timestamp, data.type);
+    this.redirectedResourceType = this.resourceType;
     this.resourceType = undefined;
     this.finished = true;
     this.endTime = data.timestamp;
