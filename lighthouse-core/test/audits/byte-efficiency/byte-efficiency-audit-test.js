@@ -266,7 +266,7 @@ describe('Byte efficiency base audit', () => {
     const result = await MockAudit.audit(artifacts, {settings, computedCache});
     const resultTti = await MockJustTTIAudit.audit(artifacts, {settings, computedCache});
     // expect less savings with just TTI
-    expect(resultTti.numericValue).toBeLessThan(result.numericValue);
+    expect(resultTti.numericValue).toBeLessThanOrEqual(result.numericValue);
     expect({default: result.numericValue, justTTI: resultTti.numericValue}).toMatchSnapshot();
   });
 });
