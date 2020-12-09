@@ -276,28 +276,43 @@
         "items": [
           {
             "source": "other",
-            "description": "Application Cache Error event: Manifest fetch failed (404) http://localhost:10200/dobetterweb/clock.appcache",
-            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
+            "description": "Application Cache Error event: Manifest fetch failed (404) http://localhost:56620/dobetterweb/clock.appcache",
+            "url": "http://localhost:56620/dobetterweb/dbw_tester.html"
           },
           {
             "source": "exception",
-            "description": "Error: An error\n    at http://localhost:10200/dobetterweb/dbw_tester.html:42:38",
-            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
+            "description": "Error: A distinctive error\n    at http://localhost:56620/dobetterweb/dbw_tester.html:58:54",
+            "url": "http://localhost:56620/dobetterweb/dbw_tester.html"
+          },
+          {
+            "source": "exception",
+            "description": "Error: An ignored error\n    at http://localhost:56620/dobetterweb/dbw_tester.html:61:38",
+            "url": "http://localhost:56620/dobetterweb/dbw_tester.html"
+          },
+          {
+            "source": "console.error",
+            "description": "Error! Error!",
+            "url": "http://localhost:56620/dobetterweb/dbw_tester.html"
           },
           {
             "source": "network",
             "description": "Failed to load resource: the server responded with a status of 404 (Not Found)",
-            "url": "http://localhost:10200/dobetterweb/unknown404.css?delay=200"
+            "url": "http://localhost:56620/dobetterweb/unknown404.css?delay=200"
           },
           {
             "source": "network",
             "description": "Failed to load resource: the server responded with a status of 404 (Not Found)",
-            "url": "http://localhost:10200/favicon.ico"
+            "url": "http://localhost:56620/dobetterweb/fcp-delayer.js?delay=5000"
           },
           {
             "source": "network",
             "description": "Failed to load resource: the server responded with a status of 404 (Not Found)",
-            "url": "http://localhost:10200/dobetterweb/unknown404.css?delay=200"
+            "url": "http://localhost:56620/favicon.ico"
+          },
+          {
+            "source": "network",
+            "description": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "url": "http://localhost:56620/dobetterweb/unknown404.css?delay=200"
           }
         ]
       }
@@ -722,7 +737,7 @@
       "description": "Deprecated APIs will eventually be removed from the browser. [Learn more](https://web.dev/deprecations/).",
       "score": 0,
       "scoreDisplayMode": "binary",
-      "displayValue": "3 warnings found",
+      "displayValue": "4 warnings found",
       "details": {
         "type": "table",
         "headings": [
@@ -739,27 +754,44 @@
         ],
         "items": [
           {
-            "value": "Synchronous XMLHttpRequest on the main thread is deprecated because of its detrimental effects to the end user's experience. For more help, check https://xhr.spec.whatwg.org/.",
+            "value": "Application Cache API manifest selection is deprecated and will be removed in M85, around August 2020. See https://www.chromestatus.com/features/6192449487634432 for more details.",
             "source": {
               "type": "source-location",
-              "url": "http://localhost:10200/dobetterweb/dbw_tester.html",
+              "url": "http://localhost:56620/dobetterweb/dbw_tester.html",
               "urlProvider": "network",
-              "line": 322,
-              "column": 6
+              "line": 8,
+              "column": 0
             }
           },
           {
             "value": "'window.webkitStorageInfo' is deprecated. Please use 'navigator.webkitTemporaryStorage' or 'navigator.webkitPersistentStorage' instead.",
             "source": {
               "type": "source-location",
-              "url": "http://localhost:10200/dobetterweb/dbw_tester.html",
+              "url": "http://localhost:56620/dobetterweb/dbw_tester.js",
               "urlProvider": "network",
-              "line": 325,
+              "line": 13,
               "column": 9
             }
           },
           {
-            "value": "/deep/ combinator is no longer supported in CSS dynamic profile.It is now effectively no-op, acting as if it were a descendant combinator. /deep/ combinator will be removed, and will be invalid at M65. You should remove it. See https://www.chromestatus.com/features/4964279606312960 for more details."
+            "value": "Synchronous XMLHttpRequest on the main thread is deprecated because of its detrimental effects to the end user's experience. For more help, check https://xhr.spec.whatwg.org/.",
+            "source": {
+              "type": "source-location",
+              "url": "http://localhost:56620/dobetterweb/dbw_tester.html",
+              "urlProvider": "network",
+              "line": 371,
+              "column": 6
+            }
+          },
+          {
+            "value": "/deep/ combinator is no longer supported in CSS dynamic profile. It is now effectively no-op, acting as if it were a descendant combinator. /deep/ combinator will be removed, and will be invalid at M65. You should remove it. See https://www.chromestatus.com/features/4964279606312960 for more details.",
+            "source": {
+              "type": "source-location",
+              "url": "http://localhost:56620/dobetterweb/dbw_tester.html",
+              "urlProvider": "network",
+              "line": 0,
+              "column": 0
+            }
           }
         ]
       }
@@ -3773,12 +3805,12 @@
         ],
         "items": [
           {
-            "label": "line: 277",
-            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
+            "label": "line: 331",
+            "url": "http://localhost:56620/dobetterweb/dbw_tester.html"
           },
           {
-            "label": "line: 281",
-            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
+            "label": "line: 335",
+            "url": "http://localhost:56620/dobetterweb/dbw_tester.html"
           }
         ]
       }
@@ -3813,16 +3845,16 @@
         ],
         "items": [
           {
-            "label": "line: 178",
-            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
+            "label": "line: 269",
+            "url": "http://localhost:56620/dobetterweb/dbw_tester.html"
           },
           {
-            "label": "line: 179",
-            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
+            "label": "line: 270",
+            "url": "http://localhost:56620/dobetterweb/dbw_tester.html"
           },
           {
-            "label": "line: 180",
-            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
+            "label": "line: 271",
+            "url": "http://localhost:56620/dobetterweb/dbw_tester.html"
           }
         ]
       }
@@ -3937,8 +3969,8 @@
         ],
         "items": [
           {
-            "label": "line: 287",
-            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
+            "label": "line: 341",
+            "url": "http://localhost:56620/dobetterweb/dbw_tester.html"
           }
         ]
       }
@@ -4084,16 +4116,8 @@
         ],
         "items": [
           {
-            "label": "line: 26",
-            "url": "http://localhost:10200/dobetterweb/dbw_tester.js"
-          },
-          {
-            "label": "line: 222",
-            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
-          },
-          {
-            "label": "line: 248",
-            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
+            "label": "line: 302",
+            "url": "http://localhost:56620/dobetterweb/dbw_tester.html"
           }
         ]
       }
@@ -6985,7 +7009,7 @@
       "lighthouse-core/audits/deprecations.js | displayValue": [
         {
           "values": {
-            "itemCount": 3
+            "itemCount": 4
           },
           "path": "audits.deprecations.displayValue"
         }
