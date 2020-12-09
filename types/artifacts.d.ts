@@ -802,8 +802,9 @@ declare global {
        * Describes a report logged to the console by the browser regarding interventions,
        * deprecations, violations, and more.
        */
-      interface ConsoleMessagesProtocolLog extends
-        BaseConsoleMessage, Pick<Crdp.Log.LogEntry, 'source'|'level'> {
+      interface ConsoleProtocolLog extends BaseConsoleMessage {
+        source: Crdp.Log.LogEntry['source'],
+        level: Crdp.Log.LogEntry['level'],
         eventType: 'protocolLog';
       }
 
