@@ -189,6 +189,7 @@ class PageDependencyGraph {
     const linkableResourceTypes = new Set([
       NetworkRequest.TYPES.XHR, NetworkRequest.TYPES.Fetch, NetworkRequest.TYPES.Script,
     ]);
+
     /** @param {CPUNode} cpuNode @param {string} reqId */
     function addDependentNetworkRequest(cpuNode, reqId) {
       const networkNode = networkNodeOutput.idToNodeMap.get(reqId);
