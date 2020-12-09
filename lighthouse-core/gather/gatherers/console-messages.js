@@ -36,16 +36,16 @@ class ConsoleMessages extends Gatherer {
     /** @type {LH.Artifacts.ConsoleMessage[]} */
     this._logEntries = [];
 
-    this._onConsoleMessagesAPICalled = this.onConsoleMessagesAPICalled.bind(this);
+    this._onConsoleAPICalled = this.onConsoleAPICalled.bind(this);
     this._onExceptionThrown = this.onExceptionThrown.bind(this);
     this._onLogEntryAdded = this.onLogEntry.bind(this);
   }
 
   /**
    * Handles events for when a script invokes a console API.
-   * @param {LH.Crdp.Runtime.ConsoleMessagesAPICalledEvent} event
+   * @param {LH.Crdp.Runtime.ConsoleAPICalledEvent} event
    */
-  onConsoleMessagesAPICalled(event) {
+  onConsoleAPICalled(event) {
     const {type} = event;
     if (type !== 'warning' && type !== 'error') {
       // Only gather warnings and errors for brevity.
@@ -131,7 +131,7 @@ class ConsoleMessages extends Gatherer {
       config: [{name: 'discouragedAPIUse', threshold: -1}],
     });
 
-    driver.on('Runtime.consoleAPICalled', this._onConsoleMessagesAPICalled);
+    driver.on('Runtime.consoleAPICalled', this._onConsoleAPICalled);
     driver.on('Runtime.exceptionThrown', this._onExceptionThrown);
     await driver.sendCommand('Runtime.enable');
   }
@@ -144,7 +144,7 @@ class ConsoleMessages extends Gatherer {
     await driver.sendCommand('Log.stopViolationsReport');
     await driver.off('Log.entryAdded', this._onLogEntryAdded);
     await driver.sendCommand('Log.disable');
-    await driver.off('Runtime.consoleAPICalled', this._onConsoleMessagesAPICalled);
+    await driver.off('Runtime.consoleAPICalled', this._onConsoleAPICalled);
     await driver.off('Runtime.exceptionThrown', this._onExceptionThrown);
     await driver.sendCommand('Runtime.disable');
     return this._logEntries;

@@ -64,7 +64,7 @@ declare global {
      * on a major version bump.
      */
     export interface PublicGathererArtifacts {
-      /** ConsoleMessages deprecation and intervention warnings, ConsoleMessages API calls, and exceptions logged by Chrome during page load. */
+      /** ConsoleMessages deprecation and intervention warnings, console API calls, and exceptions logged by Chrome during page load. */
       ConsoleMessages: Artifacts.ConsoleMessage[];
       /** All the iframe elements in the page.*/
       IFrameElements: Artifacts.IFrameElement[];
@@ -784,7 +784,7 @@ declare global {
       }
 
       /** Describes a console message logged by a script using the console API. */
-      interface ConsoleMessagesAPICall extends BaseConsoleMessage {
+      interface ConsoleAPICall extends BaseConsoleMessage {
         eventType: 'consoleAPI';
         /** The console API invoked. Only the following console API calls are gathered. */
         source: 'console.warn' | 'console.error';
@@ -792,7 +792,7 @@ declare global {
         level: 'warning' | 'error';
       }
 
-      interface ConsoleMessagesException extends BaseConsoleMessage {
+      interface ConsoleException extends BaseConsoleMessage {
         eventType: 'exception';
         source: 'exception';
         level: 'error';
@@ -808,7 +808,7 @@ declare global {
         eventType: 'protocolLog';
       }
 
-      export type ConsoleMessage = ConsoleMessagesAPICall | ConsoleMessagesException | ConsoleMessagesProtocolLog;
+      export type ConsoleMessage = ConsoleAPICall | ConsoleException | ConsoleProtocolLog;
     }
   }
 }

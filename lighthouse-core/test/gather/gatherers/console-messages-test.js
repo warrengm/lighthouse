@@ -7,7 +7,7 @@
 
 /* eslint-env jest */
 
-const ConsoleMessagesGatherer = require('../../../gather/gatherers/console.js');
+const ConsoleMessagesGatherer = require('../../../gather/gatherers/console-messages.js');
 const assert = require('assert').strict;
 
 class MockDriver {
