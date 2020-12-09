@@ -23,9 +23,9 @@ describe('Metrics: TotalBlockingTime', () => {
       pessimistic: Math.round(result.pessimisticEstimate.timeInMs),
     }).toMatchInlineSnapshot(`
       Object {
-        "optimistic": 719,
+        "optimistic": 777,
         "pessimistic": 777,
-        "timing": 748,
+        "timing": 777,
       }
     `);
   });

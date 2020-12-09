@@ -109,10 +109,10 @@ function assertValidCategories(categories, audits, groups) {
     return;
   }
 
-  const auditsKeyedById = new Map((audits || []).map(audit =>
-    /** @type {[string, LH.Config.AuditDefn]} */
-    ([audit.implementation.meta.id, audit])
-  ));
+  /** @type {Map<string, LH.Config.AuditDefn>} */
+  const auditsKeyedById = new Map((audits || []).map(audit => {
+    return [audit.implementation.meta.id, audit];
+  }));
 
   Object.keys(categories).forEach(categoryId => {
     categories[categoryId].auditRefs.forEach((auditRef, index) => {
@@ -435,7 +435,7 @@ class Config {
       assertValidPluginName(configJSON, pluginName);
 
       // TODO: refactor and delete `global.isDevtools`.
-      const pluginPath = global.isDevtools ?
+      const pluginPath = global.isDevtools || global.isLightrider ?
         pluginName :
         resolveModule(pluginName, configDir, 'plugin');
       const rawPluginJson = require(pluginPath);
