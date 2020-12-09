@@ -110,14 +110,11 @@ class NetworkRequest {
     this.failed = false;
     this.localizedFailDescription = '';
 
-    /** @type {LH.Crdp.Network.Initiator} */
-    this.initiator = {type: 'other'};
+    this.initiator = /** @type {LH.Crdp.Network.Initiator} */ ({type: 'other'});
     /** @type {LH.Crdp.Network.ResourceTiming|undefined} */
     this.timing = undefined;
     /** @type {LH.Crdp.Network.ResourceType|undefined} */
     this.resourceType = undefined;
-    /** @type {LH.Crdp.Network.ResourceType|undefined} */
-    this.redirectedResourceType = undefined;
     this.mimeType = '';
     /** @type {LH.Crdp.Network.ResourcePriority} */
     this.priority = 'Low';
@@ -263,7 +260,6 @@ class NetworkRequest {
   onRedirectResponse(data) {
     if (!data.redirectResponse) throw new Error('Missing redirectResponse data');
     this._onResponse(data.redirectResponse, data.timestamp, data.type);
-    this.redirectedResourceType = this.resourceType;
     this.resourceType = undefined;
     this.finished = true;
     this.endTime = data.timestamp;
