@@ -2,8 +2,8 @@
 
 exports[`Byte efficiency base audit should allow overriding of computeWasteWithTTIGraph 1`] = `
 Object {
-  "default": 960,
-  "justTTI": 960,
+  "default": 560,
+  "justTTI": 504,
 }
 `;
 
