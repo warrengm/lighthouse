@@ -186,6 +186,7 @@ class PageDependencyGraph {
    * @param {Array<CPUNode>} cpuNodes
    */
   static linkCPUNodes(rootNode, networkNodeOutput, cpuNodes) {
+    /** @type {Set<LH.Crdp.Network.ResourceType>} */
     const linkableResourceTypes = new Set([
       NetworkRequest.TYPES.XHR, NetworkRequest.TYPES.Fetch, NetworkRequest.TYPES.Script,
     ]);
@@ -199,7 +200,7 @@ class PageDependencyGraph {
           networkNode.startTime <= cpuNode.startTime) return;
       const resourceType =
         networkNode.record.resourceType || networkNode.record.redirectedResourceType;
-      if (!linkableResourceTypes.has(resourceType)) {
+      if (typeof resourceType !== 'undefined' && !linkableResourceTypes.has(resourceType)) {
         // We only link some resources to CPU nodes because we observe LCP simulation
         // regressions when including images, etc.
         return;
