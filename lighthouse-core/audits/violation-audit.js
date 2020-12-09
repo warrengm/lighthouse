@@ -15,7 +15,7 @@ class ViolationAudit extends Audit {
    */
   static getViolationResults(artifacts, pattern) {
     const seen = new Set();
-    return artifacts.Console
+    return artifacts.ConsoleMessages
         .filter(entry => entry.url && entry.source === 'violation' && pattern.test(entry.text))
         .map(entry => ({label: `line: ${entry.lineNumber}`, url: entry.url}))
         .filter(entry => {

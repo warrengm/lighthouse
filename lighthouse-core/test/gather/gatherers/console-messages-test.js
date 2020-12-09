@@ -7,7 +7,7 @@
 
 /* eslint-env jest */
 
-const ConsoleGatherer = require('../../../gather/gatherers/console.js');
+const ConsoleMessagesGatherer = require('../../../gather/gatherers/console.js');
 const assert = require('assert').strict;
 
 class MockDriver {
@@ -30,9 +30,9 @@ class MockDriver {
   }
 }
 
-describe('Console', () => {
+describe('ConsoleMessages', () => {
   it('captures the exceptions raised', async () => {
-    const consoleGatherer = new ConsoleGatherer();
+    const consoleGatherer = new ConsoleMessagesGatherer();
     const runtimeEx =
       {
         'timestamp': 1506535813608.003,
@@ -76,7 +76,7 @@ describe('Console', () => {
   });
 
   it('captures console.warn calls', async () => {
-    const consoleGatherer = new ConsoleGatherer();
+    const consoleGatherer = new ConsoleMessagesGatherer();
     const consoleWarnEvent =
       {
         type: 'warning',
@@ -117,7 +117,7 @@ describe('Console', () => {
   });
 
   it('captures falsey values', async () => {
-    const consoleGatherer = new ConsoleGatherer();
+    const consoleGatherer = new ConsoleMessagesGatherer();
     const consoleWarnEvent =
       {
         type: 'warning',
@@ -146,7 +146,7 @@ describe('Console', () => {
   });
 
   it('captures console.warn calls with non-string args', async () => {
-    const consoleGatherer = new ConsoleGatherer();
+    const consoleGatherer = new ConsoleMessagesGatherer();
     const consoleWarnEvent =
       {
         type: 'warning',
@@ -276,7 +276,7 @@ describe('Console', () => {
   });
 
   it('captures console.error calls', async () => {
-    const consoleGatherer = new ConsoleGatherer();
+    const consoleGatherer = new ConsoleMessagesGatherer();
     const consoleErrorEvent =
       {
         type: 'error',
@@ -330,7 +330,7 @@ describe('Console', () => {
   });
 
   it('ignores console.log calls', async () => {
-    const consoleGatherer = new ConsoleGatherer();
+    const consoleGatherer = new ConsoleMessagesGatherer();
     const consoleLog =
       {
         type: 'log',
@@ -365,7 +365,7 @@ describe('Console', () => {
   });
 
   it('captures log entries', async () => {
-    const consoleGatherer = new ConsoleGatherer();
+    const consoleGatherer = new ConsoleMessagesGatherer();
     const logEntries = [
       {
         entry: {

@@ -15,7 +15,7 @@ describe('Page uses passive events listeners where applicable', () => {
     const text = 'Use passive event listeners when you do not use preventDefault';
 
     const auditResult = PassiveEventsAudit.audit({
-      Console: [
+      ConsoleMessages: [
         {source: 'violation', url: 'https://example.com/', text},
         {source: 'violation', url: 'https://example2.com/two', text},
         {source: 'violation', url: 'https://example2.com/two', text}, // duplicate
@@ -30,7 +30,7 @@ describe('Page uses passive events listeners where applicable', () => {
 
   it('passes scroll blocking listeners should be passive', () => {
     const auditResult = PassiveEventsAudit.audit({
-      Console: [],
+      ConsoleMessages: [],
     });
     assert.equal(auditResult.score, 1);
     assert.equal(auditResult.details.items.length, 0);

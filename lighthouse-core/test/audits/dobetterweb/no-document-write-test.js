@@ -15,7 +15,7 @@ const URL = 'https://example.com';
 describe('Page does not use document.write()', () => {
   it('passes when document.write() is not used', () => {
     const auditResult = DocWriteUseAudit.audit({
-      Console: [],
+      ConsoleMessages: [],
       URL: {finalUrl: URL},
     });
     assert.equal(auditResult.score, 1);
@@ -26,7 +26,7 @@ describe('Page does not use document.write()', () => {
     const text = 'Do not use document.write';
     const auditResult = DocWriteUseAudit.audit({
       URL: {finalUrl: URL},
-      Console: [
+      ConsoleMessages: [
         {source: 'violation', url: 'https://example.com/', text},
         {source: 'violation', url: 'https://example2.com/two', text},
         {source: 'violation', url: 'http://abc.com/', text: 'Long event handler!'},

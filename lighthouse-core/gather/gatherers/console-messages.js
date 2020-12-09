@@ -30,22 +30,22 @@ function remoteObjectToString(obj) {
   return `[${type} ${className}]`;
 }
 
-class Console extends Gatherer {
+class ConsoleMessages extends Gatherer {
   constructor() {
     super();
     /** @type {LH.Artifacts.ConsoleMessage[]} */
     this._logEntries = [];
 
-    this._onConsoleAPICalled = this.onConsoleAPICalled.bind(this);
+    this._onConsoleMessagesAPICalled = this.onConsoleMessagesAPICalled.bind(this);
     this._onExceptionThrown = this.onExceptionThrown.bind(this);
     this._onLogEntryAdded = this.onLogEntry.bind(this);
   }
 
   /**
    * Handles events for when a script invokes a console API.
-   * @param {LH.Crdp.Runtime.ConsoleAPICalledEvent} event
+   * @param {LH.Crdp.Runtime.ConsoleMessagesAPICalledEvent} event
    */
-  onConsoleAPICalled(event) {
+  onConsoleMessagesAPICalled(event) {
     const {type} = event;
     if (type !== 'warning' && type !== 'error') {
       // Only gather warnings and errors for brevity.
@@ -131,24 +131,24 @@ class Console extends Gatherer {
       config: [{name: 'discouragedAPIUse', threshold: -1}],
     });
 
-    driver.on('Runtime.consoleAPICalled', this._onConsoleAPICalled);
+    driver.on('Runtime.consoleAPICalled', this._onConsoleMessagesAPICalled);
     driver.on('Runtime.exceptionThrown', this._onExceptionThrown);
     await driver.sendCommand('Runtime.enable');
   }
 
   /**
    * @param {LH.Gatherer.PassContext} passContext
-   * @return {Promise<LH.Artifacts['Console']>}
+   * @return {Promise<LH.Artifacts['ConsoleMessages']>}
    */
   async afterPass({driver}) {
     await driver.sendCommand('Log.stopViolationsReport');
     await driver.off('Log.entryAdded', this._onLogEntryAdded);
     await driver.sendCommand('Log.disable');
-    await driver.off('Runtime.consoleAPICalled', this._onConsoleAPICalled);
+    await driver.off('Runtime.consoleAPICalled', this._onConsoleMessagesAPICalled);
     await driver.off('Runtime.exceptionThrown', this._onExceptionThrown);
     await driver.sendCommand('Runtime.disable');
     return this._logEntries;
   }
 }
 
-module.exports = Console;
+module.exports = ConsoleMessages;

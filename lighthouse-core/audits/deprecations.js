@@ -45,7 +45,7 @@ class Deprecations extends Audit {
       title: str_(UIStrings.title),
       failureTitle: str_(UIStrings.failureTitle),
       description: str_(UIStrings.description),
-      requiredArtifacts: ['Console'],
+      requiredArtifacts: ['ConsoleMessages'],
     };
   }
 
@@ -54,7 +54,7 @@ class Deprecations extends Audit {
    * @return {LH.Audit.Product}
    */
   static audit(artifacts) {
-    const entries = artifacts.Console;
+    const entries = artifacts.ConsoleMessages;
 
     const deprecations = entries.filter(log => log.source === 'deprecation').map(log => {
       // HTML deprecations will have no url and no way to attribute to a specific line.

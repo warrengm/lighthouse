@@ -15,7 +15,7 @@ describe('UX: geolocation audit', () => {
     const text = 'Do not request geolocation permission without a user action.';
 
     const auditResult = GeolocationOnStartAudit.audit({
-      Console: [
+      ConsoleMessages: [
         {source: 'violation', url: 'https://example.com/', text},
         {source: 'violation', url: 'https://example2.com/two', text},
         {source: 'violation', url: 'http://abc.com/', text: 'No document.write'},
@@ -28,7 +28,7 @@ describe('UX: geolocation audit', () => {
 
   it('passes when geolocation has not been automatically requested', () => {
     const auditResult = GeolocationOnStartAudit.audit({
-      Console: [],
+      ConsoleMessages: [],
     });
     assert.equal(auditResult.score, 1);
     assert.equal(auditResult.details.items.length, 0);

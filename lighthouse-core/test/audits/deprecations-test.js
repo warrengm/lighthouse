@@ -10,10 +10,10 @@ const assert = require('assert').strict;
 
 /* eslint-env jest */
 
-describe('Console deprecations audit', () => {
+describe('ConsoleMessages deprecations audit', () => {
   it('passes when no console messages were found', () => {
     const auditResult = DeprecationsAudit.audit({
-      Console: [],
+      ConsoleMessages: [],
     });
     assert.equal(auditResult.score, 1);
     assert.equal(auditResult.details.items.length, 0);
@@ -21,7 +21,7 @@ describe('Console deprecations audit', () => {
 
   it('handles deprecations that do not have url or line numbers', () => {
     const auditResult = DeprecationsAudit.audit({
-      Console: [
+      ConsoleMessages: [
         {
           source: 'deprecation',
           text: 'Deprecation message',
@@ -38,7 +38,7 @@ describe('Console deprecations audit', () => {
     const URL = 'http://example.com';
 
     const auditResult = DeprecationsAudit.audit({
-      Console: [
+      ConsoleMessages: [
         {
           source: 'deprecation',
           lineNumber: 123,

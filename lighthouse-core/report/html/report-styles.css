@@ -112,7 +112,7 @@
   --pwa-icon-size: var(--topbar-logo-size);
   --report-background-color: #fff;
   --report-border-color-secondary: #ebebeb;
-  --report-font-family-monospace: 'Roboto Mono', 'Menlo', 'dejavu sans mono', 'Consolas', 'Lucida Console', monospace;
+  --report-font-family-monospace: 'Roboto Mono', 'Menlo', 'dejavu sans mono', 'Consolas', 'Lucida ConsoleMessages', monospace;
   --report-font-family: Roboto, Helvetica, Arial, sans-serif;
   --report-font-size: 16px;
   --report-monospace-font-size: calc(var(--report-font-size) * 0.85);
@@ -262,7 +262,7 @@
   --header-padding: 16px 0 16px 0;
   --plugin-icon-size: 75%;
   --pwa-icon-margin: 0 7px 0 -3px;
-  --report-font-family-monospace: 'Menlo', 'dejavu sans mono', 'Consolas', 'Lucida Console', monospace;
+  --report-font-family-monospace: 'Menlo', 'dejavu sans mono', 'Consolas', 'Lucida ConsoleMessages', monospace;
   --report-font-family: '.SFNSDisplay-Regular', 'Helvetica Neue', 'Lucida Grande', sans-serif;
   --report-font-size: 12px;
   --report-line-height: 20px;

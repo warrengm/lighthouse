@@ -39,7 +39,7 @@ class ErrorLogs extends Audit {
       title: str_(UIStrings.title),
       failureTitle: str_(UIStrings.failureTitle),
       description: str_(UIStrings.description),
-      requiredArtifacts: ['Console'],
+      requiredArtifacts: ['ConsoleMessages'],
     };
   }
 
@@ -81,7 +81,7 @@ class ErrorLogs extends Audit {
     const auditOptions = /** @type {AuditOptions} */ (context.options);
 
     /** @type {Array<{source: string, description: string|undefined, url: string|undefined}>} */
-    const consoleRows = artifacts.Console
+    const consoleRows = artifacts.ConsoleMessages
       .filter(item => item.level === 'error')
       .map(item => {
         return {

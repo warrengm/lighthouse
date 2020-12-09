@@ -187,7 +187,7 @@ LHL is a name that is distinct and identifies this as the LightHouse Locale form
 
 ### Why do we use CTC as our i18n messages interchange format?
 
-There are a few data formats used for holding messages for internationalization, including XMB and XLIFF.  We needed a JS-friendly format supported by Google's Translation Console (TC). This format is [somewhat well-specified](https://developer.chrome.com/extensions/i18n-messages) and defined in JSON rather than XML. ;)
+There are a few data formats used for holding messages for internationalization, including XMB and XLIFF.  We needed a JS-friendly format supported by Google's Translation ConsoleMessages (TC). This format is [somewhat well-specified](https://developer.chrome.com/extensions/i18n-messages) and defined in JSON rather than XML. ;)
 
 ### Why do we call it CTC?
 

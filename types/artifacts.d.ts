@@ -64,8 +64,8 @@ declare global {
      * on a major version bump.
      */
     export interface PublicGathererArtifacts {
-      /** Console deprecation and intervention warnings, Console API calls, and exceptions logged by Chrome during page load. */
-      Console: Artifacts.ConsoleMessage[];
+      /** ConsoleMessages deprecation and intervention warnings, ConsoleMessages API calls, and exceptions logged by Chrome during page load. */
+      ConsoleMessages: Artifacts.ConsoleMessage[];
       /** All the iframe elements in the page.*/
       IFrameElements: Artifacts.IFrameElement[];
       /** The contents of the main HTML document network resource. */
@@ -784,7 +784,7 @@ declare global {
       }
 
       /** Describes a console message logged by a script using the console API. */
-      interface ConsoleAPICall extends BaseConsoleMessage {
+      interface ConsoleMessagesAPICall extends BaseConsoleMessage {
         eventType: 'consoleAPI';
         /** The console API invoked. Only the following console API calls are gathered. */
         source: 'console.warn' | 'console.error';
@@ -792,7 +792,7 @@ declare global {
         level: 'warning' | 'error';
       }
 
-      interface ConsoleException extends BaseConsoleMessage {
+      interface ConsoleMessagesException extends BaseConsoleMessage {
         eventType: 'exception';
         source: 'exception';
         level: 'error';
@@ -802,12 +802,12 @@ declare global {
        * Describes a report logged to the console by the browser regarding interventions,
        * deprecations, violations, and more.
        */
-      interface ConsoleProtocolLog extends
+      interface ConsoleMessagesProtocolLog extends
         BaseConsoleMessage, Pick<Crdp.Log.LogEntry, 'source'|'level'> {
         eventType: 'protocolLog';
       }
 
-      export type ConsoleMessage = ConsoleAPICall | ConsoleException | ConsoleProtocolLog;
+      export type ConsoleMessage = ConsoleMessagesAPICall | ConsoleMessagesException | ConsoleMessagesProtocolLog;
     }
   }
 }

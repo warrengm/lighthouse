@@ -576,7 +576,7 @@
       "property": "og:description"
     }
   ],
-  "Console": [
+  "ConsoleMessages": [
     {
       "source": "other",
       "level": "info",

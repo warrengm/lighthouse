@@ -10,10 +10,10 @@
 const ErrorLogsAudit = require('../../audits/errors-in-console.js');
 const assert = require('assert').strict;
 
-describe('Console error logs audit', () => {
+describe('ConsoleMessages error logs audit', () => {
   it('passes when no console messages were found', () => {
     const auditResult = ErrorLogsAudit.audit({
-      Console: [],
+      ConsoleMessages: [],
     }, {options: {}});
     assert.equal(auditResult.score, 1);
     assert.ok(!auditResult.displayValue, 0);
@@ -22,7 +22,7 @@ describe('Console error logs audit', () => {
 
   it('filter out the non error logs', () => {
     const auditResult = ErrorLogsAudit.audit({
-      Console: [
+      ConsoleMessages: [
         {
           level: 'info',
           source: 'network',
@@ -36,7 +36,7 @@ describe('Console error logs audit', () => {
 
   it('fails when error logs are found ', () => {
     const auditResult = ErrorLogsAudit.audit({
-      Console: [
+      ConsoleMessages: [
         {
           level: 'error',
           source: 'network',
@@ -83,7 +83,7 @@ describe('Console error logs audit', () => {
 
   it('handle the case when some logs fields are undefined', () => {
     const auditResult = ErrorLogsAudit.audit({
-      Console: [
+      ConsoleMessages: [
         {
           level: 'error',
         },
@@ -100,7 +100,7 @@ describe('Console error logs audit', () => {
   // Checks bug #4188
   it('handle the case when exception info is not present', () => {
     const auditResult = ErrorLogsAudit.audit({
-      Console: [{
+      ConsoleMessages: [{
         'source': 'exception',
         'level': 'error',
         'timestamp': 1506535813608.003,
@@ -128,7 +128,7 @@ describe('Console error logs audit', () => {
     it('does nothing with an empty pattern', () => {
       const options = {ignoredPatterns: ''};
       const result = ErrorLogsAudit.audit({
-        Console: [
+        ConsoleMessages: [
           {
             level: 'error',
             source: 'network',
@@ -144,7 +144,7 @@ describe('Console error logs audit', () => {
     it('does nothing with an empty description', () => {
       const options = {ignoredPatterns: 'pattern'};
       const result = ErrorLogsAudit.audit({
-        Console: [
+        ConsoleMessages: [
           {
             level: 'error',
           },
@@ -158,7 +158,7 @@ describe('Console error logs audit', () => {
     it('does nothing with an empty description', () => {
       const options = {ignoredPatterns: 'pattern'};
       const result = ErrorLogsAudit.audit({
-        Console: [
+        ConsoleMessages: [
           {
             level: 'error',
           },
@@ -172,7 +172,7 @@ describe('Console error logs audit', () => {
     it('filters console messages as a string', () => {
       const options = {ignoredPatterns: ['simple']};
       const result = ErrorLogsAudit.audit({
-        Console: [
+        ConsoleMessages: [
           {
             level: 'error',
             source: 'network',
@@ -188,7 +188,7 @@ describe('Console error logs audit', () => {
     it('filters console messages as a regex', () => {
       const options = {ignoredPatterns: [/simple.*msg/]};
       const result = ErrorLogsAudit.audit({
-        Console: [
+        ConsoleMessages: [
           {
             level: 'error',
             source: 'network',
@@ -204,7 +204,7 @@ describe('Console error logs audit', () => {
     it('filters exceptions with both regex and strings', () => {
       const options = {ignoredPatterns: [/s.mple/i, 'really']};
       const result = ErrorLogsAudit.audit({
-        Console: [
+        ConsoleMessages: [
           {
             source: 'exception',
             level: 'error',
