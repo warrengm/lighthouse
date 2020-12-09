@@ -31,7 +31,7 @@ Running beforePass methods
 Gathering setup: CSSUsage
 Gathering setup: JsUsage
 Gathering setup: ViewportDimensions
-Gathering setup: Console
+Gathering setup: ConsoleMessages;
 Gathering setup: AnchorElements
 Gathering setup: ImageElements
 Gathering setup: LinkElements
@@ -62,7 +62,7 @@ Running pass methods
 Gathering in-page: CSSUsage
 Gathering in-page: JsUsage
 Gathering in-page: ViewportDimensions
-Gathering in-page: Console
+Gathering in-page: ConsoleMessages
 Gathering in-page: AnchorElements
 Gathering in-page: ImageElements
 Gathering in-page: LinkElements
@@ -92,7 +92,7 @@ Running afterPass methods
 Gathering: CSSUsage
 Gathering: JsUsage
 Gathering: ViewportDimensions
-Gathering: Console
+Gathering: ConsoleMessages
 Gathering: AnchorElements
 Gathering: ImageElements
 Gathering: LinkElements
