@@ -1361,7 +1361,7 @@ Object {
           "path": "viewport-dimensions",
         },
         Object {
-          "path": "console",
+          "path": "console-messages",
         },
         Object {
           "path": "anchor-elements",

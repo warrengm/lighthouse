@@ -255,11 +255,52 @@
     },
     "errors-in-console": {
       "id": "errors-in-console",
-      "title": "No browser errors logged to the console",
+      "title": "Browser errors were logged to the console",
       "description": "Errors logged to the console indicate unresolved problems. They can come from network request failures and other browser concerns. [Learn more](https://web.dev/errors-in-console/)",
-      "score": null,
-      "scoreDisplayMode": "error",
-      "errorMessage": "Cannot read property 'filter' of undefined"
+      "score": 0,
+      "scoreDisplayMode": "binary",
+      "details": {
+        "type": "table",
+        "headings": [
+          {
+            "key": "url",
+            "itemType": "url",
+            "text": "URL"
+          },
+          {
+            "key": "description",
+            "itemType": "code",
+            "text": "Description"
+          }
+        ],
+        "items": [
+          {
+            "source": "other",
+            "description": "Application Cache Error event: Manifest fetch failed (404) http://localhost:10200/dobetterweb/clock.appcache",
+            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
+          },
+          {
+            "source": "exception",
+            "description": "Error: An error\n    at http://localhost:10200/dobetterweb/dbw_tester.html:42:38",
+            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
+          },
+          {
+            "source": "network",
+            "description": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "url": "http://localhost:10200/dobetterweb/unknown404.css?delay=200"
+          },
+          {
+            "source": "network",
+            "description": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "url": "http://localhost:10200/favicon.ico"
+          },
+          {
+            "source": "network",
+            "description": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "url": "http://localhost:10200/dobetterweb/unknown404.css?delay=200"
+          }
+        ]
+      }
     },
     "server-response-time": {
       "id": "server-response-time",
@@ -3712,11 +3753,35 @@
     },
     "geolocation-on-start": {
       "id": "geolocation-on-start",
-      "title": "Avoids requesting the geolocation permission on page load",
+      "title": "Requests the geolocation permission on page load",
       "description": "Users are mistrustful of or confused by sites that request their location without context. Consider tying the request to a user action instead. [Learn more](https://web.dev/geolocation-on-start/).",
-      "score": null,
-      "scoreDisplayMode": "error",
-      "errorMessage": "Cannot read property 'filter' of undefined"
+      "score": 0,
+      "scoreDisplayMode": "binary",
+      "details": {
+        "type": "table",
+        "headings": [
+          {
+            "key": "url",
+            "itemType": "url",
+            "text": "URL"
+          },
+          {
+            "key": "label",
+            "itemType": "text",
+            "text": "Location"
+          }
+        ],
+        "items": [
+          {
+            "label": "line: 277",
+            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
+          },
+          {
+            "label": "line: 281",
+            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
+          }
+        ]
+      }
     },
     "inspector-issues": {
       "id": "inspector-issues",
@@ -3728,11 +3793,39 @@
     },
     "no-document-write": {
       "id": "no-document-write",
-      "title": "Avoids `document.write()`",
+      "title": "Avoid `document.write()`",
       "description": "For users on slow connections, external scripts dynamically injected via `document.write()` can delay page load by tens of seconds. [Learn more](https://web.dev/no-document-write/).",
-      "score": null,
-      "scoreDisplayMode": "error",
-      "errorMessage": "Cannot read property 'filter' of undefined"
+      "score": 0,
+      "scoreDisplayMode": "binary",
+      "details": {
+        "type": "table",
+        "headings": [
+          {
+            "key": "url",
+            "itemType": "url",
+            "text": "URL"
+          },
+          {
+            "key": "label",
+            "itemType": "text",
+            "text": "Location"
+          }
+        ],
+        "items": [
+          {
+            "label": "line: 178",
+            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
+          },
+          {
+            "label": "line: 179",
+            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
+          },
+          {
+            "label": "line: 180",
+            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
+          }
+        ]
+      }
     },
     "no-vulnerable-libraries": {
       "id": "no-vulnerable-libraries",
@@ -3824,11 +3917,31 @@
     },
     "notification-on-start": {
       "id": "notification-on-start",
-      "title": "Avoids requesting the notification permission on page load",
+      "title": "Requests the notification permission on page load",
       "description": "Users are mistrustful of or confused by sites that request to send notifications without context. Consider tying the request to user gestures instead. [Learn more](https://web.dev/notification-on-start/).",
-      "score": null,
-      "scoreDisplayMode": "error",
-      "errorMessage": "Cannot read property 'filter' of undefined"
+      "score": 0,
+      "scoreDisplayMode": "binary",
+      "details": {
+        "type": "table",
+        "headings": [
+          {
+            "key": "url",
+            "itemType": "url",
+            "text": "URL"
+          },
+          {
+            "key": "label",
+            "itemType": "text",
+            "text": "Location"
+          }
+        ],
+        "items": [
+          {
+            "label": "line: 287",
+            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
+          }
+        ]
+      }
     },
     "password-inputs-can-be-pasted-into": {
       "id": "password-inputs-can-be-pasted-into",
@@ -3951,11 +4064,39 @@
     },
     "uses-passive-event-listeners": {
       "id": "uses-passive-event-listeners",
-      "title": "Uses passive listeners to improve scrolling performance",
+      "title": "Does not use passive listeners to improve scrolling performance",
       "description": "Consider marking your touch and wheel event listeners as `passive` to improve your page's scroll performance. [Learn more](https://web.dev/uses-passive-event-listeners/).",
-      "score": null,
-      "scoreDisplayMode": "error",
-      "errorMessage": "Cannot read property 'filter' of undefined"
+      "score": 0,
+      "scoreDisplayMode": "binary",
+      "details": {
+        "type": "table",
+        "headings": [
+          {
+            "key": "url",
+            "itemType": "url",
+            "text": "URL"
+          },
+          {
+            "key": "label",
+            "itemType": "text",
+            "text": "Location"
+          }
+        ],
+        "items": [
+          {
+            "label": "line: 26",
+            "url": "http://localhost:10200/dobetterweb/dbw_tester.js"
+          },
+          {
+            "label": "line: 222",
+            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
+          },
+          {
+            "label": "line: 248",
+            "url": "http://localhost:10200/dobetterweb/dbw_tester.html"
+          }
+        ]
+      }
     },
     "meta-description": {
       "id": "meta-description",
@@ -6671,27 +6812,14 @@
       "lighthouse-core/audits/metrics/cumulative-layout-shift.js | description": [
         "audits[cumulative-layout-shift].description"
       ],
-      "lighthouse-core/audits/errors-in-console.js | title": [
+      "lighthouse-core/audits/errors-in-console.js | failureTitle": [
         "audits[errors-in-console].title"
       ],
       "lighthouse-core/audits/errors-in-console.js | description": [
         "audits[errors-in-console].description"
       ],
-      "lighthouse-core/audits/server-response-time.js | title": [
-        "audits[server-response-time].title"
-      ],
-      "lighthouse-core/audits/server-response-time.js | description": [
-        "audits[server-response-time].description"
-      ],
-      "lighthouse-core/audits/server-response-time.js | displayValue": [
-        {
-          "values": {
-            "timeInMs": 570.5630000000001
-          },
-          "path": "audits[server-response-time].displayValue"
-        }
-      ],
       "lighthouse-core/lib/i18n/i18n.js | columnURL": [
+        "audits[errors-in-console].details.headings[0].text",
         "audits[server-response-time].details.headings[0].label",
         "audits[image-aspect-ratio].details.headings[1].text",
         "audits[image-size-responsive].details.headings[1].text",
@@ -6710,7 +6838,28 @@
         "audits[uses-webp-images].details.headings[1].label",
         "audits[uses-text-compression].details.headings[0].label",
         "audits[legacy-javascript].details.headings[0].label",
-        "audits[uses-http2].details.headings[0].label"
+        "audits[geolocation-on-start].details.headings[0].text",
+        "audits[no-document-write].details.headings[0].text",
+        "audits[notification-on-start].details.headings[0].text",
+        "audits[uses-http2].details.headings[0].label",
+        "audits[uses-passive-event-listeners].details.headings[0].text"
+      ],
+      "lighthouse-core/lib/i18n/i18n.js | columnDescription": [
+        "audits[errors-in-console].details.headings[1].text"
+      ],
+      "lighthouse-core/audits/server-response-time.js | title": [
+        "audits[server-response-time].title"
+      ],
+      "lighthouse-core/audits/server-response-time.js | description": [
+        "audits[server-response-time].description"
+      ],
+      "lighthouse-core/audits/server-response-time.js | displayValue": [
+        {
+          "values": {
+            "timeInMs": 570.5630000000001
+          },
+          "path": "audits[server-response-time].displayValue"
+        }
       ],
       "lighthouse-core/lib/i18n/i18n.js | columnTimeSpent": [
         "audits[server-response-time].details.headings[1].label",
@@ -7666,11 +7815,17 @@
       "lighthouse-core/audits/dobetterweb/external-anchors-use-rel-noopener.js | columnFailingAnchors": [
         "audits[external-anchors-use-rel-noopener].details.headings[0].text"
       ],
-      "lighthouse-core/audits/dobetterweb/geolocation-on-start.js | title": [
+      "lighthouse-core/audits/dobetterweb/geolocation-on-start.js | failureTitle": [
         "audits[geolocation-on-start].title"
       ],
       "lighthouse-core/audits/dobetterweb/geolocation-on-start.js | description": [
         "audits[geolocation-on-start].description"
+      ],
+      "lighthouse-core/lib/i18n/i18n.js | columnLocation": [
+        "audits[geolocation-on-start].details.headings[1].text",
+        "audits[no-document-write].details.headings[1].text",
+        "audits[notification-on-start].details.headings[1].text",
+        "audits[uses-passive-event-listeners].details.headings[1].text"
       ],
       "lighthouse-core/audits/dobetterweb/inspector-issues.js | title": [
         "audits[inspector-issues].title"
@@ -7678,7 +7833,7 @@
       "lighthouse-core/audits/dobetterweb/inspector-issues.js | description": [
         "audits[inspector-issues].description"
       ],
-      "lighthouse-core/audits/dobetterweb/no-document-write.js | title": [
+      "lighthouse-core/audits/dobetterweb/no-document-write.js | failureTitle": [
         "audits[no-document-write].title"
       ],
       "lighthouse-core/audits/dobetterweb/no-document-write.js | description": [
@@ -7719,7 +7874,7 @@
       "lighthouse-core/audits/dobetterweb/js-libraries.js | columnVersion": [
         "audits[js-libraries].details.headings[1].text"
       ],
-      "lighthouse-core/audits/dobetterweb/notification-on-start.js | title": [
+      "lighthouse-core/audits/dobetterweb/notification-on-start.js | failureTitle": [
         "audits[notification-on-start].title"
       ],
       "lighthouse-core/audits/dobetterweb/notification-on-start.js | description": [
@@ -7748,7 +7903,7 @@
       "lighthouse-core/audits/dobetterweb/uses-http2.js | columnProtocol": [
         "audits[uses-http2].details.headings[1].label"
       ],
-      "lighthouse-core/audits/dobetterweb/uses-passive-event-listeners.js | title": [
+      "lighthouse-core/audits/dobetterweb/uses-passive-event-listeners.js | failureTitle": [
         "audits[uses-passive-event-listeners].title"
       ],
       "lighthouse-core/audits/dobetterweb/uses-passive-event-listeners.js | description": [
