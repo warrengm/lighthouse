@@ -163,6 +163,7 @@ const defaultConfig = {
       'trace-elements',
       'inspector-issues',
       'source-maps',
+      'full-page-screenshot',
     ],
   },
   {
@@ -194,7 +195,6 @@ const defaultConfig = {
     'metrics/first-contentful-paint',
     'metrics/largest-contentful-paint',
     'metrics/first-meaningful-paint',
-    'load-fast-enough-for-pwa',
     'metrics/speed-index',
     'screenshot-thumbnails',
     'final-screenshot',
@@ -244,6 +244,7 @@ const defaultConfig = {
     'unsized-images',
     'valid-source-maps',
     'preload-lcp-image',
+    'full-page-screenshot',
     'manual/pwa-cross-browser',
     'manual/pwa-page-transitions',
     'manual/pwa-each-page-has-url',
@@ -608,7 +609,6 @@ const defaultConfig = {
       manualDescription: str_(UIStrings.pwaCategoryManualDescription),
       auditRefs: [
         // Fast and Reliable
-        {id: 'load-fast-enough-for-pwa', weight: 7, group: 'pwa-fast-reliable'},
         {id: 'works-offline', weight: 5, group: 'pwa-fast-reliable'},
         {id: 'offline-start-url', weight: 1, group: 'pwa-fast-reliable'},
         // Installable

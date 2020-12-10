@@ -788,9 +788,6 @@
   "lighthouse-core/audits/image-aspect-ratio.js | title": {
     "message": "Viser bilder med riktig høyde/bredde-forhold"
   },
-  "lighthouse-core/audits/image-aspect-ratio.js | warningCompute": {
-    "message": "Ugyldig informasjon om bildestørrelse – {url}"
-  },
   "lighthouse-core/audits/image-size-responsive.js | columnActual": {
     "message": "Faktisk størrelse"
   },
@@ -877,24 +874,6 @@
   },
   "lighthouse-core/audits/layout-shift-elements.js | title": {
     "message": "Unngå store utseendeforskyvninger"
-  },
-  "lighthouse-core/audits/load-fast-enough-for-pwa.js | description": {
-    "message": "Når sider lastes inn raskt over mobilnettverk, gir det en god brukeropplevelse på mobilenheter. [Finn ut mer](https://web.dev/load-fast-enough-for-pwa/)."
-  },
-  "lighthouse-core/audits/load-fast-enough-for-pwa.js | displayValueText": {
-    "message": "Interaktiv etter {timeInMs, number, seconds} s"
-  },
-  "lighthouse-core/audits/load-fast-enough-for-pwa.js | displayValueTextWithOverride": {
-    "message": "Siden ble interaktiv på det simulerte mobilnettverket etter {timeInMs, number, seconds} s"
-  },
-  "lighthouse-core/audits/load-fast-enough-for-pwa.js | explanationLoadSlow": {
-    "message": "Siden lastes inn for sakte og blir ikke interaktiv i løpet av 10 sekunder. Se på mulighetene og diagnostikken i delen «Ytelse» for å finne ut hva som kan forbedres."
-  },
-  "lighthouse-core/audits/load-fast-enough-for-pwa.js | failureTitle": {
-    "message": "Siden lastes ikke inn raskt nok over mobilnettverk"
-  },
-  "lighthouse-core/audits/load-fast-enough-for-pwa.js | title": {
-    "message": "Siden lastes inn raskt nok over mobilnettverk"
   },
   "lighthouse-core/audits/long-tasks.js | description": {
     "message": "Viser de lengste oppgavene på hovedtråden. Dette er nyttig for å finne ut hvilke oppgaver som bidrar mest til inndataforsinkelser. [Finn ut mer](https://web.dev/long-tasks-devtools/)"

@@ -788,9 +788,6 @@
   "lighthouse-core/audits/image-aspect-ratio.js | title": {
     "message": "Показує зображення правильного формату"
   },
-  "lighthouse-core/audits/image-aspect-ratio.js | warningCompute": {
-    "message": "Недійсна інформація про розмір зображення {url}"
-  },
   "lighthouse-core/audits/image-size-responsive.js | columnActual": {
     "message": "Дійсний розмір"
   },
@@ -877,24 +874,6 @@
   },
   "lighthouse-core/audits/layout-shift-elements.js | title": {
     "message": "Уникайте великих зсувів макета"
-  },
-  "lighthouse-core/audits/load-fast-enough-for-pwa.js | description": {
-    "message": "Якщо сторінка швидко завантажується в мобільній мережі, це покращує враження користувачів мобільних пристроїв. [Докладніше](https://web.dev/load-fast-enough-for-pwa/)."
-  },
-  "lighthouse-core/audits/load-fast-enough-for-pwa.js | displayValueText": {
-    "message": "Стає інтерактивною через {timeInMs, number, seconds} с"
-  },
-  "lighthouse-core/audits/load-fast-enough-for-pwa.js | displayValueTextWithOverride": {
-    "message": "Стає інтерактивною в емульованій мобільній мережі через {timeInMs, number, seconds} с"
-  },
-  "lighthouse-core/audits/load-fast-enough-for-pwa.js | explanationLoadSlow": {
-    "message": "Сторінка завантажується надто повільно й неактивна впродовж 10 секунд. Щоб дізнатися, як виправити цю ситуацію, перегляньте можливості та дані діагностики в розділі \"Ефективність\"."
-  },
-  "lighthouse-core/audits/load-fast-enough-for-pwa.js | failureTitle": {
-    "message": "Швидкість завантаження сторінки через мобільну мережу недостатньо висока"
-  },
-  "lighthouse-core/audits/load-fast-enough-for-pwa.js | title": {
-    "message": "Швидкість завантаження сторінки через мобільну мережу достатньо висока"
   },
   "lighthouse-core/audits/long-tasks.js | description": {
     "message": "Указано найтриваліші завдання в головному потоці. Ці дані корисні, щоб визначати, що найбільше впливає на затримку вхідного сигналу. [Докладніше](https://web.dev/long-tasks-devtools/)"

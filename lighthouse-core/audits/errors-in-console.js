@@ -78,7 +78,8 @@ class ErrorLogs extends Audit {
    * @return {LH.Audit.Product}
    */
   static audit(artifacts, context) {
-    const auditOptions = /** @type {AuditOptions} */ (context.options);
+    /** @type {AuditOptions} */
+    const auditOptions = context.options;
 
     /** @type {Array<{source: string, description: string|undefined, url: string|undefined}>} */
     const consoleRows = artifacts.ConsoleMessages
