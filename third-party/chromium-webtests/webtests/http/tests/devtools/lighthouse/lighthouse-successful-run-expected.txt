@@ -31,7 +31,7 @@ Running beforePass methods
 Gathering setup: CSSUsage
 Gathering setup: JsUsage
 Gathering setup: ViewportDimensions
-Gathering setup: ConsoleMessages;
+Gathering setup: ConsoleMessages
 Gathering setup: AnchorElements
 Gathering setup: ImageElements
 Gathering setup: LinkElements
@@ -730,4 +730,3 @@ viewport-ad-density
 visual-order-follows-dom
 without-javascript
 works-offline
-
